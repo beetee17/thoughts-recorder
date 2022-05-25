@@ -1,0 +1,32 @@
+name: leopard_demo
+description: Demonstrates how to use the leopard plugin.
+
+publish_to: 'none'
+
+version: 1.0.0
+
+environment:
+  sdk: ">=2.14.0 <3.0.0"
+  flutter: ">=2.8.1"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  path_provider: ^2.0.9
+
+  flutter_voice_processor: ^1.0.7
+
+  leopard_flutter: ^1.0.3
+  
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  lints: ^1.0.1
+
+flutter:  
+  uses-material-design: true
+  assets:
+    - assets/models/android/leopard_params.pv
+    - assets/models/ios/leopard_params.pv
+    - assets/models/ios/myModel-leopard.pv

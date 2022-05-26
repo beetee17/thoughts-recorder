@@ -13,9 +13,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:leopard_demo/mic_recorder.dart';
+import 'package:leopard_demo/widgets/error_message.dart';
+import 'package:leopard_demo/widgets/share_transcript_button.dart';
+import 'package:leopard_demo/widgets/selected_file.dart';
+import 'package:leopard_demo/widgets/status_area.dart';
+import 'package:leopard_demo/widgets/text_area.dart';
 import 'package:leopard_flutter/leopard.dart';
 import 'package:leopard_flutter/leopard_error.dart';
 import 'package:path_provider/path_provider.dart';
@@ -36,8 +42,7 @@ class _MyAppState extends State<MyApp> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  bool isError = false;
-  String errorMessage = "";
+  String? errorMessage;
 
   bool isRecording = false;
   bool isProcessing = false;
@@ -47,6 +52,8 @@ class _MyAppState extends State<MyApp> {
 
   MicRecorder? _micRecorder;
   Leopard? _leopard;
+
+  File? _userSelectedFile;
 
   @override
   void initState() {
@@ -59,6 +66,37 @@ class _MyAppState extends State<MyApp> {
     });
 
     initLeopard();
+  }
+
+  void pickFile() {
+    // From SDK Documentation:
+    // The file needs to have a sample rate equal to or greater than Leopard.sampleRate.
+    //The supported formats are: FLAC, MP3, Ogg, Opus, Vorbis, WAV, and WebM.
+    FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: [
+      'flac',
+      'mp3',
+      'ogg',
+      'opus',
+      'wav',
+      'webm'
+    ]).then((res) => {
+          if (res != null)
+            {
+              setState(() {
+                _userSelectedFile = File(res.files.single.path!);
+              })
+            }
+          else
+            {
+              // User canceled the picker
+            }
+        });
+  }
+
+  void removeSelectedFile() {
+    setState(() {
+      _userSelectedFile = null;
+    });
   }
 
   Future<void> initLeopard() async {
@@ -110,7 +148,6 @@ class _MyAppState extends State<MyApp> {
 
   void errorCallback(LeopardException error) {
     setState(() {
-      isError = true;
       errorMessage = error.message!;
     });
   }
@@ -152,8 +189,11 @@ class _MyAppState extends State<MyApp> {
       return;
     }
 
-    Stopwatch stopwatch = new Stopwatch()..start();
-    String? transcript = await _leopard?.processFile(recordedFile.path);
+    Stopwatch stopwatch = Stopwatch()..start();
+    print(_userSelectedFile?.path);
+    String? transcript = await _leopard?.processFile(_userSelectedFile == null
+        ? recordedFile.path
+        : _userSelectedFile!.path);
     Duration elapsed = stopwatch.elapsed;
 
     String audioLength = recordedLength.toStringAsFixed(1);
@@ -174,101 +214,52 @@ class _MyAppState extends State<MyApp> {
       home: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: const Text('Leopard Demo'),
+          title: const Text('Thoughts Recorder'),
           backgroundColor: picoBlue,
         ),
         body: Column(
           children: [
-            buildLeopardTextArea(context),
-            buildErrorMessage(context),
-            buildLeopardStatusArea(context),
-            buildStartButton(context),
-            footer
+            TextArea(
+                textEditingController:
+                    TextEditingController(text: transcriptText)),
+            ErrorMessage(errorMessage: errorMessage),
+            StatusArea(statusAreaText: statusAreaText),
+            Row(
+              children: [
+                buildStartButton(context),
+                buildChooseFilesButton(context),
+                SaveTranscriptButton(transcriptText: transcriptText)
+              ],
+            ),
+            SelectedFile(userSelectedFile: _userSelectedFile),
+            SizedBox(
+              height: 30,
+            )
           ],
         ),
       ),
     );
   }
 
-  buildStartButton(BuildContext context) {
-    final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
-        primary: picoBlue,
-        shape: BeveledRectangleBorder(),
-        textStyle: TextStyle(color: Colors.white));
-
-    return Expanded(
-      flex: 1,
-      child: Container(
-          child: SizedBox(
-              width: 130,
-              height: 65,
-              child: ElevatedButton(
-                style: buttonStyle,
-                onPressed: (isRecording) ? _stopRecording : _startRecording,
-                child: Text(isRecording ? "Stop" : "Start",
-                    style: TextStyle(fontSize: 30)),
-              ))),
+  buildChooseFilesButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: ElevatedButton(
+        onPressed: _userSelectedFile == null ? pickFile : removeSelectedFile,
+        child: _userSelectedFile == null
+            ? Text('Upload File')
+            : Text('Remove File'),
+      ),
     );
   }
 
-  buildLeopardTextArea(BuildContext context) {
-    return Expanded(
-        flex: 6,
-        child: Container(
-            alignment: Alignment.topCenter,
-            color: Color(0xff25187e),
-            margin: EdgeInsets.all(10),
-            child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                padding: EdgeInsets.all(10),
-                physics: RangeMaintainingScrollPhysics(),
-                child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      transcriptText,
-                      textAlign: TextAlign.left,
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    )))));
+  buildStartButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: ElevatedButton(
+        onPressed: (isRecording) ? _stopRecording : _startRecording,
+        child: Text(isRecording ? "Stop" : "Start"),
+      ),
+    );
   }
-
-  buildLeopardStatusArea(BuildContext context) {
-    return Expanded(
-        flex: 1,
-        child: Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.only(bottom: 20),
-            child: Text(
-              statusAreaText,
-              style: TextStyle(color: Colors.black),
-            )));
-  }
-
-  buildErrorMessage(BuildContext context) {
-    return Expanded(
-        flex: isError ? 2 : 0,
-        child: Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.only(left: 20, right: 20),
-            padding: EdgeInsets.all(5),
-            decoration: !isError
-                ? null
-                : BoxDecoration(
-                    color: Colors.red, borderRadius: BorderRadius.circular(5)),
-            child: !isError
-                ? null
-                : Text(
-                    errorMessage,
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  )));
-  }
-
-  Widget footer = Expanded(
-      flex: 1,
-      child: Container(
-          alignment: Alignment.bottomCenter,
-          padding: EdgeInsets.only(bottom: 20),
-          child: const Text(
-            "Made in Vancouver, Canada by Picovoice",
-            style: TextStyle(color: Color(0xff666666)),
-          )));
 }

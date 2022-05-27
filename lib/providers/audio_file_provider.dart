@@ -24,8 +24,8 @@ class AudioFileProvider with ChangeNotifier {
   final AudioPlayer _player = AudioPlayer();
   AudioPlayer get player => _player;
 
-  File? _userSelectedFile;
-  File? get userSelectedFile => _userSelectedFile;
+  File? _file;
+  File? get file => _file;
 
   // File Picker Functions
   void pickFile() {
@@ -41,7 +41,7 @@ class AudioFileProvider with ChangeNotifier {
       'webm'
     ]).then((res) {
       if (res != null) {
-        _userSelectedFile = File(res.files.single.path!);
+        _file = File(res.files.single.path!);
         notifyListeners();
       } else {
         // User canceled the picker
@@ -50,7 +50,7 @@ class AudioFileProvider with ChangeNotifier {
   }
 
   void removeSelectedFile() {
-    _userSelectedFile = null;
+    _file = null;
     notifyListeners();
   }
 
@@ -90,7 +90,7 @@ class AudioFileProvider with ChangeNotifier {
 
   togglePlayPause() async {
     if (!isPlaying && !finishedPlaying) {
-      int result = await player.play(_userSelectedFile!.path, isLocal: true);
+      int result = await player.play(_file!.path, isLocal: true);
       if (result == 1) {
         //play success
         _isPlaying = true;

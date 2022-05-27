@@ -56,17 +56,18 @@ class MainProvider with ChangeNotifier {
       _statusAreaText = "Transcribing, please wait...";
       _isRecording = false;
       notifyListeners();
-      _processRecording(recordedFile);
+      processRecording(recordedFile);
     } on LeopardException catch (ex) {
       print("Failed to stop audio capture: ${ex.message}");
     }
   }
 
-  Future<void> _processRecording(File recordedFile,
+  Future<void> processRecording(File recordedFile,
       {double? audioLength}) async {
     if (_leopard == null) {
       return;
     }
+    _statusAreaText = "Transcribing, please wait...";
 
     Stopwatch stopwatch = Stopwatch()..start();
     String? transcript = await _leopard?.processFile(recordedFile.path);

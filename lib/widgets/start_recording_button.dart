@@ -16,7 +16,7 @@ class StartRecordingButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed:
             (isRecording) ? provider.stopRecording : provider.startRecording,
-        child: Text(isRecording ? "Stop" : "Start"),
+        child: Text(isRecording ? "Stop" : "Record"),
       ),
     );
   }

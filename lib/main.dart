@@ -16,6 +16,7 @@ import 'package:leopard_demo/widgets/selected_file.dart';
 import 'package:leopard_demo/widgets/start_recording_button.dart';
 import 'package:leopard_demo/widgets/status_area.dart';
 import 'package:leopard_demo/widgets/text_area.dart';
+import 'package:leopard_demo/widgets/transcribe_audio_file_button.dart';
 import 'package:leopard_demo/widgets/upload_file_button.dart';
 import 'package:provider/provider.dart';
 
@@ -48,6 +49,8 @@ class _MyAppState extends State<MyApp> {
   Color picoBlue = Color.fromRGBO(55, 125, 255, 1);
   @override
   Widget build(BuildContext context) {
+    AudioFileProvider audio = context.watch<AudioFileProvider>();
+
     return MaterialApp(
       home: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -64,8 +67,11 @@ class _MyAppState extends State<MyApp> {
             // ErrorMessage(),
             StatusArea(),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                StartRecordingButton(),
+                audio.file == null
+                    ? StartRecordingButton()
+                    : TranscribeAudioFileButton(),
                 UploadFileButton(),
                 SaveTranscriptButton()
               ],

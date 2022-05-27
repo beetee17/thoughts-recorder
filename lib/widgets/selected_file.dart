@@ -12,8 +12,7 @@ class SelectedFile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    File? userSelectedFile =
-        context.watch<AudioFileProvider>().userSelectedFile;
+    File? userSelectedFile = context.watch<AudioFileProvider>().file;
     print(userSelectedFile);
     if (userSelectedFile == null) {
       return const Text('No file selected');

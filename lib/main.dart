@@ -17,6 +17,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:leopard_demo/mic_recorder.dart';
+import 'package:leopard_demo/widgets/audio_player.dart';
 import 'package:leopard_demo/widgets/error_message.dart';
 import 'package:leopard_demo/widgets/share_transcript_button.dart';
 import 'package:leopard_demo/widgets/selected_file.dart';

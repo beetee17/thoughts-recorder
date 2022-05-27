@@ -9,28 +9,23 @@
 // specific language governing permissions and limitations under the License.
 //
 
-import 'dart:async';
-import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:leopard_demo/mic_recorder.dart';
 import 'package:leopard_demo/providers/main_provider.dart';
-import 'package:leopard_demo/utils/global_variables.dart';
-import 'package:leopard_demo/widgets/error_message.dart';
 import 'package:leopard_demo/widgets/share_transcript_button.dart';
 import 'package:leopard_demo/widgets/selected_file.dart';
 import 'package:leopard_demo/widgets/start_recording_button.dart';
 import 'package:leopard_demo/widgets/status_area.dart';
 import 'package:leopard_demo/widgets/text_area.dart';
 import 'package:leopard_demo/widgets/upload_file_button.dart';
-import 'package:leopard_flutter/leopard.dart';
-import 'package:leopard_flutter/leopard_error.dart';
 import 'package:provider/provider.dart';
+
+import 'providers/audio_file_provider.dart';
 
 void main() {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => MainProvider()),
+      ChangeNotifierProvider(create: (_) => AudioFileProvider()),
     ],
     child: MyApp(),
   ));
@@ -70,7 +65,7 @@ class _MyAppState extends State<MyApp> {
             StatusArea(),
             Row(
               children: [
-                StartButton(),
+                StartRecordingButton(),
                 UploadFileButton(),
                 SaveTranscriptButton()
               ],

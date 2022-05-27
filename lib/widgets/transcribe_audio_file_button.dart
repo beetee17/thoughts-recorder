@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 
 import '../providers/main_provider.dart';
 
-class StartRecordingButton extends StatelessWidget {
-  const StartRecordingButton({Key? key}) : super(key: key);
+class TranscribeAudioFileButton extends StatelessWidget {
+  const TranscribeAudioFileButton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

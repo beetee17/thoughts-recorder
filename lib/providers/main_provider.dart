@@ -30,36 +30,6 @@ class MainProvider with ChangeNotifier {
   MicRecorder? _micRecorder;
   Leopard? _leopard;
 
-  File? _userSelectedFile;
-  File? get userSelectedFile => _userSelectedFile;
-
-  // File Picker Functions
-  void pickFile() {
-    // From SDK Documentation:
-    // The file needs to have a sample rate equal to or greater than Leopard.sampleRate.
-    //The supported formats are: FLAC, MP3, Ogg, Opus, Vorbis, WAV, and WebM.
-    FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: [
-      'flac',
-      'mp3',
-      'ogg',
-      'opus',
-      'wav',
-      'webm'
-    ]).then((res) {
-      if (res != null) {
-        _userSelectedFile = File(res.files.single.path!);
-        notifyListeners();
-      } else {
-        // User canceled the picker
-      }
-    });
-  }
-
-  void removeSelectedFile() {
-    _userSelectedFile = null;
-    notifyListeners();
-  }
-
   // Recorder Functions
   Future<void> startRecording() async {
     if (_isRecording || _micRecorder == null) {
@@ -86,30 +56,29 @@ class MainProvider with ChangeNotifier {
       _statusAreaText = "Transcribing, please wait...";
       _isRecording = false;
       notifyListeners();
-      _processAudio(recordedFile);
+      _processRecording(recordedFile);
     } on LeopardException catch (ex) {
       print("Failed to stop audio capture: ${ex.message}");
     }
   }
 
-  Future<void> _processAudio(File recordedFile) async {
+  Future<void> _processRecording(File recordedFile,
+      {double? audioLength}) async {
     if (_leopard == null) {
       return;
     }
 
     Stopwatch stopwatch = Stopwatch()..start();
-    print(_userSelectedFile?.path);
-    String? transcript = await _leopard?.processFile(_userSelectedFile == null
-        ? recordedFile.path
-        : _userSelectedFile!.path);
+    String? transcript = await _leopard?.processFile(recordedFile.path);
     Duration elapsed = stopwatch.elapsed;
 
-    String audioLength = _recordedLength.toStringAsFixed(1);
+    String recordedLength = _recordedLength.toStringAsFixed(1);
+
     String transcriptionTime =
         (elapsed.inMilliseconds / 1000).toStringAsFixed(1);
 
     _statusAreaText =
-        "Transcribed ${audioLength}(s) of audio in ${transcriptionTime}(s)";
+        "Transcribed ${audioLength == null ? recordedLength : audioLength.toStringAsFixed(1)}(s) of audio in $transcriptionTime(s)";
     _transcriptText = transcript ?? "";
 
     notifyListeners();
@@ -152,7 +121,7 @@ class MainProvider with ChangeNotifier {
     if (length < maxRecordingLengthSecs) {
       _recordedLength = length;
       _statusAreaText =
-          "Recording : ${length.toStringAsFixed(1)} / ${maxRecordingLengthSecs} seconds";
+          "Recording : ${length.toStringAsFixed(1)} / $maxRecordingLengthSecs seconds";
 
       notifyListeners();
     } else {

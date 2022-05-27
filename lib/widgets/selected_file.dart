@@ -1,8 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:leopard_demo/providers/audio_file_provider.dart';
 import 'package:leopard_demo/widgets/audio_player.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +12,8 @@ class SelectedFile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    File? userSelectedFile = context.watch<MainProvider>().userSelectedFile;
+    File? userSelectedFile =
+        context.watch<AudioFileProvider>().userSelectedFile;
     print(userSelectedFile);
     if (userSelectedFile == null) {
       return const Text('No file selected');

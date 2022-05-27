@@ -55,6 +55,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        resizeToAvoidBottomInset: false,
         key: _scaffoldKey,
         appBar: AppBar(
           title: const Text('Thoughts Recorder'),

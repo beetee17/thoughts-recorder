@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:leopard_demo/utils/extensions.dart';
 
 class TextArea extends StatefulWidget {
   final TextEditingController textEditingController;
@@ -48,7 +47,7 @@ class _TextAreaState extends State<TextArea> {
 
     // Remove any extra whitespace
     formattedText = formattedText.replaceAll(RegExp(' {2,}'), ' ');
-    return formattedText;
+    return formattedText.capitalizeSentences().capitalizeNewLines();
   }
 
   @override
@@ -71,7 +70,7 @@ class _TextAreaState extends State<TextArea> {
             )));
 
     return Expanded(
-      flex: 6,
+      flex: 5,
       child: Column(children: [
         Padding(
           padding: const EdgeInsets.all(10.0),

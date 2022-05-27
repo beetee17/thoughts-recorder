@@ -4,12 +4,13 @@ import 'dart:typed_data';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:leopard_demo/utils/extensions.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/main_provider.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
-  final File audioFile;
-
-  const AudioPlayerWidget({Key? key, required this.audioFile})
-      : super(key: key);
+  const AudioPlayerWidget({Key? key}) : super(key: key);
 
   @override
   State<AudioPlayerWidget> createState() => _AudioPlayerWidgetState();
@@ -23,18 +24,6 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   bool finishedPlaying = false;
 
   AudioPlayer player = AudioPlayer();
-
-  durationToString(Duration d) {
-    String twoDigits(int n) => n.toString().padLeft(2, "0");
-    int hours = d.inHours;
-    int minutes = d.inMinutes.remainder(60);
-    int seconds = d.inSeconds.remainder(60);
-
-    if (hours > 0) {
-      return "$hours:${twoDigits(minutes)}:${twoDigits(seconds)}";
-    }
-    return "$minutes:${twoDigits(seconds)}";
-  }
 
   @override
   void initState() {
@@ -52,7 +41,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
           currentPos =
               p.inMilliseconds; //get the current position of playing audio
 
-          currentPosLabel = durationToString(p);
+          currentPosLabel = p.toAudioDurationString();
         });
       });
     });
@@ -61,6 +50,8 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
+    File audioFile = context.watch<MainProvider>().userSelectedFile!;
+
     return Container(
         child: Column(
       children: [
@@ -95,8 +86,8 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
               ElevatedButton.icon(
                   onPressed: () async {
                     if (!isPlaying && !finishedPlaying) {
-                      int result = await player.play(widget.audioFile.path,
-                          isLocal: true);
+                      int result =
+                          await player.play(audioFile.path, isLocal: true);
                       if (result == 1) {
                         //play success
                         setState(() {

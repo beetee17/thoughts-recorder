@@ -11,7 +11,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:leopard_demo/providers/main_provider.dart';
-import 'package:leopard_demo/widgets/share_transcript_button.dart';
+import 'package:leopard_demo/widgets/save_audio_button.dart';
+import 'package:leopard_demo/widgets/save_transcript_button.dart';
 import 'package:leopard_demo/widgets/selected_file.dart';
 import 'package:leopard_demo/widgets/start_recording_button.dart';
 import 'package:leopard_demo/widgets/status_area.dart';
@@ -26,7 +27,7 @@ void main() {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => MainProvider()),
-      ChangeNotifierProvider(create: (_) => AudioFileProvider()),
+      ChangeNotifierProvider(create: (_) => AudioProvider()),
     ],
     child: MyApp(),
   ));
@@ -49,7 +50,7 @@ class _MyAppState extends State<MyApp> {
   Color picoBlue = Color.fromRGBO(55, 125, 255, 1);
   @override
   Widget build(BuildContext context) {
-    AudioFileProvider audio = context.watch<AudioFileProvider>();
+    MainProvider provider = context.watch<MainProvider>();
 
     return MaterialApp(
       home: Scaffold(
@@ -69,11 +70,11 @@ class _MyAppState extends State<MyApp> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                audio.file == null
+                provider.file == null
                     ? StartRecordingButton()
                     : TranscribeAudioFileButton(),
                 UploadFileButton(),
-                SaveTranscriptButton()
+                SaveAudioButton()
               ],
             ),
             SelectedFile(),

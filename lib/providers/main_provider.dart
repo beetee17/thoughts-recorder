@@ -30,6 +30,36 @@ class MainProvider with ChangeNotifier {
   MicRecorder? _micRecorder;
   Leopard? _leopard;
 
+  File? _file;
+  File? get file => _file;
+
+  // File Picker Functions
+  void pickFile() {
+    // From SDK Documentation:
+    // The file needs to have a sample rate equal to or greater than Leopard.sampleRate.
+    //The supported formats are: FLAC, MP3, Ogg, Opus, Vorbis, WAV, and WebM.
+    FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: [
+      'flac',
+      'mp3',
+      'ogg',
+      'opus',
+      'wav',
+      'webm'
+    ]).then((res) {
+      if (res != null) {
+        _file = File(res.files.single.path!);
+        notifyListeners();
+      } else {
+        // User canceled the picker
+      }
+    });
+  }
+
+  void removeSelectedFile() {
+    _file = null;
+    notifyListeners();
+  }
+
   // Recorder Functions
   Future<void> startRecording() async {
     if (_isRecording || _micRecorder == null) {
@@ -52,25 +82,28 @@ class MainProvider with ChangeNotifier {
     }
 
     try {
-      File recordedFile = await _micRecorder!.stopRecord();
+      _file = await _micRecorder!.stopRecord();
       _statusAreaText = "Transcribing, please wait...";
       _isRecording = false;
       notifyListeners();
-      processRecording(recordedFile);
+      processRecording();
     } on LeopardException catch (ex) {
       print("Failed to stop audio capture: ${ex.message}");
     }
   }
 
-  Future<void> processRecording(File recordedFile,
-      {double? audioLength}) async {
+  /// Processes given audio data and sets the [transcriptionText].
+  ///
+  /// [audioLength] If this optional parameter is given, this means it is a user uploaded file.
+  ///
+  Future<void> processRecording({double? audioLength}) async {
     if (_leopard == null) {
       return;
     }
     _statusAreaText = "Transcribing, please wait...";
 
     Stopwatch stopwatch = Stopwatch()..start();
-    String? transcript = await _leopard?.processFile(recordedFile.path);
+    String? transcript = await _leopard?.processFile(_file!.path);
     Duration elapsed = stopwatch.elapsed;
 
     String recordedLength = _recordedLength.toStringAsFixed(1);

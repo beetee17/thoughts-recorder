@@ -5,7 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:leopard_demo/utils/extensions.dart';
 
-class AudioFileProvider with ChangeNotifier {
+class AudioProvider with ChangeNotifier {
   int _duration = 100;
   int get duration => _duration;
 
@@ -23,36 +23,6 @@ class AudioFileProvider with ChangeNotifier {
 
   final AudioPlayer _player = AudioPlayer();
   AudioPlayer get player => _player;
-
-  File? _file;
-  File? get file => _file;
-
-  // File Picker Functions
-  void pickFile() {
-    // From SDK Documentation:
-    // The file needs to have a sample rate equal to or greater than Leopard.sampleRate.
-    //The supported formats are: FLAC, MP3, Ogg, Opus, Vorbis, WAV, and WebM.
-    FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: [
-      'flac',
-      'mp3',
-      'ogg',
-      'opus',
-      'wav',
-      'webm'
-    ]).then((res) {
-      if (res != null) {
-        _file = File(res.files.single.path!);
-        notifyListeners();
-      } else {
-        // User canceled the picker
-      }
-    });
-  }
-
-  void removeSelectedFile() {
-    _file = null;
-    notifyListeners();
-  }
 
   // Initialise Player
   void initialisePlayer() {
@@ -88,9 +58,9 @@ class AudioFileProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  togglePlayPause() async {
+  togglePlayPause(file) async {
     if (!isPlaying && !finishedPlaying) {
-      int result = await player.play(_file!.path, isLocal: true);
+      int result = await player.play(file!.path, isLocal: true);
       if (result == 1) {
         //play success
         _isPlaying = true;

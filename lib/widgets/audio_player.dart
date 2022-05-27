@@ -21,12 +21,13 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   @override
   void initState() {
     super.initState();
-    context.read<AudioFileProvider>().initialisePlayer();
+    context.read<AudioProvider>().initialisePlayer();
   }
 
   @override
   Widget build(BuildContext context) {
-    AudioFileProvider audio = context.watch<AudioFileProvider>();
+    AudioProvider audio = context.watch<AudioProvider>();
+    MainProvider provider = context.watch<MainProvider>();
 
     return Container(
         child: Column(
@@ -51,7 +52,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
             spacing: 10,
             children: [
               ElevatedButton.icon(
-                  onPressed: audio.togglePlayPause,
+                  onPressed: () => audio.togglePlayPause(provider.file!),
                   icon: Icon(audio.isPlaying ? Icons.pause : Icons.play_arrow),
                   label: Text(audio.isPlaying ? "Pause" : "Play")),
               ElevatedButton.icon(

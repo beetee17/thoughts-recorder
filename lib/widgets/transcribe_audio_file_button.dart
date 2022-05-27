@@ -11,14 +11,14 @@ class TranscribeAudioFileButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MainProvider mainProvider = context.read<MainProvider>();
-    AudioFileProvider audioFile = context.watch<AudioFileProvider>();
+    AudioProvider audioFile = context.watch<AudioProvider>();
 
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: ElevatedButton(
-        onPressed: () => mainProvider.processRecording(audioFile.file!,
+        onPressed: () => mainProvider.processRecording(
             audioLength: audioFile.duration.toDouble() / 1000),
-        child: Text("Transcribe File"),
+        child: Text("Transcribe"),
       ),
     );
   }

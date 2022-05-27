@@ -11,17 +11,17 @@ class UploadFileButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AudioFileProvider fileProvider = context.watch<AudioFileProvider>();
-    File? userSelectedFile = fileProvider.file;
+    MainProvider provider = context.watch<MainProvider>();
+    File? userSelectedFile = provider.file;
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: ElevatedButton(
         onPressed: userSelectedFile == null
-            ? fileProvider.pickFile
-            : fileProvider.removeSelectedFile,
+            ? provider.pickFile
+            : provider.removeSelectedFile,
         child: userSelectedFile == null
-            ? Text('Upload File')
-            : Text('Remove File'),
+            ? Text('Upload Audio')
+            : Text('Remove Audio'),
       ),
     );
   }

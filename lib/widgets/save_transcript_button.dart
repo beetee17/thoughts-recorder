@@ -24,7 +24,7 @@ class SaveTranscriptButton extends StatelessWidget {
       padding: const EdgeInsets.all(10.0),
       child: ElevatedButton(
         onPressed: () => shareTranscript(transcriptText),
-        child: const Text('Share'),
+        child: const Text('Share Text'),
       ),
     );
   }

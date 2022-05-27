@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:leopard_demo/utils/extensions.dart';
+import 'package:leopard_demo/widgets/save_transcript_button.dart';
 
 class TextArea extends StatefulWidget {
   final TextEditingController textEditingController;
@@ -72,15 +73,27 @@ class _TextAreaState extends State<TextArea> {
     return Expanded(
       flex: 5,
       child: Column(children: [
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: ElevatedButton(
-            onPressed: () {
-              setState(() {
-                showRawText = !showRawText;
-              });
-            },
-            child: Text('${showRawText ? 'View Formatted' : 'Edit Raw'} Text'),
+        Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      showRawText = !showRawText;
+                    });
+                  },
+                  child: Text(
+                      '${showRawText ? 'View Formatted' : 'Edit Raw'} Text'),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: SaveTranscriptButton(),
+              ),
+            ],
           ),
         ),
         Expanded(

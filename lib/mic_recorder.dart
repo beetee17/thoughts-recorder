@@ -24,6 +24,7 @@ typedef ProcessErrorCallback = Function(LeopardException error);
 class MicRecorder {
   final VoiceProcessor? _voiceProcessor;
   int _sampleRate;
+  int get sampleRate => _sampleRate;
 
   final RecordedCallback _recordedCallback;
   final ProcessErrorCallback _processErrorCallback;
@@ -60,7 +61,7 @@ class MicRecorder {
       }
 
       _pcmData.addAll(frame);
-      if (count != 0 && count % 20 == 0) {
+      if (count != 0 && count % 35 == 0) {
         _recordedCallback(_pcmData.length / _sampleRate, combinedFrame);
         combinedFrame = [];
       } else {

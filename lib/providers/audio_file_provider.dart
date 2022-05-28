@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:audioplayers/audioplayers.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:leopard_demo/utils/extensions.dart';
 
@@ -41,8 +38,15 @@ class AudioProvider with ChangeNotifier {
         _currentPosLabel = p.toAudioDurationString();
         notifyListeners();
       });
+
+      player.onPlayerStateChanged.listen((event) {
+        if (event == PlayerState.COMPLETED) {
+          seek(0);
+          _isPlaying = false;
+          notifyListeners();
+        }
+      });
     });
-    notifyListeners();
   }
 
   // Audio Player Functions

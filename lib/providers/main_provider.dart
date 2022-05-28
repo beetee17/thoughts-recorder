@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -28,18 +29,28 @@ class MainProvider with ChangeNotifier {
   List<int> combinedFrame = [];
   double combinedDuration = 0.0;
 
-  // List<Pair<String, double>> _transcriptText = [];
-  String _transcriptText = '';
-  // String get transcriptText => _transcriptText.map((p) => p.first).join(' ');
-  String get transcriptText => _transcriptText;
-  List<Pair<List<int>, double>> _frames = [];
-  List<Pair<List<int>, double>> get frames => _frames;
+  List<Pair<String, double>> _transcriptTextList = [];
+  int? _highlightedSpanIndex;
+  int? get highlightedSpanIndex => _highlightedSpanIndex;
+
+  String get transcriptText =>
+      _transcriptTextList.map((p) => p.first).join(' ');
+  List<Pair<String, double>> get transcriptTextList => _transcriptTextList;
 
   MicRecorder? _micRecorder;
   Leopard? _leopard;
 
   File? _file;
   File? get file => _file;
+
+  void highlightSpan(int index) {
+    if (_highlightedSpanIndex == index) {
+      _highlightedSpanIndex = null;
+    } else {
+      _highlightedSpanIndex = index;
+    }
+    notifyListeners();
+  }
 
   // File Picker Functions
   void pickFile() {
@@ -76,17 +87,16 @@ class MainProvider with ChangeNotifier {
 
     try {
       await _micRecorder!.startRecord();
-      _transcriptText = '';
+      _transcriptTextList = [];
+      _highlightedSpanIndex = null;
+      combinedFrame = [];
+      combinedDuration = 0.0;
+      print('Started recording: $transcriptTextList');
       _isRecording = true;
       notifyListeners();
     } on LeopardException catch (ex) {
       print("Failed to start audio capture: ${ex.message}");
     }
-  }
-
-  process(Pair<List<int>, double> frame) async {
-    final String text = await _leopard!.process(frame.first);
-    return Pair(text, frame.second);
   }
 
   Future<void> stopRecording() async {
@@ -95,12 +105,17 @@ class MainProvider with ChangeNotifier {
     }
 
     try {
-      _file = await _micRecorder!.stopRecord();
-      // _transcriptText = '';
-      // _transcriptText = [for (final frame in frames) await process(frame)];
-      // _statusAreaText = "Transcribing, please wait...";
-      final remainingFrames = _micRecorder!.combinedFrame;
-      _transcriptText += await _leopard!.process(remainingFrames);
+      _file = null;
+      _file = await Future.delayed(
+          const Duration(seconds: 1), () => _micRecorder!.stopRecord());
+      combinedFrame.addAll(_micRecorder!.combinedFrame);
+
+      final double startTime = max(0, _recordedLength - combinedDuration);
+      processCombined(combinedFrame, startTime).then((value) {
+        _transcriptTextList.add(value);
+        print('Transcribed the remaining frames: $transcriptTextList');
+      });
+
       _isRecording = false;
       notifyListeners();
       // processRecording();
@@ -113,7 +128,7 @@ class MainProvider with ChangeNotifier {
   ///
   /// [audioLength] If this optional parameter is given, this means it is a user uploaded file.
   ///
-  Future<void> processRecording({double? audioLength}) async {
+  Future<void> processRecording(double audioLength) async {
     if (_leopard == null) {
       return;
     }
@@ -123,14 +138,12 @@ class MainProvider with ChangeNotifier {
     String? transcript = await _leopard?.processFile(_file!.path);
     Duration elapsed = stopwatch.elapsed;
 
-    String recordedLength = _recordedLength.toStringAsFixed(1);
-
     String transcriptionTime =
         (elapsed.inMilliseconds / 1000).toStringAsFixed(1);
 
     _statusAreaText =
-        "Transcribed ${audioLength == null ? recordedLength : audioLength.toStringAsFixed(1)}(s) of audio in $transcriptionTime(s)";
-    // _transcriptText = transcript ?? "";
+        "Transcribed ${audioLength.toStringAsFixed(1)}(s) of audio in $transcriptionTime(s)";
+    _transcriptTextList = [Pair(transcript ?? '', 0)];
 
     notifyListeners();
   }
@@ -168,26 +181,39 @@ class MainProvider with ChangeNotifier {
     }
   }
 
+  Future<Pair<String, double>> processCombined(
+      List<int> combinedFrame, double startTime) async {
+    final transcript = await _leopard!.process(combinedFrame);
+    return Pair(transcript, startTime);
+  }
+
   Future<void> recordedCallback(double length, List<int> frame) async {
     if (length < maxRecordingLengthSecs) {
       _recordedLength = length;
       _statusAreaText =
           "Recording : ${length.toStringAsFixed(1)} / $maxRecordingLengthSecs seconds";
-      // frames.add(Pair(frame, length));
+
       final text = await _leopard!.process(frame);
       print(text);
+
       combinedFrame.addAll(frame);
-      combinedDuration += 0.03 / 1024 * frame.length.toDouble();
+      combinedDuration += frame.length / _micRecorder!.sampleRate;
+
       if (text == null || text.trim().isEmpty) {
-        // potential end point
-        if (combinedDuration > 5) {
-          final transcript = await _leopard!.process(combinedFrame);
-          _transcriptText += '$transcript ';
+        print('potential end point');
+        if (combinedDuration > 4) {
+          final double startTime = max(0, _recordedLength - combinedDuration);
+
+          // we want the startTimeof the text rather than the end
+          processCombined(combinedFrame, startTime).then((value) {
+            _transcriptTextList.add(value);
+            print(transcriptTextList);
+          });
+
           combinedFrame = [];
           combinedDuration = 0.0;
         }
       }
-      // _transcriptText += '$text ';
       notifyListeners();
     } else {
       _recordedLength = length;

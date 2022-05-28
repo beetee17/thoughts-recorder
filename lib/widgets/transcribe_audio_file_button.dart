@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:leopard_demo/main.dart';
 import 'package:leopard_demo/providers/audio_file_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -16,8 +15,8 @@ class TranscribeAudioFileButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: ElevatedButton(
-        onPressed: () => mainProvider.processRecording(
-            audioLength: audioFile.duration.toDouble() / 1000),
+        onPressed: () =>
+            mainProvider.processRecording(audioFile.duration.toDouble() / 1000),
         child: Text("Transcribe"),
       ),
     );

@@ -25,6 +25,9 @@ class MainProvider with ChangeNotifier {
       "Press START to start recording some audio to transcribe";
   String get statusAreaText => _statusAreaText;
 
+  List<int> combinedFrame = [];
+  double combinedDuration = 0.0;
+
   // List<Pair<String, double>> _transcriptText = [];
   String _transcriptText = '';
   // String get transcriptText => _transcriptText.map((p) => p.first).join(' ');
@@ -170,9 +173,21 @@ class MainProvider with ChangeNotifier {
       _recordedLength = length;
       _statusAreaText =
           "Recording : ${length.toStringAsFixed(1)} / $maxRecordingLengthSecs seconds";
-      frames.add(Pair(frame, length));
+      // frames.add(Pair(frame, length));
       final text = await _leopard!.process(frame);
-      _transcriptText += '$text ';
+      print(text);
+      combinedFrame.addAll(frame);
+      combinedDuration += 0.03 / 1024 * frame.length.toDouble();
+      if (text == null || text.trim().isEmpty) {
+        // potential end point
+        if (combinedDuration > 5) {
+          final transcript = await _leopard!.process(combinedFrame);
+          _transcriptText += '$transcript ';
+          combinedFrame = [];
+          combinedDuration = 0.0;
+        }
+      }
+      // _transcriptText += '$text ';
       notifyListeners();
     } else {
       _recordedLength = length;

@@ -60,7 +60,7 @@ class MicRecorder {
       }
 
       _pcmData.addAll(frame);
-      if (count != 0 && count % 150 == 0) {
+      if (count != 0 && count % 20 == 0) {
         _recordedCallback(_pcmData.length / _sampleRate, combinedFrame);
         combinedFrame = [];
       } else {

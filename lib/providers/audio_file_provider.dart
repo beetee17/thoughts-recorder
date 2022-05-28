@@ -42,7 +42,6 @@ class AudioProvider with ChangeNotifier {
         notifyListeners();
       });
     });
-    notifyListeners();
   }
 
   // Audio Player Functions

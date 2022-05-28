@@ -1,6 +1,12 @@
+import 'dart:math';
+
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:leopard_demo/providers/audio_file_provider.dart';
+import 'package:leopard_demo/providers/main_provider.dart';
 import 'package:leopard_demo/utils/extensions.dart';
 import 'package:leopard_demo/widgets/save_transcript_button.dart';
+import 'package:provider/provider.dart';
 
 class TextArea extends StatefulWidget {
   final TextEditingController textEditingController;
@@ -56,6 +62,35 @@ class _TextAreaState extends State<TextArea> {
     super.dispose();
   }
 
+  void find(int wordIndex, BuildContext context) {
+    final provider = context.read<MainProvider>();
+    final audio = context.read<AudioProvider>();
+    provider.binarySearch(wordIndex).then((frameIndex) {
+      if (frameIndex > 0) {
+        final double duration = 0.03 / 1024 * frameIndex;
+        print(duration);
+        audio.seek(min(audio.duration.toDouble() - 200, duration * 1000));
+      }
+    });
+  }
+
+  List<TextSpan> getSpans(String text, BuildContext context) {
+    List<String> words = text.split(' ');
+    List<TextSpan> spans = [];
+
+    for (int i = 0; i < words.length; i++) {
+      spans.add(TextSpan(
+          text: '${words[i]} ',
+          recognizer: TapGestureRecognizer()
+            ..onTap = () {
+              print("Word ${words[i]} tapped");
+              find(i, context);
+            },
+          style: TextStyle(color: Colors.white, fontSize: 20)));
+    }
+    return spans;
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget formattedTextView = SingleChildScrollView(
@@ -104,19 +139,26 @@ class _TextAreaState extends State<TextArea> {
               margin: EdgeInsets.all(10),
               child: showRawText
                   ? Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: TextField(
-                        style: TextStyle(color: Colors.white, fontSize: 20),
-                        controller: widget.textEditingController,
-                        textInputAction: TextInputAction.newline,
-                        keyboardType: TextInputType.multiline,
-                        minLines: null,
-                        maxLines:
-                            null, // If this is null, there is no limit to the number of lines, and the text container will start with enough vertical space for one line and automatically grow to accommodate additional lines as they are entered.
-                        expands:
-                            true, // If set to true and wrapped in a parent widget like [Expanded] or [SizedBox], the input will expand to fill the parent.
-                      ),
+                      padding: const EdgeInsets.only(left: 10),
+                      child: RichText(
+                          text: TextSpan(
+                              children: getSpans(
+                                  widget.textEditingController.text, context))),
                     )
+                  // ? Padding(
+                  //     padding: const EdgeInsets.only(left: 10.0),
+                  //     child: TextField(
+                  //       style: TextStyle(color: Colors.white, fontSize: 20),
+                  //       controller: widget.textEditingController,
+                  //       textInputAction: TextInputAction.newline,
+                  //       keyboardType: TextInputType.multiline,
+                  //       minLines: null,
+                  //       maxLines:
+                  //           null, // If this is null, there is no limit to the number of lines, and the text container will start with enough vertical space for one line and automatically grow to accommodate additional lines as they are entered.
+                  //       expands:
+                  //           true, // If set to true and wrapped in a parent widget like [Expanded] or [SizedBox], the input will expand to fill the parent.
+                  //     ),
+                  //   )
                   : formattedTextView),
         ),
       ]),

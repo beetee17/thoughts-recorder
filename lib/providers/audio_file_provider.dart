@@ -34,6 +34,10 @@ class AudioProvider with ChangeNotifier {
       });
 
       player.onAudioPositionChanged.listen((Duration p) {
+        if (p.inMilliseconds >= _duration) {
+          _isPlaying = false;
+          _finishedPlaying = true;
+        }
         //refresh the UI
         _currentPos =
             p.inMilliseconds; //get the current position of playing audio
@@ -42,6 +46,7 @@ class AudioProvider with ChangeNotifier {
         notifyListeners();
       });
     });
+    notifyListeners();
   }
 
   // Audio Player Functions

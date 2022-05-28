@@ -1,11 +1,5 @@
-import 'dart:io';
-import 'dart:typed_data';
-
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:leopard_demo/providers/audio_file_provider.dart';
-import 'package:leopard_demo/utils/extensions.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/main_provider.dart';

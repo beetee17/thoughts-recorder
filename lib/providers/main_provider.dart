@@ -33,6 +33,37 @@ class MainProvider with ChangeNotifier {
   File? _file;
   File? get file => _file;
 
+  Future<int> binarySearch(int transcriptIndex) async {
+    if (_micRecorder == null || _leopard == null) {
+      return -1;
+    }
+    List<String> list = transcriptText.split(' ');
+    List<int> pcmData = _micRecorder!.pcmData;
+
+    int min = 0;
+    int max = pcmData.length - 1;
+
+    while (min <= max) {
+      print('$min, $max');
+      int mid = ((min + max) / 2).floor();
+      int res = await _leopard!.process(pcmData.sublist(0, mid)).then((s) {
+        return s.split(' ').length - 1;
+      });
+
+      if (transcriptIndex == res) {
+        print("Found word: ${list[transcriptIndex]} at Index $mid");
+        return mid;
+      } else if (transcriptIndex < res) {
+        max = mid - 1;
+      } else {
+        min = mid + 1;
+      }
+    }
+
+    print("Not found");
+    return -1;
+  }
+
   // File Picker Functions
   void pickFile() {
     // From SDK Documentation:

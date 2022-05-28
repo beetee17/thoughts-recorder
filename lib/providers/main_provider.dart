@@ -25,9 +25,10 @@ class MainProvider with ChangeNotifier {
       "Press START to start recording some audio to transcribe";
   String get statusAreaText => _statusAreaText;
 
-  List<Pair<String, double>> _transcriptText = [];
-  String get transcriptText => _transcriptText.map((p) => p.first).join(' ');
-
+  // List<Pair<String, double>> _transcriptText = [];
+  String _transcriptText = '';
+  // String get transcriptText => _transcriptText.map((p) => p.first).join(' ');
+  String get transcriptText => _transcriptText;
   List<Pair<List<int>, double>> _frames = [];
   List<Pair<List<int>, double>> get frames => _frames;
 
@@ -72,7 +73,7 @@ class MainProvider with ChangeNotifier {
 
     try {
       await _micRecorder!.startRecord();
-
+      _transcriptText = '';
       _isRecording = true;
       notifyListeners();
     } on LeopardException catch (ex) {
@@ -92,8 +93,11 @@ class MainProvider with ChangeNotifier {
 
     try {
       _file = await _micRecorder!.stopRecord();
-      _transcriptText = [for (final frame in frames) await process(frame)];
-      _statusAreaText = "Transcribing, please wait...";
+      // _transcriptText = '';
+      // _transcriptText = [for (final frame in frames) await process(frame)];
+      // _statusAreaText = "Transcribing, please wait...";
+      final remainingFrames = _micRecorder!.combinedFrame;
+      _transcriptText += await _leopard!.process(remainingFrames);
       _isRecording = false;
       notifyListeners();
       // processRecording();
@@ -167,6 +171,8 @@ class MainProvider with ChangeNotifier {
       _statusAreaText =
           "Recording : ${length.toStringAsFixed(1)} / $maxRecordingLengthSecs seconds";
       frames.add(Pair(frame, length));
+      final text = await _leopard!.process(frame);
+      _transcriptText += '$text ';
       notifyListeners();
     } else {
       _recordedLength = length;

@@ -31,6 +31,8 @@ class MicRecorder {
   RemoveListener? _removeErrorListener;
 
   List<int> _pcmData = [];
+  List<int> combinedFrame = [];
+  int count = 0;
 
   static Future<MicRecorder> create(
       int sampleRate,
@@ -58,7 +60,13 @@ class MicRecorder {
       }
 
       _pcmData.addAll(frame);
-      _recordedCallback(_pcmData.length / _sampleRate, frame);
+      if (count != 0 && count % 150 == 0) {
+        _recordedCallback(_pcmData.length / _sampleRate, combinedFrame);
+        combinedFrame = [];
+      } else {
+        combinedFrame.addAll(frame);
+      }
+      count++;
     });
 
     _removeErrorListener = _voiceProcessor!.addErrorListener((errorMsg) {

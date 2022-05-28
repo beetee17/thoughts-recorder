@@ -28,7 +28,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   Widget build(BuildContext context) {
     AudioProvider audio = context.watch<AudioProvider>();
     MainProvider provider = context.watch<MainProvider>();
-
+    print(provider.file);
     return Container(
         child: Column(
       children: [

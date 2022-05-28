@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:leopard_demo/mic_recorder.dart';
 import 'package:leopard_demo/utils/global_variables.dart';
+import 'package:leopard_demo/utils/utils.dart';
 
 import 'package:leopard_flutter/leopard.dart';
 import 'package:leopard_flutter/leopard_error.dart';
@@ -24,8 +25,11 @@ class MainProvider with ChangeNotifier {
       "Press START to start recording some audio to transcribe";
   String get statusAreaText => _statusAreaText;
 
-  String _transcriptText = "";
-  String get transcriptText => _transcriptText;
+  List<Pair<String, double>> _transcriptText = [];
+  String get transcriptText => _transcriptText.map((p) => p.first).join(' ');
+
+  List<Pair<List<int>, double>> _frames = [];
+  List<Pair<List<int>, double>> get frames => _frames;
 
   MicRecorder? _micRecorder;
   Leopard? _leopard;
@@ -76,6 +80,11 @@ class MainProvider with ChangeNotifier {
     }
   }
 
+  process(Pair<List<int>, double> frame) async {
+    final String text = await _leopard!.process(frame.first);
+    return Pair(text, frame.second);
+  }
+
   Future<void> stopRecording() async {
     if (!_isRecording || _micRecorder == null) {
       return;
@@ -83,10 +92,11 @@ class MainProvider with ChangeNotifier {
 
     try {
       _file = await _micRecorder!.stopRecord();
+      _transcriptText = [for (final frame in frames) await process(frame)];
       _statusAreaText = "Transcribing, please wait...";
       _isRecording = false;
       notifyListeners();
-      processRecording();
+      // processRecording();
     } on LeopardException catch (ex) {
       print("Failed to stop audio capture: ${ex.message}");
     }
@@ -113,7 +123,7 @@ class MainProvider with ChangeNotifier {
 
     _statusAreaText =
         "Transcribed ${audioLength == null ? recordedLength : audioLength.toStringAsFixed(1)}(s) of audio in $transcriptionTime(s)";
-    _transcriptText = transcript ?? "";
+    // _transcriptText = transcript ?? "";
 
     notifyListeners();
   }
@@ -151,12 +161,12 @@ class MainProvider with ChangeNotifier {
     }
   }
 
-  Future<void> recordedCallback(double length) async {
+  Future<void> recordedCallback(double length, List<int> frame) async {
     if (length < maxRecordingLengthSecs) {
       _recordedLength = length;
       _statusAreaText =
           "Recording : ${length.toStringAsFixed(1)} / $maxRecordingLengthSecs seconds";
-
+      frames.add(Pair(frame, length));
       notifyListeners();
     } else {
       _recordedLength = length;

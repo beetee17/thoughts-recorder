@@ -18,7 +18,7 @@ import 'package:flutter_voice_processor/flutter_voice_processor.dart';
 import 'package:leopard_flutter/leopard_error.dart';
 import 'package:path_provider/path_provider.dart';
 
-typedef RecordedCallback = Function(double length);
+typedef RecordedCallback = Function(double length, List<int> frame);
 typedef ProcessErrorCallback = Function(LeopardException error);
 
 class MicRecorder {
@@ -32,11 +32,15 @@ class MicRecorder {
 
   List<int> _pcmData = [];
 
-  static Future<MicRecorder> create(int sampleRate, RecordedCallback recordedCallback, ProcessErrorCallback processErrorCallback) async {
+  static Future<MicRecorder> create(
+      int sampleRate,
+      RecordedCallback recordedCallback,
+      ProcessErrorCallback processErrorCallback) async {
     return MicRecorder._(sampleRate, recordedCallback, processErrorCallback);
   }
 
-  MicRecorder._(this._sampleRate, this._recordedCallback, this._processErrorCallback)
+  MicRecorder._(
+      this._sampleRate, this._recordedCallback, this._processErrorCallback)
       : _voiceProcessor = VoiceProcessor.getVoiceProcessor(512, _sampleRate) {
     if (_voiceProcessor == null) {
       throw LeopardRuntimeException("flutter_voice_processor not available.");
@@ -54,7 +58,7 @@ class MicRecorder {
       }
 
       _pcmData.addAll(frame);
-      _recordedCallback(_pcmData.length / _sampleRate);
+      _recordedCallback(_pcmData.length / _sampleRate, frame);
     });
 
     _removeErrorListener = _voiceProcessor!.addErrorListener((errorMsg) {
@@ -96,9 +100,8 @@ class MicRecorder {
 
     try {
       return await writeWavFile();
-    } catch(e) {
-      throw LeopardIOException(
-          "Failed to save recorded audio to file.");
+    } catch (e) {
+      throw LeopardIOException("Failed to save recorded audio to file.");
     }
   }
 
@@ -118,17 +121,20 @@ class MicRecorder {
     }
 
     void writeUint32(int value) {
-      final uint32Buffer = Uint8List(4)..buffer.asByteData().setUint32(0, value, Endian.little);
+      final uint32Buffer = Uint8List(4)
+        ..buffer.asByteData().setUint32(0, value, Endian.little);
       bytesBuilder.add(uint32Buffer);
     }
 
     void writeUint16(int value) {
-      final uint16Buffer = Uint8List(2)..buffer.asByteData().setUint16(0, value, Endian.little);
+      final uint16Buffer = Uint8List(2)
+        ..buffer.asByteData().setUint16(0, value, Endian.little);
       bytesBuilder.add(uint16Buffer);
     }
 
     void writeInt16(int value) {
-      final int16Buffer = Uint8List(2)..buffer.asByteData().setInt16(0, value, Endian.little);
+      final int16Buffer = Uint8List(2)
+        ..buffer.asByteData().setInt16(0, value, Endian.little);
       bytesBuilder.add(int16Buffer);
     }
 

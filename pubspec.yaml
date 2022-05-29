@@ -14,10 +14,12 @@ dependencies:
   file_picker: ^4.5.1
   flutter:
     sdk: flutter
+  flutter_redux: ^0.10.0
   flutter_voice_processor: ^1.0.7
   leopard_flutter: ^1.0.3
   path_provider: ^2.0.10
   provider: ^6.0.3
+  redux_thunk: ^0.4.0
   share_extend: ^2.0.0
 
 dev_dependencies:

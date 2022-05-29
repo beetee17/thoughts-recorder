@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:leopard_demo/providers/audio_file_provider.dart';
+import 'package:leopard_demo/redux_/rootStore.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/main_provider.dart';
@@ -9,16 +11,26 @@ class TranscribeAudioFileButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    MainProvider mainProvider = context.read<MainProvider>();
-    AudioProvider audioFile = context.watch<AudioProvider>();
-
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: ElevatedButton(
-        onPressed: () =>
-            mainProvider.processRecording(audioFile.duration.toDouble() / 1000),
-        child: Text("Transcribe"),
-      ),
+    return StoreConnector<AppState, TranscribeAudioFileButtonVM>(
+      converter: (store) => TranscribeAudioFileButtonVM(
+          store.state.audio.duration,
+          store.state.untitled.processCurrentAudioFile),
+      builder: (_, viewModel) {
+        return Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: ElevatedButton(
+            onPressed: () => viewModel.processAudioFile(
+                viewModel.audioFileDuration.toDouble() / 1000),
+            child: Text("Transcribe"),
+          ),
+        );
+      },
     );
   }
+}
+
+class TranscribeAudioFileButtonVM {
+  int audioFileDuration;
+  void Function(double) processAudioFile;
+  TranscribeAudioFileButtonVM(this.audioFileDuration, this.processAudioFile);
 }

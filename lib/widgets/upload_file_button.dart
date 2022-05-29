@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:leopard_demo/providers/audio_file_provider.dart';
+import 'package:leopard_demo/redux_/rootStore.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/main_provider.dart';
@@ -11,24 +13,31 @@ class UploadFileButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    MainProvider provider = context.watch<MainProvider>();
-    AudioProvider audio = context.watch<AudioProvider>();
-    File? userSelectedFile = provider.file;
-
-    void removeSelectedFile() {
-      provider.removeSelectedFile();
-      audio.stopPlayer();
-    }
-
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: ElevatedButton(
-        onPressed:
-            userSelectedFile == null ? provider.pickFile : removeSelectedFile,
-        child: userSelectedFile == null
-            ? Text('Upload Audio')
-            : Text('Remove Audio'),
-      ),
+    return StoreConnector<AppState, UploadFileButtonVM>(
+      converter: (store) => UploadFileButtonVM(
+          store.state.untitled.file,
+          store.state.untitled.pickFile,
+          store.state.untitled.removeSelectedFile),
+      builder: (_, viewModel) {
+        return Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: ElevatedButton(
+            onPressed: viewModel.file == null
+                ? viewModel.pickFile
+                : viewModel.removeFile,
+            child: viewModel.file == null
+                ? Text('Upload Audio')
+                : Text('Remove Audio'),
+          ),
+        );
+      },
     );
   }
+}
+
+class UploadFileButtonVM {
+  File? file;
+  void Function() pickFile;
+  void Function() removeFile;
+  UploadFileButtonVM(this.file, this.pickFile, this.removeFile);
 }

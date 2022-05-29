@@ -175,3 +175,5 @@ class _TextAreaState extends State<TextArea> {
     );
   }
 }
+
+class TextAreaVM {}

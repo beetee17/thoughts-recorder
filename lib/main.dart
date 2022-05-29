@@ -9,8 +9,12 @@
 // specific language governing permissions and limitations under the License.
 //
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:leopard_demo/providers/main_provider.dart';
+import 'package:leopard_demo/redux_/rootStore.dart';
 import 'package:leopard_demo/widgets/save_audio_button.dart';
 import 'package:leopard_demo/widgets/save_transcript_button.dart';
 import 'package:leopard_demo/widgets/selected_file.dart';
@@ -52,38 +56,52 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     MainProvider provider = context.watch<MainProvider>();
 
-    return MaterialApp(
-      home: Scaffold(
-        resizeToAvoidBottomInset: false,
-        key: _scaffoldKey,
-        appBar: AppBar(
-          title: const Text('Thoughts Recorder'),
-          backgroundColor: picoBlue,
-        ),
-        body: Column(
-          children: [
-            TextArea(
-                textEditingController: TextEditingController(
-                    text: context.watch<MainProvider>().transcriptText)),
-            // ErrorMessage(),
-            StatusArea(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                provider.file == null
-                    ? StartRecordingButton()
-                    : TranscribeAudioFileButton(),
-                UploadFileButton(),
-                SaveAudioButton()
-              ],
-            ),
-            SelectedFile(),
-            SizedBox(
-              height: 30,
-            )
-          ],
-        ),
-      ),
+    return StoreProvider<AppState>(
+      store: store,
+      child: StoreConnector<AppState, MyAppOuterVM>(
+          converter: (store) => MyAppOuterVM(
+              store.state.untitled.transcriptText, store.state.untitled.file),
+          builder: (_, viewModel) {
+            return MaterialApp(
+              home: Scaffold(
+                resizeToAvoidBottomInset: false,
+                key: _scaffoldKey,
+                appBar: AppBar(
+                  title: const Text('Thoughts Recorder'),
+                  backgroundColor: picoBlue,
+                ),
+                body: Column(
+                  children: [
+                    TextArea(
+                        textEditingController: TextEditingController(
+                            text: viewModel.transcriptText)),
+                    // ErrorMessage(),
+                    StatusArea(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        viewModel.file == null
+                            ? StartRecordingButton()
+                            : TranscribeAudioFileButton(),
+                        UploadFileButton(),
+                        SaveAudioButton()
+                      ],
+                    ),
+                    SelectedFile(),
+                    SizedBox(
+                      height: 30,
+                    )
+                  ],
+                ),
+              ),
+            );
+          }),
     );
   }
+}
+
+class MyAppOuterVM {
+  String transcriptText;
+  File? file;
+  MyAppOuterVM(this.transcriptText, this.file);
 }

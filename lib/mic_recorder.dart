@@ -13,6 +13,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
+import 'package:ffmpeg_kit_flutter/return_code.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_voice_processor/flutter_voice_processor.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
@@ -173,5 +175,22 @@ class MicRecorder {
     }
     _removeVoiceProcessorListener?.call();
     _removeErrorListener?.call();
+  }
+
+  static Future<List<int>?> getFramesFromFile(File file) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final String outputFilePath = '${directory.path}/output.pcm';
+
+    final session = await FFmpegKit.execute(
+        '-y -i "${file.path}" -acodec pcm_s16le -f s16le -ac 1 -ar 16000 "$outputFilePath"');
+
+    final returnCode = await session.getReturnCode();
+
+    if (ReturnCode.isSuccess(returnCode)) {
+      File outputFile = File(outputFilePath);
+      Uint8List bytes = await outputFile.readAsBytes();
+      return bytes.buffer.asInt16List();
+    }
+    return null;
   }
 }

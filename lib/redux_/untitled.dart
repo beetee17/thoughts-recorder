@@ -232,8 +232,14 @@ class UntitledState {
 
     store.dispatch(ProcessingAudioFileAction());
 
+    List<int>? frames = await MicRecorder.getFramesFromFile(file!);
+    if (frames == null) {
+      print('Did not get any frames from audio file');
+      return;
+    }
+
     Stopwatch stopwatch = Stopwatch()..start();
-    String transcript = await leopard!.processFile(file!.path);
+    String transcript = await leopard!.process(frames);
     Duration elapsed = stopwatch.elapsed;
 
     String transcriptionTime =
@@ -316,7 +322,6 @@ void recordedCallback(
         "Recording : ${length.toStringAsFixed(1)} / $maxRecordingLengthSecs seconds";
 
     state.leopard!.process(frame).then((transcript) {
-      // print(text);
       final List<int> newCombinedFrame = state.combinedFrame;
       newCombinedFrame.addAll(frame);
 
@@ -346,7 +351,9 @@ void recordedCallback(
 // Individual Reducers.
 // Each reducer will handle actions related to the State Tree it cares about!
 UntitledState untitledReducer(UntitledState prevState, action) {
-  print(action);
+  if (action is! AudioPositionChangeAction) {
+    print(action);
+  }
   if (action is InitAction) {
     return prevState.copyWith(
         leopard: action.leopard, micRecorder: action.micRecorder);

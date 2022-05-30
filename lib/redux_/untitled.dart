@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:math';
-
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
 import 'package:leopard_demo/mic_recorder.dart';
 import 'package:leopard_demo/redux_/audio.dart';
 import 'package:leopard_demo/utils/global_variables.dart';
@@ -11,11 +11,8 @@ import 'package:leopard_demo/utils/utils.dart';
 import 'package:leopard_flutter/leopard.dart';
 import 'package:leopard_flutter/leopard_error.dart';
 
-import 'dart:io';
-
-import 'package:audioplayers/audioplayers.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:leopard_demo/utils/extensions.dart';
+import 'package:redux_thunk/redux_thunk.dart';
 
 // Define your State
 class UntitledState {
@@ -53,12 +50,15 @@ class UntitledState {
       required this.statusAreaText,
       required this.combinedFrame,
       required this.combinedDuration,
-      required this.transcriptTextList}) {
-    initLeopard();
+      required this.transcriptTextList});
+
+  @override
+  String toString() {
+    return 'file: $file \ncombinedDuration: $combinedDuration \n$leopard \nMicRecorder: $micRecorder \nTranscript: $transcriptTextList';
   }
 
   static UntitledState empty() {
-    return UntitledState(
+    final empty = UntitledState(
       combinedDuration: 0,
       combinedFrame: [],
       errorMessage: null,
@@ -72,6 +72,7 @@ class UntitledState {
       statusAreaText: 'Press START to start recording some audio to transcribe',
       transcriptTextList: [],
     );
+    return empty;
   }
 
   UntitledState copyWith({
@@ -89,7 +90,7 @@ class UntitledState {
     File? file,
   }) {
     return UntitledState(
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: errorMessage,
       isRecording: isRecording ?? this.isRecording,
       isProcessing: isProcessing ?? this.isProcessing,
       recordedLength: recordedLength ?? this.recordedLength,
@@ -97,15 +98,16 @@ class UntitledState {
       combinedFrame: combinedFrame ?? this.combinedFrame,
       combinedDuration: combinedDuration ?? this.combinedDuration,
       transcriptTextList: transcriptTextList ?? this.transcriptTextList,
-      highlightedSpanIndex: highlightedSpanIndex ?? this.highlightedSpanIndex,
+      highlightedSpanIndex: highlightedSpanIndex,
       micRecorder: micRecorder ?? this.micRecorder,
       leopard: leopard ?? this.leopard,
-      file: file ?? this.file,
+      file: file,
     );
   }
 
-  Future<void> initLeopard() async {
-    if (leopard != null && micRecorder != null) {
+  static ThunkAction<AppState> initLeopard = (Store<AppState> store) async {
+    if (store.state.untitled.leopard != null &&
+        store.state.untitled.micRecorder != null) {
       return;
     }
     String platform = Platform.isAndroid
@@ -119,24 +121,33 @@ class UntitledState {
     try {
       final leopard = await Leopard.create(accessKey, modelPath);
       final micRecorder = await MicRecorder.create(
-          leopard.sampleRate, recordedCallback, errorCallback);
+          leopard.sampleRate,
+          store.state.untitled.recordedCallbackThunk(leopard),
+          store.state.untitled.errorCallback);
+      print('dispatching $leopard and $micRecorder');
       store.dispatch(InitAction(leopard, micRecorder));
     } on LeopardInvalidArgumentException catch (ex) {
-      errorCallback(LeopardInvalidArgumentException(
+      store.state.untitled.errorCallback(LeopardInvalidArgumentException(
           "${ex.message}\nEnsure your accessKey '$accessKey' is a valid access key."));
     } on LeopardActivationException {
-      errorCallback(LeopardActivationException("AccessKey activation error."));
+      store.state.untitled.errorCallback(
+          LeopardActivationException("AccessKey activation error."));
     } on LeopardActivationLimitException {
-      errorCallback(LeopardActivationLimitException(
+      store.state.untitled.errorCallback(LeopardActivationLimitException(
           "AccessKey reached its device limit."));
     } on LeopardActivationRefusedException {
-      errorCallback(LeopardActivationRefusedException("AccessKey refused."));
+      store.state.untitled.errorCallback(
+          LeopardActivationRefusedException("AccessKey refused."));
     } on LeopardActivationThrottledException {
-      errorCallback(
+      store.state.untitled.errorCallback(
           LeopardActivationThrottledException("AccessKey has been throttled."));
     } on LeopardException catch (ex) {
-      errorCallback(ex);
+      store.state.untitled.errorCallback(ex);
     }
+  };
+
+  void highlightSpan(int index) {
+    store.dispatch(HighlightSpanAtIndex(index));
   }
 
 // File Picker Functions
@@ -161,8 +172,8 @@ class UntitledState {
   }
 
   void removeSelectedFile() {
-    store.dispatch(AudioFileChangeAction(null));
     AudioState.stopPlayer();
+    store.dispatch(AudioFileChangeAction(null));
   }
 
   // Recorder Functions
@@ -171,9 +182,10 @@ class UntitledState {
       return;
     }
     try {
-      await micRecorder!.startRecord();
-      store.dispatch(StartRecordSuccessAction());
-      print('Started recording: $transcriptTextList');
+      micRecorder!.startRecord().then((value) {
+        store.dispatch(StartRecordSuccessAction());
+        print('Started recording: $transcriptTextList');
+      });
     } on LeopardException catch (ex) {
       print("Failed to start audio capture: ${ex.message}");
     }
@@ -232,36 +244,21 @@ class UntitledState {
         ProcessAudioFileSuccessAction(successText, transcriptTextList));
   }
 
-  Future<void> recordedCallback(double length, List<int> frame) async {
-    if (length < maxRecordingLengthSecs) {
-      final statusAreaText =
-          "Recording : ${length.toStringAsFixed(1)} / $maxRecordingLengthSecs seconds";
+  recordedCallbackThunk(Leopard leopard) {
+    return (double length, List<int> frame) async {
+      print("CALLBACK with $leopard");
 
-      final String transcript = await leopard!.process(frame);
-      // print(text);
-      final List<int> newCombinedFrame = combinedFrame;
-      newCombinedFrame.addAll(frame);
+      if (length < maxRecordingLengthSecs) {
+        final statusAreaText =
+            "Recording : ${length.toStringAsFixed(1)} / $maxRecordingLengthSecs seconds";
 
-      final double newCombinedDuration =
-          combinedDuration + (frame.length / micRecorder!.sampleRate);
+        final String transcript = await leopard.process(frame);
 
-      store.dispatch(RecordedCallbackAction(
-          statusAreaText, length, newCombinedFrame, newCombinedDuration));
-
-      if (transcript == null || transcript.trim().isEmpty) {
-        print('potential end point');
-        if (newCombinedDuration > 4) {
-          final double startTime = max(0, length - newCombinedDuration);
-
-          // we want the startTimeof the text rather than the end
-          processCombined(combinedFrame, startTime).then((value) {
-            store.dispatch(IncomingTranscriptAction(value));
-          });
-        }
+        store.dispatch(RecordedCallbackAction(length, frame, transcript));
+      } else {
+        await stopRecording();
       }
-    } else {
-      await stopRecording();
-    }
+    };
   }
 
   void errorCallback(LeopardException error) {
@@ -307,23 +304,32 @@ class ErrorCallbackAction {
   ErrorCallbackAction(this.errorMessage);
 }
 
+// class RecordedCallbackAction {
+//   String statusAreaText;
+//   double recordedLength;
+//   List<int> combinedFrame;
+//   double combinedDuration;
+//   RecordedCallbackAction(this.statusAreaText, this.recordedLength,
+//       this.combinedFrame, this.combinedDuration);
+// }
 class RecordedCallbackAction {
-  String statusAreaText;
-  double recordedLength;
-  List<int> combinedFrame;
-  double combinedDuration;
-  RecordedCallbackAction(this.statusAreaText, this.recordedLength,
-      this.combinedFrame, this.combinedDuration);
+  double length;
+  List<int> frame;
+  String transcript;
+  RecordedCallbackAction(this.length, this.frame, this.transcript);
 }
 
 class IncomingTranscriptAction {
   Pair<String, double> transcript;
-  IncomingTranscriptAction(this.transcript);
+  double length;
+  IncomingTranscriptAction(this.transcript, this.length);
 }
 
 // Individual Reducers.
 // Each reducer will handle actions related to the State Tree it cares about!
 UntitledState untitledReducer(UntitledState prevState, action) {
+  print(action);
+  print('Previous State: $prevState');
   if (action is InitAction) {
     return prevState.copyWith(
         leopard: action.leopard, micRecorder: action.micRecorder);
@@ -357,16 +363,37 @@ UntitledState untitledReducer(UntitledState prevState, action) {
   } else if (action is IncomingTranscriptAction) {
     final newTranscriptTextList = prevState.transcriptTextList;
     newTranscriptTextList.add(action.transcript);
+    print(newTranscriptTextList);
     return prevState.copyWith(
+        recordedLength: action.length,
         transcriptTextList: newTranscriptTextList,
         combinedFrame: [],
         combinedDuration: 0.0);
   } else if (action is RecordedCallbackAction) {
+    final List<int> newCombinedFrame = prevState.combinedFrame;
+    newCombinedFrame.addAll(action.frame);
+
+    final double newCombinedDuration = prevState.combinedDuration +
+        (action.frame.length / prevState.leopard!.sampleRate);
+    print(
+        'before duration: $prevState.combinedDuration, after duration: $newCombinedDuration');
+
+    if (action.transcript.trim().isEmpty) {
+      print('potential end point');
+      if (newCombinedDuration > 4) {
+        final double startTime = max(0, action.length - newCombinedDuration);
+        print('dispatching transcript');
+        // we want the startTimeof the text rather than the end
+        prevState.processCombined(newCombinedFrame, startTime).then((value) {
+          return store.dispatch(IncomingTranscriptAction(value, action.length));
+        });
+      }
+    }
+
     return prevState.copyWith(
-        statusAreaText: action.statusAreaText,
-        recordedLength: action.recordedLength,
-        combinedFrame: action.combinedFrame,
-        combinedDuration: action.combinedDuration);
+        recordedLength: action.length,
+        combinedFrame: newCombinedFrame,
+        combinedDuration: newCombinedDuration);
   } else if (action is ErrorCallbackAction) {
     return prevState.copyWith(errorMessage: action.errorMessage);
   } else {

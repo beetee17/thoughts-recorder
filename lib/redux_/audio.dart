@@ -13,6 +13,11 @@ class AudioState {
   final bool finishedPlaying;
   static final AudioPlayer player = AudioPlayer();
 
+  @override
+  String toString() {
+    return 'duration: $duration \ncurrentPos:$currentPos \ncurrentPosLabel:$currentPosLabel \nisPlaying:$isPlaying \nfinishedPlaying:$finishedPlaying';
+  }
+
   AudioState({
     required this.duration,
     required this.currentPos,
@@ -140,6 +145,7 @@ class AudioStopSuccessAction {}
 // Individual Reducers.
 // Each reducer will handle actions related to the State Tree it cares about!
 AudioState audioReducer(AudioState prevState, action) {
+  print(action);
   if (action is AudioDurationChangeAction) {
     return prevState.copyWith(duration: action.newDuration.inMilliseconds);
   } else if (action is AudioPositionChangeAction) {

@@ -17,6 +17,7 @@ class SelectedFile extends StatelessWidget {
     return StoreConnector<AppState, SelectedFileVM>(
         converter: (store) => SelectedFileVM(store.state.untitled.file),
         builder: (_, viewModel) {
+          print('FILE IS ${viewModel.file}');
           return Container(
               child: viewModel.file == null
                   ? const Text('No file selected')

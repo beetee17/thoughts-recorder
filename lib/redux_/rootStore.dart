@@ -2,6 +2,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:leopard_demo/redux_/audio.dart';
 import 'package:leopard_demo/redux_/untitled.dart';
 import 'package:redux/redux.dart';
+import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 
 // Define your State
@@ -13,6 +14,11 @@ class AppState {
 
   static AppState empty() {
     return AppState(AudioState.empty(), UntitledState.empty());
+  }
+
+  @override
+  String toString() {
+    return '$untitled \n$audio';
   }
 }
 
@@ -30,5 +36,5 @@ class AppState {
 AppState appStateReducer(AppState state, action) => AppState(
     audioReducer(state.audio, action), untitledReducer(state.untitled, action));
 
-final store = Store<AppState>(appStateReducer,
+final store = DevToolsStore<AppState>(appStateReducer,
     initialState: AppState.empty(), middleware: [thunkMiddleware]);

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:leopard_demo/providers/audio_file_provider.dart';
@@ -18,40 +20,36 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   @override
   void initState() {
     super.initState();
-    // context.read<AudioProvider>().initialisePlayer();
     AudioState.initialisePlayer();
   }
 
   @override
   void dispose() {
     super.dispose();
-    context.read<AudioProvider>().player.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    MainProvider provider = context.watch<MainProvider>();
-    print(provider.file);
-
-    return StoreConnector<AppState, AudioState>(
-        converter: (store) => store.state.audio,
-        builder: (_, audio) {
+    return StoreConnector<AppState, AudioPlayerWidgetVM>(
+        converter: (store) =>
+            AudioPlayerWidgetVM(store.state.audio, store.state.untitled.file),
+        builder: (_, viewModel) {
           return Container(
               child: Column(
             children: [
               Container(
                 child: Text(
-                  audio.currentPosLabel,
+                  viewModel.audio.currentPosLabel,
                   style: TextStyle(fontSize: 25),
                 ),
               ),
               Container(
                   child: Slider(
-                value: double.parse(audio.currentPos.toString()),
+                value: double.parse(viewModel.audio.currentPos.toString()),
                 min: 0,
-                max: double.parse(audio.duration.toString()),
-                divisions: audio.duration,
-                label: audio.currentPosLabel,
+                max: double.parse(viewModel.audio.duration.toString()),
+                divisions: viewModel.audio.duration,
+                label: viewModel.audio.currentPosLabel,
                 onChanged: AudioState.seek,
               )),
               Container(
@@ -59,10 +57,13 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                   spacing: 10,
                   children: [
                     ElevatedButton.icon(
-                        onPressed: () => audio.togglePlayPause(provider.file!),
-                        icon: Icon(
-                            audio.isPlaying ? Icons.pause : Icons.play_arrow),
-                        label: Text(audio.isPlaying ? "Pause" : "Play")),
+                        onPressed: () =>
+                            viewModel.audio.togglePlayPause(viewModel.file!),
+                        icon: Icon(viewModel.audio.isPlaying
+                            ? Icons.pause
+                            : Icons.play_arrow),
+                        label:
+                            Text(viewModel.audio.isPlaying ? "Pause" : "Play")),
                     ElevatedButton.icon(
                         onPressed: AudioState.stopPlayer,
                         icon: Icon(Icons.stop),
@@ -74,4 +75,10 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
           ));
         });
   }
+}
+
+class AudioPlayerWidgetVM {
+  AudioState audio;
+  File? file;
+  AudioPlayerWidgetVM(this.audio, this.file);
 }

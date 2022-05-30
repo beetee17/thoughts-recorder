@@ -152,15 +152,9 @@ class UntitledState {
   void pickFile() {
     // From SDK Documentation:
     // The file needs to have a sample rate equal to or greater than Leopard.sampleRate.
-    //The supported formats are: FLAC, MP3, Ogg, Opus, Vorbis, WAV, and WebM.
-    FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: [
-      'flac',
-      'mp3',
-      'ogg',
-      'opus',
-      'wav',
-      'webm'
-    ]).then((res) {
+    // The supported formats are: FLAC, MP3, Ogg, Opus, Vorbis, WAV, and WebM.
+    // TODO: Now support any media file type through conversion of file via ffmpeg.
+    FilePicker.platform.pickFiles(type: FileType.media).then((res) {
       if (res != null) {
         store.dispatch(AudioFileChangeAction(File(res.files.single.path!)));
       } else {

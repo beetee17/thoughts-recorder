@@ -11,7 +11,7 @@ class AudioState {
   final String currentPosLabel;
   final bool isPlaying;
   final bool finishedPlaying;
-  static final AudioPlayer player = AudioPlayer();
+  static AudioPlayer player = AudioPlayer();
 
   @override
   String toString() {
@@ -29,6 +29,7 @@ class AudioState {
   static void initialisePlayer() {
     // INITIALISE AUDIO PLAYER
     player.onDurationChanged.listen((Duration d) {
+      seek(0);
       store.dispatch(AudioDurationChangeAction(d));
     });
 
@@ -117,6 +118,8 @@ class AudioState {
 }
 
 // Define your Actions
+class ReleaseAudioFileAction {}
+
 class AudioDurationChangeAction {
   Duration newDuration;
   AudioDurationChangeAction(this.newDuration);
@@ -145,7 +148,9 @@ class AudioStopSuccessAction {}
 // Individual Reducers.
 // Each reducer will handle actions related to the State Tree it cares about!
 AudioState audioReducer(AudioState prevState, action) {
-  print(action);
+  if (action is! AudioPositionChangeAction) {
+    print(action);
+  }
   if (action is AudioDurationChangeAction) {
     return prevState.copyWith(duration: action.newDuration.inMilliseconds);
   } else if (action is AudioPositionChangeAction) {

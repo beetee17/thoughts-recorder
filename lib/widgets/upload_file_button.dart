@@ -2,11 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:leopard_demo/providers/audio_file_provider.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:provider/provider.dart';
-
-import '../providers/main_provider.dart';
 
 class UploadFileButton extends StatelessWidget {
   const UploadFileButton({Key? key}) : super(key: key);

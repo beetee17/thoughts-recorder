@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:provider/provider.dart';
-
-import '../providers/main_provider.dart';
 
 class StartRecordingButton extends StatelessWidget {
   const StartRecordingButton({Key? key}) : super(key: key);

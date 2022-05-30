@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:leopard_demo/providers/main_provider.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
 import 'package:provider/provider.dart';
 

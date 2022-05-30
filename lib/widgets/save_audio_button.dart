@@ -2,10 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:leopard_demo/providers/main_provider.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
 import 'package:share_extend/share_extend.dart';
-import 'package:provider/provider.dart';
 
 class SaveAudioButton extends StatelessWidget {
   const SaveAudioButton({Key? key}) : super(key: key);

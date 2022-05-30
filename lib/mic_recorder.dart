@@ -15,10 +15,12 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:flutter_voice_processor/flutter_voice_processor.dart';
+import 'package:leopard_demo/redux_/rootStore.dart';
+import 'package:leopard_demo/redux_/untitled.dart';
 import 'package:leopard_flutter/leopard_error.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 
-typedef RecordedCallback = Function(double length, List<int> frame);
 typedef ProcessErrorCallback = Function(LeopardException error);
 
 class MicRecorder {
@@ -26,7 +28,6 @@ class MicRecorder {
   int _sampleRate;
   int get sampleRate => _sampleRate;
 
-  final RecordedCallback _recordedCallback;
   final ProcessErrorCallback _processErrorCallback;
   RemoveListener? _removeVoiceProcessorListener;
   RemoveListener? _removeErrorListener;
@@ -36,14 +37,11 @@ class MicRecorder {
   int count = 0;
 
   static Future<MicRecorder> create(
-      int sampleRate,
-      RecordedCallback recordedCallback,
-      ProcessErrorCallback processErrorCallback) async {
-    return MicRecorder._(sampleRate, recordedCallback, processErrorCallback);
+      int sampleRate, ProcessErrorCallback processErrorCallback) async {
+    return MicRecorder._(sampleRate, processErrorCallback);
   }
 
-  MicRecorder._(
-      this._sampleRate, this._recordedCallback, this._processErrorCallback)
+  MicRecorder._(this._sampleRate, this._processErrorCallback)
       : _voiceProcessor = VoiceProcessor.getVoiceProcessor(512, _sampleRate) {
     if (_voiceProcessor == null) {
       throw LeopardRuntimeException("flutter_voice_processor not available.");
@@ -62,7 +60,8 @@ class MicRecorder {
 
       _pcmData.addAll(frame);
       if (count != 0 && count % 35 == 0) {
-        _recordedCallback(_pcmData.length / _sampleRate, combinedFrame);
+        recordedCallback(
+            store.state.untitled, _pcmData.length / _sampleRate, combinedFrame);
         combinedFrame = [];
       } else {
         combinedFrame.addAll(frame);

@@ -91,7 +91,10 @@ class _MyAppState extends State<MyApp> {
                   ),
                   endDrawer: Container(
                       color: Colors.white60,
-                      child: ReduxDevTools<AppState>(store))),
+                      child: ReduxDevTools<AppState>(
+                        store,
+                        stateMaxLines: 10,
+                      ))),
             );
           }),
     );

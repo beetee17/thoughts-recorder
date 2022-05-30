@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:leopard_demo/providers/audio_file_provider.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:provider/provider.dart';
-
-import '../providers/main_provider.dart';
 
 class TranscribeAudioFileButton extends StatelessWidget {
   const TranscribeAudioFileButton({Key? key}) : super(key: key);

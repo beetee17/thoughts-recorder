@@ -2,11 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:leopard_demo/providers/audio_file_provider.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:provider/provider.dart';
 
-import '../providers/main_provider.dart';
 import '../redux_/audio.dart';
 
 class AudioPlayerWidget extends StatefulWidget {

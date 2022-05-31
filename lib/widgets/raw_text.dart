@@ -56,9 +56,13 @@ class _RawTextState extends State<RawText> {
               .values
               .toList();
 
-          return Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: RichText(text: TextSpan(children: spans)));
+          return SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              padding: EdgeInsets.all(10),
+              physics: RangeMaintainingScrollPhysics(),
+              child: Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: RichText(text: TextSpan(children: spans))));
         });
   }
 }

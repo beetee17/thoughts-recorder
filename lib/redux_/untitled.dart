@@ -94,7 +94,7 @@ class UntitledState {
       combinedFrame: combinedFrame ?? this.combinedFrame,
       combinedDuration: combinedDuration ?? this.combinedDuration,
       transcriptTextList: transcriptTextList ?? this.transcriptTextList,
-      highlightedSpanIndex: highlightedSpanIndex,
+      highlightedSpanIndex: highlightedSpanIndex ?? this.highlightedSpanIndex,
       micRecorder: micRecorder ?? this.micRecorder,
       leopard: leopard ?? this.leopard,
       file: shouldOverrideFile ? file : this.file,
@@ -103,7 +103,7 @@ class UntitledState {
 
   @override
   String toString() {
-    return 'file: $file \ncombinedDuration: $combinedDuration \ncombinedFrames: ${combinedFrame.length} items \nMicRecorder: $micRecorder \nTranscript: $transcriptTextList';
+    return 'file: $file \nhighlightedIndex:$highlightedSpanIndex \ncombinedDuration: $combinedDuration \ncombinedFrames: ${combinedFrame.length} items \nMicRecorder: $micRecorder \nTranscript: $transcriptTextList';
   }
 
   static ThunkAction<AppState> initLeopard = (Store<AppState> store) async {
@@ -404,7 +404,9 @@ UntitledState untitledReducer(UntitledState prevState, action) {
     final newTranscriptTextList = prevState.transcriptTextList;
     newTranscriptTextList.add(action.remainingTranscript);
     return prevState.copyWith(
-        transcriptTextList: newTranscriptTextList, isRecording: false);
+        transcriptTextList: newTranscriptTextList,
+        highlightedSpanIndex: 0,
+        isRecording: false);
   } else if (action is StartProcessingAudioFileAction) {
     return prevState.copyWith(
         transcriptTextList: [],
@@ -420,6 +422,7 @@ UntitledState untitledReducer(UntitledState prevState, action) {
     newTranscriptTextList.add(action.transcript);
     return prevState.copyWith(
         transcriptTextList: newTranscriptTextList,
+        highlightedSpanIndex: newTranscriptTextList.length - 1,
         combinedFrame: [],
         combinedDuration: 0.0);
   } else if (action is RecordedCallbackUpdateAction) {

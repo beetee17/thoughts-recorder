@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
 import 'package:leopard_demo/widgets/audio_player.dart';
+import 'package:leopard_demo/widgets/start_recording_button.dart';
+import 'package:leopard_demo/widgets/upload_file_button.dart';
 
 class SelectedFile extends StatelessWidget {
   const SelectedFile({Key? key}) : super(key: key);
@@ -15,7 +17,14 @@ class SelectedFile extends StatelessWidget {
         builder: (_, viewModel) {
           return Container(
               child: viewModel.file == null
-                  ? const Text('No file selected')
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Spacer(),
+                        StartRecordingButton(),
+                        Expanded(child: UploadFileButton())
+                      ],
+                    )
                   : AudioPlayerWidget());
         });
   }

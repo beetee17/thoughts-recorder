@@ -13,19 +13,12 @@ class RawText extends StatefulWidget {
 
 class _RawTextState extends State<RawText> {
   @override
-  void dispose() {
-    TextFormatter.splitText(widget.textEditingController.text,
-        store.state.untitled.transcriptTextList);
-    widget.textEditingController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return TextField(
-        style: TextStyle(fontSize: 20, color: Colors.white),
-        maxLines: null,
+        style: TextStyle(fontSize: 20),
         expands: true,
+        maxLines: null,
+        decoration: InputDecoration(border: InputBorder.none),
         controller: widget.textEditingController);
   }
 }

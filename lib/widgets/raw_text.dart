@@ -5,11 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:leopard_demo/redux_/audio.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
+import 'package:leopard_demo/utils/extensions.dart';
 
 import '../utils/utils.dart';
 
 class RawText extends StatefulWidget {
-  const RawText({Key? key}) : super(key: key);
+  final TextEditingController textEditingController;
+  const RawText({Key? key, required this.textEditingController})
+      : super(key: key);
 
   @override
   State<RawText> createState() => _RawTextState();
@@ -17,61 +20,39 @@ class RawText extends StatefulWidget {
 
 class _RawTextState extends State<RawText> {
   @override
+  void dispose() {
+    TextFormatter.splitText(widget.textEditingController.text,
+        store.state.untitled.transcriptTextList);
+    widget.textEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, RawTextVM>(
         converter: (store) => RawTextVM(
             store.state.untitled.transcriptTextList,
+            store.state.untitled.transcriptText,
             store.state.untitled.highlightSpan,
             store.state.untitled.highlightedSpanIndex,
             store.state.audio.duration),
         builder: (_, viewModel) {
-          List<TextSpan> spans = viewModel.transcriptTextList
-              .asMap()
-              .map((index, pair) {
-                void onTapSpan() {
-                  print("Text: ${pair.first} tapped");
-                  viewModel.highlightSpan(index);
-                  final seekTimeInMS = min(
-                      viewModel.audioDuration.toDouble(), pair.second * 1000);
-                  print('seeking: ${seekTimeInMS / 1000}s');
-                  AudioState.seek(seekTimeInMS);
-                }
-
-                Paint? shouldHighlightSpan() {
-                  if (viewModel.highlightedSpanIndex == index) {
-                    return Paint()..color = Colors.greenAccent;
-                  }
-                  return null;
-                }
-
-                TextSpan span = TextSpan(
-                    text: '${pair.first} ',
-                    recognizer: TapGestureRecognizer()..onTap = onTapSpan,
-                    style: TextStyle(
-                        color: Colors.white,
-                        background: shouldHighlightSpan(),
-                        fontSize: 20));
-                return MapEntry(index, span);
-              })
-              .values
-              .toList();
-
-          return SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              padding: EdgeInsets.all(10),
-              physics: RangeMaintainingScrollPhysics(),
-              child: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: RichText(text: TextSpan(children: spans))));
+          return TextField(
+            style: TextStyle(fontSize: 20, color: Colors.white),
+            maxLines: null,
+            expands: true,
+            controller: widget.textEditingController,
+          );
         });
   }
 }
 
 class RawTextVM {
   List<Pair<String, double>> transcriptTextList;
+  String text;
   void Function(int) highlightSpan;
   int? highlightedSpanIndex;
   int audioDuration;
-  RawTextVM(this.transcriptTextList, this.highlightSpan,
+  RawTextVM(this.transcriptTextList, this.text, this.highlightSpan,
       this.highlightedSpanIndex, this.audioDuration);
 }

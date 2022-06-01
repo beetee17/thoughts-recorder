@@ -12,6 +12,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_redux_dev_tools/flutter_redux_dev_tools.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
@@ -59,42 +60,45 @@ class _MyAppState extends State<MyApp> {
               store.state.untitled.transcriptText, store.state.untitled.file),
           builder: (_, viewModel) {
             return MaterialApp(
-              home: Scaffold(
-                  resizeToAvoidBottomInset: false,
-                  key: _scaffoldKey,
-                  appBar: AppBar(
-                    title: const Text('Thoughts Recorder'),
-                    backgroundColor: picoBlue,
-                  ),
-                  body: Column(
-                    children: [
-                      TextArea(
-                          textEditingController: TextEditingController(
-                              text: viewModel.transcriptText)),
-                      // ErrorMessage(),
-                      StatusArea(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          viewModel.file == null
-                              ? StartRecordingButton()
-                              : TranscribeAudioFileButton(),
-                          UploadFileButton(),
-                          SaveAudioButton()
-                        ],
-                      ),
-                      SelectedFile(),
-                      SizedBox(
-                        height: 30,
-                      )
-                    ],
-                  ),
-                  endDrawer: Container(
-                      color: Colors.white60,
-                      child: ReduxDevTools<AppState>(
-                        store,
-                        stateMaxLines: 10,
-                      ))),
+              home: GestureDetector(
+                onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+                child: Scaffold(
+                    resizeToAvoidBottomInset: false,
+                    key: _scaffoldKey,
+                    appBar: AppBar(
+                      title: const Text('Thoughts Recorder'),
+                      backgroundColor: picoBlue,
+                    ),
+                    body: Column(
+                      children: [
+                        TextArea(
+                            textEditingController: TextEditingController(
+                                text: viewModel.transcriptText)),
+                        // ErrorMessage(),
+                        StatusArea(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            viewModel.file == null
+                                ? StartRecordingButton()
+                                : TranscribeAudioFileButton(),
+                            UploadFileButton(),
+                            SaveAudioButton()
+                          ],
+                        ),
+                        SelectedFile(),
+                        SizedBox(
+                          height: 30,
+                        )
+                      ],
+                    ),
+                    endDrawer: Container(
+                        color: Colors.white60,
+                        child: ReduxDevTools<AppState>(
+                          store,
+                          stateMaxLines: 10,
+                        ))),
+              ),
             );
           }),
     );

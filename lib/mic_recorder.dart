@@ -62,8 +62,8 @@ class MicRecorder {
 
       _pcmData.addAll(frame);
       if (count != 0 && count % 35 == 0) {
-        recordedCallback(
-            store.state.untitled, _pcmData.length / _sampleRate, combinedFrame);
+        store.dispatch(
+            getRecordedCallback(_pcmData.length / _sampleRate, combinedFrame));
         combinedFrame = [];
       } else {
         combinedFrame.addAll(frame);

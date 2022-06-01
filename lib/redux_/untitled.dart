@@ -5,6 +5,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:leopard_demo/mic_recorder.dart';
 import 'package:leopard_demo/redux_/audio.dart';
+import 'package:leopard_demo/utils/extensions.dart';
 import 'package:leopard_demo/utils/global_variables.dart';
 import 'package:leopard_demo/utils/utils.dart';
 
@@ -102,7 +103,7 @@ class UntitledState {
 
   @override
   String toString() {
-    return 'file: $file \ncombinedDuration: $combinedDuration \n$leopard \nMicRecorder: $micRecorder \nTranscript: $transcriptTextList';
+    return 'file: $file \ncombinedDuration: $combinedDuration \ncombinedFrames: ${combinedFrame.length} items \nMicRecorder: $micRecorder \nTranscript: $transcriptTextList';
   }
 
   static ThunkAction<AppState> initLeopard = (Store<AppState> store) async {
@@ -149,12 +150,29 @@ class UntitledState {
   }
 
 // File Picker Functions
-  void pickFile() {
+  void pickFile({bool fromGallery = false}) {
     // From SDK Documentation:
     // The file needs to have a sample rate equal to or greater than Leopard.sampleRate.
     // The supported formats are: FLAC, MP3, Ogg, Opus, Vorbis, WAV, and WebM.
     // TODO: Now support any media file type through conversion of file via ffmpeg.
-    FilePicker.platform.pickFiles(type: FileType.media).then((res) {
+    FilePicker.platform
+        .pickFiles(
+            type: fromGallery ? FileType.video : FileType.custom,
+            allowedExtensions: fromGallery
+                ? null
+                : [
+                    'flac',
+                    'mp3',
+                    'ogg',
+                    'opus',
+                    'vorbis',
+                    'wav',
+                    'webm',
+                    'mp4',
+                    'mov',
+                    'avi'
+                  ])
+        .then((res) {
       if (res != null) {
         store.dispatch(AudioFileChangeAction(File(res.files.single.path!)));
       } else {
@@ -186,7 +204,11 @@ class UntitledState {
       List<int> combinedFrame, double startTime) async {
     // TODO: Handle if leopard is somehow not initialised.
     final transcript = await leopard!.process(combinedFrame);
-    return Pair(transcript, startTime);
+    return Pair(
+        HighlightableSpanEditor.BEGIN_FLAG +
+            transcript.toLowerCase() +
+            HighlightableSpanEditor.TERMINATING_FLAG,
+        startTime);
   }
 
   Future<void> stopRecording() async {
@@ -213,38 +235,6 @@ class UntitledState {
     } on LeopardException catch (ex) {
       print("Failed to stop audio capture: ${ex.message}");
     }
-  }
-
-  /// Processes given audio data and sets the [transcriptionText].
-  ///
-  /// [audioLength] If this optional parameter is given, this means it is a user uploaded file.
-  ///
-  Future<void> processCurrentAudioFile(double audioLength) async {
-    if (leopard == null || file == null) {
-      return;
-    }
-
-    store.dispatch(ProcessingAudioFileAction());
-
-    List<int>? frames = await MicRecorder.getFramesFromFile(file!);
-    if (frames == null) {
-      print('Did not get any frames from audio file');
-      return;
-    }
-
-    Stopwatch stopwatch = Stopwatch()..start();
-    String transcript = await leopard!.process(frames);
-    Duration elapsed = stopwatch.elapsed;
-
-    String transcriptionTime =
-        (elapsed.inMilliseconds / 1000).toStringAsFixed(1);
-
-    final successText =
-        "Transcribed ${audioLength.toStringAsFixed(1)}(s) of audio in $transcriptionTime(s)";
-    final transcriptTextList = [Pair(transcript, 0.0)];
-
-    store.dispatch(
-        ProcessAudioFileSuccessAction(successText, transcriptTextList));
   }
 
   void errorCallback(LeopardException error) {
@@ -276,7 +266,7 @@ class StopRecordSucessAction {
   StopRecordSucessAction(this.remainingTranscript);
 }
 
-class ProcessingAudioFileAction {}
+class StartProcessingAudioFileAction {}
 
 class ProcessAudioFileSuccessAction {
   String statusAreaText;
@@ -309,38 +299,83 @@ class IncomingTranscriptAction {
   IncomingTranscriptAction(this.transcript);
 }
 
-void recordedCallback(
-    UntitledState state, double length, List<int> frame) async {
-  if (length < maxRecordingLengthSecs) {
-    final statusAreaText =
-        "Recording : ${length.toStringAsFixed(1)} / $maxRecordingLengthSecs seconds";
+ThunkAction<AppState> processCurrentAudioFile = (Store<AppState> store) async {
+  final double audioLength = store.state.audio.duration.toDouble();
+  final UntitledState state = store.state.untitled;
+  if (state.leopard == null || state.file == null) {
+    return;
+  }
 
-    state.leopard!.process(frame).then((transcript) {
-      final List<int> newCombinedFrame = state.combinedFrame;
+  store.dispatch(StartProcessingAudioFileAction());
+
+  List<int>? frames = await MicRecorder.getFramesFromFile(state.file!);
+  if (frames == null) {
+    print('Did not get any frames from audio file');
+    return;
+  }
+
+  Stopwatch stopwatch = Stopwatch()..start();
+  List<List<int>> allFrames = frames.split(12000);
+  List<int> data = [];
+
+  for (final frame in allFrames) {
+    data.addAll(frame);
+    await store.dispatch(
+        getRecordedCallback(data.length / state.leopard!.sampleRate, frame));
+  }
+
+  Duration elapsed = stopwatch.elapsed;
+
+  String transcriptionTime = (elapsed.inMilliseconds / 1000).toStringAsFixed(1);
+
+  final successText =
+      "Transcribed ${audioLength.toStringAsFixed(1)}(s) of audio in $transcriptionTime(s)";
+};
+
+ThunkAction<AppState> Function(double, List<int>) getRecordedCallback =
+    (double length, List<int> frame) {
+  return (Store<AppState> store) async {
+    if (length < maxRecordingLengthSecs) {
+      final statusAreaText =
+          "Recording : ${length.toStringAsFixed(1)} / $maxRecordingLengthSecs seconds";
+
+      String singleFrameTranscript =
+          await store.state.untitled.leopard!.process(frame);
+      UntitledState state = store.state.untitled;
+
+      List<int> newCombinedFrame = state.combinedFrame;
       newCombinedFrame.addAll(frame);
 
-      final double newCombinedDuration = state.combinedDuration +
+      double newCombinedDuration = state.combinedDuration +
           (frame.length / state.micRecorder!.sampleRate);
 
-      store.dispatch(RecordedCallbackUpdateAction(
-          statusAreaText, length, newCombinedFrame, newCombinedDuration));
+      if (singleFrameTranscript == null ||
+          singleFrameTranscript.trim().isEmpty) {
+        print('potential end point, duration: $newCombinedDuration');
 
-      if (transcript == null || transcript.trim().isEmpty) {
-        print('potential end point');
         if (newCombinedDuration > 4) {
           final double startTime = max(0, length - newCombinedDuration);
 
-          // we want the startTimeof the text rather than the end
-          state.processCombined(newCombinedFrame, startTime).then((value) {
-            store.dispatch(IncomingTranscriptAction(value));
-          });
+          // we want the startTime of the text rather than the end
+          Pair<String, double> incomingTranscript =
+              await state.processCombined(newCombinedFrame, startTime);
+          await store.dispatch(IncomingTranscriptAction(incomingTranscript));
+          // newCombinedDuration = 0.0;
+          // newCombinedFrame = [];
+
+        } else {
+          await store.dispatch(RecordedCallbackUpdateAction(
+              statusAreaText, length, newCombinedFrame, newCombinedDuration));
         }
+      } else {
+        await store.dispatch(RecordedCallbackUpdateAction(
+            statusAreaText, length, newCombinedFrame, newCombinedDuration));
       }
-    });
-  } else {
-    await state.stopRecording();
-  }
-}
+    } else {
+      await store.state.untitled.stopRecording();
+    }
+  };
+};
 
 // Individual Reducers.
 // Each reducer will handle actions related to the State Tree it cares about!
@@ -373,8 +408,13 @@ UntitledState untitledReducer(UntitledState prevState, action) {
         transcriptTextList: newTranscriptTextList,
         isRecording: false,
         shouldOverrideFile: true);
-  } else if (action is ProcessingAudioFileAction) {
-    return prevState.copyWith(statusAreaText: "Transcribing, please wait...");
+  } else if (action is StartProcessingAudioFileAction) {
+    return prevState.copyWith(
+        transcriptTextList: [],
+        highlightedSpanIndex: null,
+        combinedFrame: [],
+        combinedDuration: 0.0,
+        statusAreaText: "Transcribing, please wait...");
   } else if (action is ProcessAudioFileSuccessAction) {
     return prevState.copyWith(
         statusAreaText: action.statusAreaText,

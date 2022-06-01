@@ -13,7 +13,7 @@ class Pair<T1, T2> {
   }
 
   @override
-  int get hashCode => Object.hash(first.hashCode, second.hashCode);
+  int get hashCode => Object.hash(first, second);
 
   @override
   String toString() => '(${first.toString()}, ${second.toString()})';

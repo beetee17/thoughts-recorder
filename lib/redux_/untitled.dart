@@ -107,6 +107,41 @@ class UntitledState {
     return 'file: $file \nhighlightedIndex:$highlightedSpanIndex \ncombinedDuration: $combinedDuration \ncombinedFrames: ${combinedFrame.length} items \nMicRecorder: $micRecorder \nTranscript: $transcriptTextList';
   }
 
+  @override
+  bool operator ==(other) {
+    return (other is UntitledState) &&
+        (errorMessage == other.errorMessage) &&
+        (isRecording == other.isRecording) &&
+        (isProcessing == other.isProcessing) &&
+        (recordedLength == other.recordedLength) &&
+        (statusAreaText == other.statusAreaText) &&
+        (combinedFrame == other.combinedFrame) &&
+        (combinedDuration == other.combinedDuration) &&
+        (transcriptTextList == other.transcriptTextList) &&
+        (highlightedSpanIndex == other.highlightedSpanIndex) &&
+        (micRecorder == other.micRecorder) &&
+        (leopard == other.leopard) &&
+        (file == other.file);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      combinedDuration,
+      combinedFrame,
+      errorMessage,
+      file,
+      highlightedSpanIndex,
+      isProcessing,
+      isRecording,
+      leopard,
+      micRecorder,
+      recordedLength,
+      statusAreaText,
+      transcriptTextList,
+    );
+  }
+
   static ThunkAction<AppState> initLeopard = (Store<AppState> store) async {
     if (store.state.untitled.leopard != null &&
         store.state.untitled.micRecorder != null) {

@@ -33,4 +33,13 @@ class SelectedFile extends StatelessWidget {
 class SelectedFileVM {
   File? file;
   SelectedFileVM(this.file);
+  @override
+  bool operator ==(other) {
+    return (other is SelectedFileVM) && (file == other.file);
+  }
+
+  @override
+  int get hashCode {
+    return file.hashCode;
+  }
 }

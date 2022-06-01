@@ -44,4 +44,15 @@ class StartRecordingButtonVM {
   bool isRecording;
   StartRecordingButtonVM(
       this.startRecording, this.stopRecording, this.isRecording);
+  @override
+  bool operator ==(other) {
+    return (other is StartRecordingButtonVM) &&
+        (startRecording == other.startRecording) &&
+        (stopRecording == other.stopRecording);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(startRecording, stopRecording);
+  }
 }

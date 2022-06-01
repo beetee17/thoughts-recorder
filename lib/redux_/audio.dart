@@ -18,6 +18,22 @@ class AudioState {
     return 'duration: $duration \ncurrentPos:$currentPos \ncurrentPosLabel:$currentPosLabel \nisPlaying:$isPlaying \nfinishedPlaying:$finishedPlaying';
   }
 
+  @override
+  bool operator ==(other) {
+    return (other is AudioState) &&
+        (duration == other.duration) &&
+        (currentPos == other.currentPos) &&
+        (currentPosLabel == other.currentPosLabel) &&
+        (isPlaying == other.isPlaying) &&
+        (finishedPlaying == other.finishedPlaying);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+        duration, currentPos, currentPosLabel, isPlaying, finishedPlaying);
+  }
+
   AudioState({
     required this.duration,
     required this.currentPos,

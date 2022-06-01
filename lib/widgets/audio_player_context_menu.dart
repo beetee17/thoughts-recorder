@@ -52,4 +52,15 @@ class AudioPlayerContextMenuVM {
   File? file;
   void Function() removeFile;
   AudioPlayerContextMenuVM(this.file, this.removeFile);
+  @override
+  bool operator ==(other) {
+    return (other is AudioPlayerContextMenuVM) &&
+        (file == other.file) &&
+        (removeFile == other.removeFile);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(file, removeFile);
+  }
 }

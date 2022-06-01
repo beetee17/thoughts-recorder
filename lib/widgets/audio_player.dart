@@ -106,4 +106,15 @@ class AudioPlayerWidgetVM {
   AudioState audio;
   File? file;
   AudioPlayerWidgetVM(this.audio, this.file);
+  @override
+  bool operator ==(other) {
+    return (other is AudioPlayerWidgetVM) &&
+        (audio == other.audio) &&
+        (file == other.file);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(audio, file);
+  }
 }

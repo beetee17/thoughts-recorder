@@ -51,4 +51,16 @@ class UploadFileButtonVM {
   void Function({bool fromGallery}) pickFile;
   void Function() removeFile;
   UploadFileButtonVM(this.file, this.pickFile, this.removeFile);
+  @override
+  bool operator ==(other) {
+    return (other is UploadFileButtonVM) &&
+        (file == other.file) &&
+        (pickFile == other.pickFile) &&
+        (removeFile == other.removeFile);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(file.hashCode, pickFile.hashCode, removeFile.hashCode);
+  }
 }

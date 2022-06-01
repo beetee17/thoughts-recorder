@@ -28,4 +28,15 @@ class TranscribeAudioFileButtonVM {
   int audioFileDuration;
   UntitledState state;
   TranscribeAudioFileButtonVM(this.audioFileDuration, this.state);
+  @override
+  bool operator ==(other) {
+    return (other is TranscribeAudioFileButtonVM) &&
+        (audioFileDuration == other.audioFileDuration) &&
+        (state == other.state);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(audioFileDuration, state);
+  }
 }

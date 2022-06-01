@@ -33,4 +33,13 @@ class ErrorMessage extends StatelessWidget {
 class ErrorMessageVM {
   String? errorMessage;
   ErrorMessageVM(this.errorMessage);
+  @override
+  bool operator ==(other) {
+    return (other is ErrorMessageVM) && (errorMessage == other.errorMessage);
+  }
+
+  @override
+  int get hashCode {
+    return errorMessage.hashCode;
+  }
 }

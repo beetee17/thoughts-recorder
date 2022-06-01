@@ -34,4 +34,13 @@ class SaveAudioButton extends StatelessWidget {
 class SaveAudioButtonVM {
   File? file;
   SaveAudioButtonVM(this.file);
+  @override
+  bool operator ==(other) {
+    return (other is SaveAudioButtonVM) && (file == other.file);
+  }
+
+  @override
+  int get hashCode {
+    return file.hashCode;
+  }
 }

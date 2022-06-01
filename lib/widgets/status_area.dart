@@ -21,4 +21,13 @@ class StatusArea extends StatelessWidget {
 class StatusAreaVM {
   String text;
   StatusAreaVM(this.text);
+  @override
+  bool operator ==(other) {
+    return (other is StatusAreaVM) && (text == other.text);
+  }
+
+  @override
+  int get hashCode {
+    return text.hashCode;
+  }
 }

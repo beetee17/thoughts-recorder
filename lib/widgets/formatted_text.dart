@@ -79,4 +79,18 @@ class FormattedTextVM {
   int audioDuration;
   FormattedTextVM(this.transcriptTextList, this.text, this.highlightSpan,
       this.highlightedSpanIndex, this.audioDuration);
+  @override
+  bool operator ==(other) {
+    return (other is FormattedTextVM) &&
+        (transcriptTextList == other.transcriptTextList) &&
+        (text == other.text) &&
+        (highlightSpan == other.highlightSpan) &&
+        (audioDuration == other.audioDuration);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(transcriptTextList, text, highlightSpan,
+        highlightedSpanIndex, audioDuration);
+  }
 }

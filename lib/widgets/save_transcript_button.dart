@@ -29,4 +29,13 @@ class SaveTranscriptButton extends StatelessWidget {
 class SaveTranscriptButtonVM {
   String text;
   SaveTranscriptButtonVM(this.text);
+  @override
+  bool operator ==(other) {
+    return (other is SaveTranscriptButtonVM) && (text == other.text);
+  }
+
+  @override
+  int get hashCode {
+    return text.hashCode;
+  }
 }

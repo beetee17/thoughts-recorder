@@ -23,7 +23,7 @@ class ErrorMessage extends StatelessWidget {
                 ? null
                 : Text(
                     viewModel.errorMessage!,
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    style: TextStyle(fontSize: 18),
                   ));
       },
     );

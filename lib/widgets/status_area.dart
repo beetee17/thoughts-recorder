@@ -10,13 +10,10 @@ class StatusArea extends StatelessWidget {
     return StoreConnector<AppState, StatusAreaVM>(
         converter: (store) => StatusAreaVM(store.state.untitled.statusAreaText),
         builder: (_, viewModel) {
-          return Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.only(bottom: 5),
-              child: Text(
-                viewModel.text,
-                style: TextStyle(color: Colors.black),
-              ));
+          return Text(
+            viewModel.text,
+            style: TextStyle(color: Colors.black),
+          );
         });
   }
 }

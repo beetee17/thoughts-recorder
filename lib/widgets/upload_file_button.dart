@@ -17,37 +17,30 @@ class UploadFileButton extends StatelessWidget {
           store.state.untitled.removeSelectedFile),
       builder: (_, viewModel) {
         return CupertinoContextMenu(
-            actions: <Widget>[
-              CupertinoContextMenuAction(
-                trailingIcon: CupertinoIcons.folder_open,
-                child: const Text('Choose Files'),
-                onPressed: () {
-                  viewModel.pickFile(fromGallery: false);
-                  Navigator.of(context).pop();
-                },
-              ),
-              CupertinoContextMenuAction(
-                trailingIcon: CupertinoIcons.photo_on_rectangle,
-                child: const Text('Photo Library'),
-                onPressed: () {
-                  viewModel.pickFile(fromGallery: true);
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  if (viewModel.file != null) {
-                    viewModel.removeFile();
-                  }
-                },
-                child: viewModel.file == null
-                    ? Text('Upload Audio')
-                    : Text('Remove Audio'),
-              ),
-            ));
+          actions: <Widget>[
+            CupertinoContextMenuAction(
+              trailingIcon: CupertinoIcons.folder_open,
+              child: const Text('Choose Files'),
+              onPressed: () {
+                viewModel.pickFile(fromGallery: false);
+                Navigator.of(context).pop();
+              },
+            ),
+            CupertinoContextMenuAction(
+              trailingIcon: CupertinoIcons.photo_on_rectangle,
+              child: const Text('Photo Library'),
+              onPressed: () {
+                viewModel.pickFile(fromGallery: true);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+          child: Icon(
+            Icons.file_upload_outlined,
+            color: Color.fromARGB(180, 0, 0, 0),
+            size: 30,
+          ),
+        );
       },
     );
   }

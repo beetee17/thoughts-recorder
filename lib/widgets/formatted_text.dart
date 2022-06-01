@@ -1,8 +1,10 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:leopard_demo/utils/extensions.dart';
 
 import '../redux_/audio.dart';
 import '../redux_/rootStore.dart';
@@ -27,44 +29,44 @@ class _FormattedTextViewState extends State<FormattedTextView> {
             store.state.untitled.highlightedSpanIndex,
             store.state.audio.duration),
         builder: (_, viewModel) {
-          List<TextSpan> spans = viewModel.transcriptTextList
-              .asMap()
-              .map((index, pair) {
-                void onTapSpan() {
-                  print("Text: ${pair.first} tapped");
-                  viewModel.highlightSpan(index);
-                  final seekTimeInMS = min(
-                      viewModel.audioDuration.toDouble(), pair.second * 1000);
-                  print('seeking: ${seekTimeInMS / 1000}s');
-                  AudioState.seek(seekTimeInMS);
-                }
+          List<TextSpan> spans =
+              TextFormatter.splitText(widget.text, viewModel.transcriptTextList)
+                  .asMap()
+                  .map((index, pair) {
+                    void onTapSpan() {
+                      print("Text: ${pair.first} tapped");
+                      final seekTimeInMS = min(
+                          viewModel.audioDuration.toDouble(),
+                          pair.second * 1000);
+                      print('seeking: ${seekTimeInMS / 1000}s');
+                      AudioState.seek(seekTimeInMS);
+                    }
 
-                Paint? shouldHighlightSpan() {
-                  if (viewModel.highlightedSpanIndex == index) {
-                    return Paint()..color = Colors.greenAccent;
-                  }
-                  return null;
-                }
+                    TextStyle shouldHighlightSpan() {
+                      if (viewModel.highlightedSpanIndex == index) {
+                        return TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold);
+                      }
+                      return TextStyle(color: Colors.black54);
+                    }
 
-                TextSpan span = TextSpan(
-                    text: '${pair.first} ',
-                    recognizer: TapGestureRecognizer()..onTap = onTapSpan,
-                    style: TextStyle(
-                        color: Colors.white,
-                        background: shouldHighlightSpan(),
-                        fontSize: 20));
-                return MapEntry(index, span);
-              })
-              .values
-              .toList();
+                    TextSpan span = TextSpan(
+                        text: '${pair.first} ',
+                        recognizer: TapGestureRecognizer()..onTap = onTapSpan,
+                        style: TextStyle(fontSize: 20)
+                            .merge(shouldHighlightSpan()));
+                    return MapEntry(index, span);
+                  })
+                  .values
+                  .toList();
 
-          return SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              padding: EdgeInsets.all(10),
-              physics: RangeMaintainingScrollPhysics(),
-              child: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: RichText(text: TextSpan(children: spans))));
+          return Container(
+            margin: EdgeInsets.only(top: 10, bottom: 15),
+            child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                physics: RangeMaintainingScrollPhysics(),
+                child: RichText(text: TextSpan(children: spans))),
+          );
         });
   }
 }

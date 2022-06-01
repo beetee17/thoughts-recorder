@@ -32,7 +32,14 @@ extension TextFormatter on String {
       },
     );
 
-    final tmp = res
+    return res;
+  }
+
+  static List<Pair<String, double>> formatTextList(
+      String editedText, List<Pair<String, double>> transcriptTextList) {
+    RegExp regex = RegExp(r'\[(.*?)\]');
+
+    final tmp = splitText(editedText, transcriptTextList)
         .map((pair) =>
             pair.map((first) => first.formatText(), (second) => second))
         .toList();

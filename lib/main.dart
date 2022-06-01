@@ -12,10 +12,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_redux_dev_tools/flutter_redux_dev_tools.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
 import 'package:leopard_demo/redux_/untitled.dart';
+import 'package:leopard_demo/utils/extensions.dart';
 import 'package:leopard_demo/widgets/save_audio_button.dart';
 import 'package:leopard_demo/widgets/selected_file.dart';
 import 'package:leopard_demo/widgets/start_recording_button.dart';
@@ -45,47 +47,60 @@ class _MyAppState extends State<MyApp> {
   Color picoBlue = Color.fromRGBO(55, 125, 255, 1);
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.white, // Only honored in Android M and above
+      statusBarIconBrightness:
+          Brightness.dark, // Only honored in Android M and above
+      statusBarBrightness: Brightness.light, // Only honored in iOS
+    ));
     return StoreProvider<AppState>(
       store: store,
       child: StoreConnector<AppState, MyAppOuterVM>(
           converter: (store) => MyAppOuterVM(
               store.state.untitled.transcriptText, store.state.untitled.file),
           builder: (_, viewModel) {
+            final TextEditingController textEditingController =
+                TextEditingController(text: viewModel.transcriptText);
             return MaterialApp(
+              // debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                  sliderTheme: SliderThemeData(
+                    trackHeight: 5,
+                    thumbColor: Colors.blue.shade800,
+                    activeTrackColor: Colors.blue.shade800,
+                    thumbShape: RoundSliderThumbShape(elevation: 3),
+                    valueIndicatorColor: Colors.black87,
+                    overlayColor: Colors.grey.withOpacity(0.2),
+                    // inactiveTrackColor: Colors.green,
+                  ),
+                  scaffoldBackgroundColor: Colors.white,
+                  textTheme: Theme.of(context).textTheme.apply(
+                        bodyColor: Colors.black, //<-- SEE HERE
+                        displayColor: Colors.black, //<-- SEE HERE
+                      )),
               home: GestureDetector(
-                onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+                onTap: () {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  TextFormatter.formatTextList(textEditingController.text,
+                      store.state.untitled.transcriptTextList);
+                },
                 child: Scaffold(
                     resizeToAvoidBottomInset: false,
                     key: _scaffoldKey,
-                    appBar: AppBar(
-                      title: const Text('Thoughts Recorder'),
-                      backgroundColor: picoBlue,
-                    ),
-                    body: Column(
-                      children: [
-                        TextArea(
-                            textEditingController: TextEditingController(
-                                text: viewModel.transcriptText)),
-                        // ErrorMessage(),
-                        StatusArea(),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            viewModel.file == null
-                                ? StartRecordingButton()
-                                : TranscribeAudioFileButton(),
-                            UploadFileButton(),
-                            SaveAudioButton()
-                          ],
-                        ),
-                        SelectedFile(),
-                        SizedBox(
-                          height: 30,
-                        )
-                      ],
+                    body: SafeArea(
+                      child: Column(
+                        children: [
+                          TextArea(
+                              textEditingController: textEditingController),
+                          // ErrorMessage(),
+                          StatusArea(),
+
+                          SelectedFile(),
+                        ],
+                      ),
                     ),
                     endDrawer: Container(
-                        color: Colors.white60,
+                        color: Colors.white,
                         child: ReduxDevTools<AppState>(
                           store,
                           stateMaxLines: 10,

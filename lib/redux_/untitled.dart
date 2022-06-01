@@ -66,7 +66,7 @@ class UntitledState {
       leopard: null,
       micRecorder: null,
       recordedLength: 0,
-      statusAreaText: 'Press START to start recording some audio to transcribe',
+      statusAreaText: 'No audio file',
       transcriptTextList: [],
     );
   }
@@ -175,6 +175,7 @@ class UntitledState {
         .then((res) {
       if (res != null) {
         store.dispatch(AudioFileChangeAction(File(res.files.single.path!)));
+        store.dispatch(processCurrentAudioFile);
       } else {
         // User canceled the picker
       }
@@ -215,20 +216,7 @@ class UntitledState {
 
     try {
       final file = await micRecorder!.stopRecord();
-      final remainingFrames = combinedFrame;
-      remainingFrames.addAll(micRecorder!.combinedFrame);
-
-      final double startTime = max(0, recordedLength - combinedDuration);
-      final remainingTranscript =
-          await processCombined(combinedFrame, startTime);
-
-      store.dispatch(StopRecordSucessAction(remainingTranscript));
-      AudioState.player.release().then((value) {
-        store.dispatch(AudioFileChangeAction(file));
-        // AudioState.stopPlayer();
-        AudioState.player = AudioPlayer();
-        AudioState.initialisePlayer();
-      });
+      await store.dispatch(processRemainingFrames);
     } on LeopardException catch (ex) {
       print("Failed to stop audio capture: ${ex.message}");
     }
@@ -258,12 +246,17 @@ class AudioFileChangeAction {
 
 class StartRecordSuccessAction {}
 
-class StopRecordSucessAction {
+class ProcessedRemainingFramesAction {
   Pair<String, double> remainingTranscript;
-  StopRecordSucessAction(this.remainingTranscript);
+  ProcessedRemainingFramesAction(this.remainingTranscript);
 }
 
 class StartProcessingAudioFileAction {}
+
+class StatusTextChangeAction {
+  String statusText;
+  StatusTextChangeAction(this.statusText);
+}
 
 class ProcessAudioFileSuccessAction {
   String statusAreaText;
@@ -283,18 +276,34 @@ class RecordedCallbackAction {
 }
 
 class RecordedCallbackUpdateAction {
-  String statusAreaText;
   double recordedLength;
   List<int> combinedFrame;
   double combinedDuration;
-  RecordedCallbackUpdateAction(this.statusAreaText, this.recordedLength,
-      this.combinedFrame, this.combinedDuration);
+  RecordedCallbackUpdateAction(
+      this.recordedLength, this.combinedFrame, this.combinedDuration);
 }
 
 class IncomingTranscriptAction {
   Pair<String, double> transcript;
   IncomingTranscriptAction(this.transcript);
 }
+
+ThunkAction<AppState> processRemainingFrames = (Store<AppState> store) async {
+  UntitledState state = store.state.untitled;
+  final remainingFrames = state.combinedFrame;
+  remainingFrames.addAll(state.micRecorder!.combinedFrame);
+
+  final double startTime =
+      max(0, state.recordedLength - state.combinedDuration);
+  final remainingTranscript =
+      await state.processCombined(state.combinedFrame, startTime);
+  if (remainingTranscript.first.trim().isNotEmpty) {
+    await store.dispatch(ProcessedRemainingFramesAction(remainingTranscript));
+  }
+  await store.dispatch(AudioFileChangeAction(state.file));
+  AudioState.player = AudioPlayer();
+  AudioState.initialisePlayer();
+};
 
 ThunkAction<AppState> processCurrentAudioFile = (Store<AppState> store) async {
   final double audioLength = store.state.audio.duration.toDouble();
@@ -311,31 +320,24 @@ ThunkAction<AppState> processCurrentAudioFile = (Store<AppState> store) async {
     return;
   }
 
-  Stopwatch stopwatch = Stopwatch()..start();
   List<List<int>> allFrames = frames.split(12000);
   List<int> data = [];
 
   for (final frame in allFrames) {
     data.addAll(frame);
-    await store.dispatch(
-        getRecordedCallback(data.length / state.leopard!.sampleRate, frame));
+    final double transcribedLength = data.length / state.leopard!.sampleRate;
+    await store.dispatch(getRecordedCallback(transcribedLength, frame));
+    await store.dispatch(StatusTextChangeAction(
+        "Transcribed ${transcribedLength.toStringAsFixed(1)} seconds..."));
   }
 
-  Duration elapsed = stopwatch.elapsed;
-
-  String transcriptionTime = (elapsed.inMilliseconds / 1000).toStringAsFixed(1);
-
-  final successText =
-      "Transcribed ${audioLength.toStringAsFixed(1)}(s) of audio in $transcriptionTime(s)";
+  await store.dispatch(processRemainingFrames);
 };
 
 ThunkAction<AppState> Function(double, List<int>) getRecordedCallback =
     (double length, List<int> frame) {
   return (Store<AppState> store) async {
     if (length < maxRecordingLengthSecs) {
-      final statusAreaText =
-          "Recording : ${length.toStringAsFixed(1)} / $maxRecordingLengthSecs seconds";
-
       String singleFrameTranscript =
           await store.state.untitled.leopard!.process(frame);
       UntitledState state = store.state.untitled;
@@ -359,11 +361,11 @@ ThunkAction<AppState> Function(double, List<int>) getRecordedCallback =
           await store.dispatch(IncomingTranscriptAction(incomingTranscript));
         } else {
           await store.dispatch(RecordedCallbackUpdateAction(
-              statusAreaText, length, newCombinedFrame, newCombinedDuration));
+              length, newCombinedFrame, newCombinedDuration));
         }
       } else {
         await store.dispatch(RecordedCallbackUpdateAction(
-            statusAreaText, length, newCombinedFrame, newCombinedDuration));
+            length, newCombinedFrame, newCombinedDuration));
       }
     } else {
       await store.state.untitled.stopRecording();
@@ -381,13 +383,16 @@ UntitledState untitledReducer(UntitledState prevState, action) {
     return prevState.copyWith(
         leopard: action.leopard, micRecorder: action.micRecorder);
   } else if (action is HighlightSpanAtIndex) {
-    int newIndex = action.index;
-    return prevState.copyWith(
-        highlightedSpanIndex:
-            newIndex == prevState.highlightedSpanIndex ? null : newIndex);
+    return prevState.copyWith(highlightedSpanIndex: action.index);
   } else if (action is AudioFileChangeAction) {
-    print('files are equal: ${action.file == prevState.file}');
-    return prevState.copyWith(file: action.file, shouldOverrideFile: true);
+    final String? path = action.file?.path;
+    final String filename = path == null
+        ? 'No audio file'
+        : RegExp(r'[^\/]+$').allMatches(action.file!.path).last.group(0)!;
+    return prevState.copyWith(
+        file: action.file,
+        shouldOverrideFile: true,
+        statusAreaText: '$filename');
   } else if (action is StartRecordSuccessAction) {
     return prevState.copyWith(
         transcriptTextList: [],
@@ -395,20 +400,17 @@ UntitledState untitledReducer(UntitledState prevState, action) {
         combinedFrame: [],
         combinedDuration: 0.0,
         isRecording: true);
-  } else if (action is StopRecordSucessAction) {
+  } else if (action is ProcessedRemainingFramesAction) {
     final newTranscriptTextList = prevState.transcriptTextList;
     newTranscriptTextList.add(action.remainingTranscript);
     return prevState.copyWith(
-        transcriptTextList: newTranscriptTextList,
-        isRecording: false,
-        shouldOverrideFile: true);
+        transcriptTextList: newTranscriptTextList, isRecording: false);
   } else if (action is StartProcessingAudioFileAction) {
     return prevState.copyWith(
         transcriptTextList: [],
         highlightedSpanIndex: null,
         combinedFrame: [],
-        combinedDuration: 0.0,
-        statusAreaText: "Transcribing, please wait...");
+        combinedDuration: 0.0);
   } else if (action is ProcessAudioFileSuccessAction) {
     return prevState.copyWith(
         statusAreaText: action.statusAreaText,
@@ -422,12 +424,19 @@ UntitledState untitledReducer(UntitledState prevState, action) {
         combinedDuration: 0.0);
   } else if (action is RecordedCallbackUpdateAction) {
     return prevState.copyWith(
-        statusAreaText: action.statusAreaText,
         recordedLength: action.recordedLength,
         combinedFrame: action.combinedFrame,
         combinedDuration: action.combinedDuration);
   } else if (action is ErrorCallbackAction) {
     return prevState.copyWith(errorMessage: action.errorMessage);
+  } else if (action is AudioPositionChangeAction) {
+    final int highlightIndex = prevState.transcriptTextList.lastIndexWhere(
+        // We do not want the edge cases due to rounding errors
+        (pair) =>
+            pair.second * 950 < action.newPosition.inMilliseconds.toDouble());
+    return prevState.copyWith(highlightedSpanIndex: highlightIndex);
+  } else if (action is StatusTextChangeAction) {
+    return prevState.copyWith(statusAreaText: action.statusText);
   } else {
     return prevState;
   }

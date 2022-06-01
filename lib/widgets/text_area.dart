@@ -1,6 +1,13 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:leopard_demo/redux_/rootStore.dart';
 import 'package:leopard_demo/widgets/raw_text.dart';
 import 'package:leopard_demo/widgets/save_transcript_button.dart';
+import 'package:leopard_demo/widgets/secondary_icon_button.dart';
+import 'package:leopard_demo/widgets/status_area.dart';
 
 import 'formatted_text.dart';
 
@@ -24,45 +31,50 @@ class _TextAreaState extends State<TextArea> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      flex: 5,
-      child: Column(children: [
-        Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: ElevatedButton(
-                  onPressed: () {
+    return StoreConnector<AppState, TextAreaVM>(
+      converter: (store) => TextAreaVM(store.state.untitled.file),
+      builder: (_, viewModel) {
+        return Expanded(
+          flex: 5,
+          child: Stack(children: [
+            Container(
+              child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 8),
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 50.0, horizontal: 10.0),
+                    child: showRawText
+                        ? RawText(
+                            textEditingController: widget.textEditingController,
+                          )
+                        : FormattedTextView(
+                            text: widget.textEditingController.text),
+                  )),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: SecondaryIconButton(
+                  onPress: () {
                     setState(() {
                       showRawText = !showRawText;
                     });
                   },
-                  child: Text(
-                      '${showRawText ? 'View Formatted' : 'Edit Raw'} Text'),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: SaveTranscriptButton(),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          flex: 5,
-          child: Container(
-              alignment: Alignment.topCenter,
-              color: Color(0xff25187e),
-              margin: EdgeInsets.all(10),
-              child: showRawText
-                  ? RawText(
-                      textEditingController: widget.textEditingController,
-                    )
-                  : FormattedTextView(text: widget.textEditingController.text)),
-        ),
-      ]),
+                  margin: EdgeInsets.only(top: 10.0, right: 10.0),
+                  icon: Icon(showRawText ? CupertinoIcons.eye : Icons.edit)),
+            ),
+            Align(
+              alignment: Alignment.topRight,
+              child: SaveTranscriptButton(),
+            ),
+          ]),
+        );
+      },
     );
   }
+}
+
+class TextAreaVM {
+  File? file;
+  TextAreaVM(this.file);
 }

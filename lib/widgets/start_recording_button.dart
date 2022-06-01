@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
+import 'package:leopard_demo/widgets/icon_button_with_shadow.dart';
 
 class StartRecordingButton extends StatelessWidget {
   const StartRecordingButton({Key? key}) : super(key: key);
@@ -15,11 +16,21 @@ class StartRecordingButton extends StatelessWidget {
       builder: (_, viewModel) {
         return Padding(
           padding: const EdgeInsets.all(10.0),
-          child: ElevatedButton(
-            onPressed: (viewModel.isRecording)
-                ? viewModel.stopRecording
-                : viewModel.startRecording,
-            child: Text(viewModel.isRecording ? "Stop" : "Record"),
+          child: Container(
+            decoration: BoxDecoration(
+                color: Colors.redAccent.shade400,
+                borderRadius: BorderRadius.all(Radius.circular(
+                        25.0) //                 <--- border radius here
+                    )),
+            child: WithShadow(
+              child: IconButton(
+                  onPressed: (viewModel.isRecording)
+                      ? viewModel.stopRecording
+                      : viewModel.startRecording,
+                  iconSize: 50,
+                  color: Colors.white,
+                  icon: Icon(viewModel.isRecording ? Icons.stop : Icons.mic)),
+            ),
           ),
         );
       },

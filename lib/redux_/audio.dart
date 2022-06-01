@@ -28,6 +28,7 @@ class AudioState {
 
   static void initialisePlayer() {
     // INITIALISE AUDIO PLAYER
+    player.setReleaseMode(ReleaseMode.STOP);
     player.onDurationChanged.listen((Duration d) {
       seek(0);
       store.dispatch(AudioDurationChangeAction(d));
@@ -95,7 +96,7 @@ class AudioState {
     return AudioState(
         duration: 100,
         currentPos: 0,
-        currentPosLabel: '00:00',
+        currentPosLabel: '0:00',
         isPlaying: false,
         finishedPlaying: false);
   }

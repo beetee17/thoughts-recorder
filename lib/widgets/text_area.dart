@@ -32,6 +32,7 @@ class _TextAreaState extends State<TextArea> {
   Widget build(BuildContext context) {
     return StoreConnector<AppState, TextAreaVM>(
       converter: (store) => TextAreaVM(store.state.untitled.file),
+      distinct: true,
       builder: (_, viewModel) {
         return Expanded(
           flex: 5,
@@ -76,4 +77,13 @@ class _TextAreaState extends State<TextArea> {
 class TextAreaVM {
   File? file;
   TextAreaVM(this.file);
+  @override
+  bool operator ==(other) {
+    return (other is TextAreaVM) && (file == other.file);
+  }
+
+  @override
+  int get hashCode {
+    return file.hashCode;
+  }
 }

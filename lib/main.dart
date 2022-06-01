@@ -51,6 +51,7 @@ class _MyAppState extends State<MyApp> {
     return StoreProvider<AppState>(
       store: store,
       child: StoreConnector<AppState, MyAppOuterVM>(
+          distinct: true,
           converter: (store) => MyAppOuterVM(
               store.state.untitled.transcriptText,
               store.state.untitled.transcriptTextList),
@@ -117,4 +118,16 @@ class MyAppOuterVM {
   String transcriptText;
   List<Pair<String, double>> transcriptTextList;
   MyAppOuterVM(this.transcriptText, this.transcriptTextList);
+
+  @override
+  bool operator ==(other) {
+    return (other is MyAppOuterVM) &&
+        (transcriptText == other.transcriptText) &&
+        (transcriptTextList == other.transcriptTextList);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(transcriptText.hashCode, transcriptTextList.hashCode);
+  }
 }

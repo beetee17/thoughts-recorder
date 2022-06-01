@@ -9,28 +9,23 @@
 // specific language governing permissions and limitations under the License.
 //
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:leopard_demo/providers/main_provider.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:flutter_redux_dev_tools/flutter_redux_dev_tools.dart';
+import 'package:leopard_demo/redux_/rootStore.dart';
+import 'package:leopard_demo/redux_/untitled.dart';
 import 'package:leopard_demo/widgets/save_audio_button.dart';
-import 'package:leopard_demo/widgets/save_transcript_button.dart';
 import 'package:leopard_demo/widgets/selected_file.dart';
 import 'package:leopard_demo/widgets/start_recording_button.dart';
 import 'package:leopard_demo/widgets/status_area.dart';
 import 'package:leopard_demo/widgets/text_area.dart';
 import 'package:leopard_demo/widgets/transcribe_audio_file_button.dart';
 import 'package:leopard_demo/widgets/upload_file_button.dart';
-import 'package:provider/provider.dart';
-
-import 'providers/audio_file_provider.dart';
 
 void main() {
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (_) => MainProvider()),
-      ChangeNotifierProvider(create: (_) => AudioProvider()),
-    ],
-    child: MyApp(),
-  ));
+  runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -44,46 +39,66 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    context.read<MainProvider>().initLeopard();
+    store.dispatch(UntitledState.initLeopard);
   }
 
   Color picoBlue = Color.fromRGBO(55, 125, 255, 1);
   @override
   Widget build(BuildContext context) {
-    MainProvider provider = context.watch<MainProvider>();
-
-    return MaterialApp(
-      home: Scaffold(
-        resizeToAvoidBottomInset: false,
-        key: _scaffoldKey,
-        appBar: AppBar(
-          title: const Text('Thoughts Recorder'),
-          backgroundColor: picoBlue,
-        ),
-        body: Column(
-          children: [
-            TextArea(
-                textEditingController: TextEditingController(
-                    text: context.watch<MainProvider>().transcriptText)),
-            // ErrorMessage(),
-            StatusArea(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                provider.file == null
-                    ? StartRecordingButton()
-                    : TranscribeAudioFileButton(),
-                UploadFileButton(),
-                SaveAudioButton()
-              ],
-            ),
-            SelectedFile(),
-            SizedBox(
-              height: 30,
-            )
-          ],
-        ),
-      ),
+    return StoreProvider<AppState>(
+      store: store,
+      child: StoreConnector<AppState, MyAppOuterVM>(
+          converter: (store) => MyAppOuterVM(
+              store.state.untitled.transcriptText, store.state.untitled.file),
+          builder: (_, viewModel) {
+            return MaterialApp(
+              home: GestureDetector(
+                onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+                child: Scaffold(
+                    resizeToAvoidBottomInset: false,
+                    key: _scaffoldKey,
+                    appBar: AppBar(
+                      title: const Text('Thoughts Recorder'),
+                      backgroundColor: picoBlue,
+                    ),
+                    body: Column(
+                      children: [
+                        TextArea(
+                            textEditingController: TextEditingController(
+                                text: viewModel.transcriptText)),
+                        // ErrorMessage(),
+                        StatusArea(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            viewModel.file == null
+                                ? StartRecordingButton()
+                                : TranscribeAudioFileButton(),
+                            UploadFileButton(),
+                            SaveAudioButton()
+                          ],
+                        ),
+                        SelectedFile(),
+                        SizedBox(
+                          height: 30,
+                        )
+                      ],
+                    ),
+                    endDrawer: Container(
+                        color: Colors.white60,
+                        child: ReduxDevTools<AppState>(
+                          store,
+                          stateMaxLines: 10,
+                        ))),
+              ),
+            );
+          }),
     );
   }
+}
+
+class MyAppOuterVM {
+  String transcriptText;
+  File? file;
+  MyAppOuterVM(this.transcriptText, this.file);
 }

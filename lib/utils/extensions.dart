@@ -1,6 +1,6 @@
 import 'package:leopard_demo/redux_/rootStore.dart';
 import 'package:leopard_demo/redux_/untitled.dart';
-import 'package:leopard_demo/utils/utils.dart';
+import 'package:leopard_demo/utils/pair.dart';
 
 extension StringCasingExtension on String {
   String toCapitalized() => length > 0

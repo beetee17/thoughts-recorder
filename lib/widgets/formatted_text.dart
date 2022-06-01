@@ -8,7 +8,7 @@ import 'package:leopard_demo/utils/extensions.dart';
 
 import '../redux_/audio.dart';
 import '../redux_/rootStore.dart';
-import '../utils/utils.dart';
+import '../utils/pair.dart';
 
 class FormattedTextView extends StatefulWidget {
   final String text;

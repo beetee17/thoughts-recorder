@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:leopard_demo/utils/extensions.dart';
 
 class RawText extends StatefulWidget {
   final TextEditingController textEditingController;

@@ -18,13 +18,10 @@ import 'package:flutter_redux_dev_tools/flutter_redux_dev_tools.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
 import 'package:leopard_demo/redux_/untitled.dart';
 import 'package:leopard_demo/utils/extensions.dart';
-import 'package:leopard_demo/widgets/save_audio_button.dart';
+import 'package:leopard_demo/utils/pair.dart';
 import 'package:leopard_demo/widgets/selected_file.dart';
-import 'package:leopard_demo/widgets/start_recording_button.dart';
 import 'package:leopard_demo/widgets/status_area.dart';
 import 'package:leopard_demo/widgets/text_area.dart';
-import 'package:leopard_demo/widgets/transcribe_audio_file_button.dart';
-import 'package:leopard_demo/widgets/upload_file_button.dart';
 
 void main() {
   runApp(MyApp());
@@ -36,8 +33,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
   @override
   void initState() {
     super.initState();
@@ -57,7 +52,8 @@ class _MyAppState extends State<MyApp> {
       store: store,
       child: StoreConnector<AppState, MyAppOuterVM>(
           converter: (store) => MyAppOuterVM(
-              store.state.untitled.transcriptText, store.state.untitled.file),
+              store.state.untitled.transcriptText,
+              store.state.untitled.transcriptTextList),
           builder: (_, viewModel) {
             final TextEditingController textEditingController =
                 TextEditingController(text: viewModel.transcriptText);
@@ -86,13 +82,12 @@ class _MyAppState extends State<MyApp> {
               home: GestureDetector(
                 onTap: () {
                   FocusManager.instance.primaryFocus?.unfocus();
-                  TextFormatter.formatTextList(textEditingController.text,
-                      store.state.untitled.transcriptTextList);
+                  TextFormatter.formatTextList(
+                      textEditingController.text, viewModel.transcriptTextList);
                 },
                 child: Scaffold(
                     appBar: AppBar(title: const Text('Transcript')),
                     resizeToAvoidBottomInset: false,
-                    key: _scaffoldKey,
                     body: SafeArea(
                       child: Column(
                         children: [
@@ -120,6 +115,6 @@ class _MyAppState extends State<MyApp> {
 
 class MyAppOuterVM {
   String transcriptText;
-  File? file;
-  MyAppOuterVM(this.transcriptText, this.file);
+  List<Pair<String, double>> transcriptTextList;
+  MyAppOuterVM(this.transcriptText, this.transcriptTextList);
 }

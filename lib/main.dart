@@ -74,6 +74,11 @@ class _MyAppState extends State<MyApp> {
                     // inactiveTrackColor: Colors.green,
                   ),
                   scaffoldBackgroundColor: Colors.white,
+                  appBarTheme: AppBarTheme(
+                      backgroundColor: Colors.white,
+                      foregroundColor:
+                          Colors.black //here you can give the text color
+                      ),
                   textTheme: Theme.of(context).textTheme.apply(
                         bodyColor: Colors.black, //<-- SEE HERE
                         displayColor: Colors.black, //<-- SEE HERE
@@ -85,6 +90,7 @@ class _MyAppState extends State<MyApp> {
                       store.state.untitled.transcriptTextList);
                 },
                 child: Scaffold(
+                    appBar: AppBar(title: const Text('Transcript')),
                     resizeToAvoidBottomInset: false,
                     key: _scaffoldKey,
                     body: SafeArea(

@@ -8,7 +8,7 @@ import 'package:leopard_demo/utils/extensions.dart';
 import 'package:leopard_demo/widgets/audio_player_context_menu.dart';
 
 import '../redux_/audio.dart';
-import 'icon_button_with_shadow.dart';
+import 'widget_with_shadow.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
   const AudioPlayerWidget({Key? key}) : super(key: key);

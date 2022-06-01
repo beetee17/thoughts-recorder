@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:provider/provider.dart';
 
 class ErrorMessage extends StatelessWidget {
   const ErrorMessage({Key? key}) : super(key: key);

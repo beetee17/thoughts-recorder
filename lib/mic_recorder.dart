@@ -169,23 +169,17 @@ class MicRecorder {
     return wavFile.writeAsBytes(bytesBuilder.toBytes());
   }
 
-  Future<void> delete() async {
-    if (_voiceProcessor?.isRecording ?? false) {
-      await _voiceProcessor!.stop();
-    }
-    _removeVoiceProcessorListener?.call();
-    _removeErrorListener?.call();
-  }
-
   static Future<List<int>?> getFramesFromFile(File file) async {
     final directory = await getApplicationDocumentsDirectory();
     final String outputFilePath = '${directory.path}/output.pcm';
 
+    // see https://stackoverflow.com/questions/4854513/can-ffmpeg-convert-audio-to-raw-pcm-if-so-how
     final session = await FFmpegKit.execute(
         '-y -i "${file.path}" -acodec pcm_s16le -f s16le -ac 1 -ar 16000 "$outputFilePath"');
 
     final returnCode = await session.getReturnCode();
 
+    // see https://stackoverflow.com/questions/59877602/how-to-get-byte-data-from-audio-file-must-be-as-signed-int-bytes-in-flutter
     if (ReturnCode.isSuccess(returnCode)) {
       File outputFile = File(outputFilePath);
       Uint8List bytes = await outputFile.readAsBytes();

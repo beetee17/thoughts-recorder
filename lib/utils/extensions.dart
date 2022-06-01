@@ -1,10 +1,6 @@
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
 import 'package:leopard_demo/redux_/untitled.dart';
 import 'package:leopard_demo/utils/utils.dart';
-
-import '../redux_/audio.dart';
 
 extension StringCasingExtension on String {
   String toCapitalized() => length > 0
@@ -100,49 +96,5 @@ extension Chunking on List<int> {
           this.sublist(i, endIndex > this.length ? this.length : endIndex));
     }
     return chunks;
-  }
-}
-
-class HighlightableSpanEditor extends TextEditingController {
-  // final Pair<String, double> transcriptTextList;
-  static final String BEGIN_FLAG = '[';
-  static final String TERMINATING_FLAG = ']';
-  final pattern = RegExp(r'\[(.*?)\]');
-  String initialText;
-  HighlightableSpanEditor(this.initialText) : super(text: initialText);
-
-  void onDoubleTapSpan(int index) {
-    store.state.untitled.highlightSpan(index);
-  }
-
-  int index = 0;
-
-  @override
-  TextSpan buildTextSpan(
-      {required BuildContext context,
-      TextStyle? style,
-      required bool withComposing}) {
-    List<InlineSpan> children = [];
-
-    // splitMapJoin is a bit tricky here but i found it very handy for populating children list
-    this.text.splitMapJoin(
-      pattern,
-      onMatch: (Match match) {
-        children.add(TextSpan(
-            text: match[0],
-            recognizer: DoubleTapGestureRecognizer()
-              ..onDoubleTap = () => onDoubleTapSpan(index),
-            style: style?.merge(
-                TextStyle(background: Paint()..color = Colors.greenAccent))));
-        this.index++;
-        return '';
-      },
-      onNonMatch: (String text) {
-        children.add(TextSpan(text: text, style: style));
-        return '';
-      },
-    );
-    this.index = 0;
-    return TextSpan(style: style, children: children);
   }
 }

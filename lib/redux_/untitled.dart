@@ -149,7 +149,7 @@ class UntitledState {
     store.dispatch(HighlightSpanAtIndex(index));
   }
 
-// File Picker Functions
+  // File Picker Functions
   void pickFile({bool fromGallery = false}) {
     // From SDK Documentation:
     // The file needs to have a sample rate equal to or greater than Leopard.sampleRate.
@@ -205,10 +205,7 @@ class UntitledState {
     // TODO: Handle if leopard is somehow not initialised.
     final transcript = await leopard!.process(combinedFrame);
     return Pair(
-        HighlightableSpanEditor.BEGIN_FLAG +
-            transcript.toLowerCase() +
-            HighlightableSpanEditor.TERMINATING_FLAG,
-        startTime);
+        BEGIN_FLAG + transcript.toLowerCase() + TERMINATING_FLAG, startTime);
   }
 
   Future<void> stopRecording() async {
@@ -360,9 +357,6 @@ ThunkAction<AppState> Function(double, List<int>) getRecordedCallback =
           Pair<String, double> incomingTranscript =
               await state.processCombined(newCombinedFrame, startTime);
           await store.dispatch(IncomingTranscriptAction(incomingTranscript));
-          // newCombinedDuration = 0.0;
-          // newCombinedFrame = [];
-
         } else {
           await store.dispatch(RecordedCallbackUpdateAction(
               statusAreaText, length, newCombinedFrame, newCombinedDuration));

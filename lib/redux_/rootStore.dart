@@ -1,7 +1,5 @@
-import 'package:flutter_redux/flutter_redux.dart';
 import 'package:leopard_demo/redux_/audio.dart';
 import 'package:leopard_demo/redux_/untitled.dart';
-import 'package:redux/redux.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 

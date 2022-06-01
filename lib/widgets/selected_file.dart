@@ -16,10 +16,7 @@ class SelectedFile extends StatelessWidget {
           return Container(
               child: viewModel.file == null
                   ? const Text('No file selected')
-                  : AudioPlayerWidget()
-              // Text text = Text(userSelectedFile!.path);
-              // return Padding(padding: const EdgeInsets.all(16.0), child: text);
-              );
+                  : AudioPlayerWidget());
         });
   }
 }

@@ -12,7 +12,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_redux_dev_tools/flutter_redux_dev_tools.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
@@ -27,13 +26,6 @@ import 'package:leopard_demo/widgets/upload_file_button.dart';
 
 void main() {
   runApp(MyApp());
-  // runApp(MultiProvider(
-  //   providers: [
-  //     ChangeNotifierProvider(create: (_) => MainProvider()),
-  //     ChangeNotifierProvider(create: (_) => AudioProvider()),
-  //   ],
-  //   child: MyApp(),
-  // ));
 }
 
 class MyApp extends StatefulWidget {

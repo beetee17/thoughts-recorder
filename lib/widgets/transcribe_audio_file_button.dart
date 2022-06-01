@@ -27,6 +27,5 @@ class TranscribeAudioFileButton extends StatelessWidget {
 class TranscribeAudioFileButtonVM {
   int audioFileDuration;
   UntitledState state;
-  // void Function(double) processAudioFile;
   TranscribeAudioFileButtonVM(this.audioFileDuration, this.state);
 }

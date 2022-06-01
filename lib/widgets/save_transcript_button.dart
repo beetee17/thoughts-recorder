@@ -7,12 +7,6 @@ class SaveTranscriptButton extends StatelessWidget {
   const SaveTranscriptButton({Key? key}) : super(key: key);
 
   void shareTranscript(text) async {
-    // Directory dir = await getApplicationDocumentsDirectory();
-    // File testFile = File("${dir.path}/transcript.txt");
-
-    // await testFile.create(recursive: true);
-    // testFile.writeAsStringSync(text);
-
     ShareExtend.share(text, "text");
   }
 

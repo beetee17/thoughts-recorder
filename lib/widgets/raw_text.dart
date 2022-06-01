@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class RawText extends StatefulWidget {
   final TextEditingController textEditingController;
@@ -13,10 +14,11 @@ class _RawTextState extends State<RawText> {
   @override
   Widget build(BuildContext context) {
     return TextField(
-        style: TextStyle(fontSize: 20),
+        style: GoogleFonts.rubik(
+            fontSize: 28, fontWeight: FontWeight.w500, height: 1.4),
         expands: true,
         maxLines: null,
-        decoration: InputDecoration(border: InputBorder.none),
+        decoration: InputDecoration.collapsed(hintText: null),
         controller: widget.textEditingController);
   }
 }

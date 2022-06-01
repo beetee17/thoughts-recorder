@@ -294,10 +294,9 @@ class StatusTextChangeAction {
   StatusTextChangeAction(this.statusText);
 }
 
-class ProcessAudioFileSuccessAction {
-  String statusAreaText;
+class UpdateTranscriptTextList {
   List<Pair<String, double>> transcriptTextList;
-  ProcessAudioFileSuccessAction(this.statusAreaText, this.transcriptTextList);
+  UpdateTranscriptTextList(this.transcriptTextList);
 }
 
 class ErrorCallbackAction {
@@ -449,10 +448,8 @@ UntitledState untitledReducer(UntitledState prevState, action) {
         highlightedSpanIndex: null,
         combinedFrame: [],
         combinedDuration: 0.0);
-  } else if (action is ProcessAudioFileSuccessAction) {
-    return prevState.copyWith(
-        statusAreaText: action.statusAreaText,
-        transcriptTextList: action.transcriptTextList);
+  } else if (action is UpdateTranscriptTextList) {
+    return prevState.copyWith(transcriptTextList: action.transcriptTextList);
   } else if (action is IncomingTranscriptAction) {
     final newTranscriptTextList = prevState.transcriptTextList;
     newTranscriptTextList.add(action.transcript);

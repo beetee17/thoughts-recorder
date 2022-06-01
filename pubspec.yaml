@@ -11,6 +11,7 @@ environment:
 
 dependencies:
   audioplayers: ^0.20.1
+  cupertino_icons: ^1.0.0
   ffmpeg_kit_flutter: ^4.5.1
   file_picker: ^4.5.1
   flutter:
@@ -18,6 +19,7 @@ dependencies:
   flutter_redux: ^0.10.0
   flutter_redux_dev_tools: ^0.5.2
   flutter_voice_processor: ^1.0.7
+  google_fonts: ^3.0.1
   leopard_flutter: ^1.0.3
   path_provider: ^2.0.10
   provider: ^6.0.3
@@ -25,7 +27,6 @@ dependencies:
   redux_thunk: ^0.4.0
   share_extend: ^2.0.0
   uuid: ^3.0.6
-  cupertino_icons: ^1.0.0
 
 dev_dependencies:
   flutter_test:

@@ -22,6 +22,8 @@ import 'package:leopard_demo/utils/pair.dart';
 import 'package:leopard_demo/widgets/selected_file.dart';
 import 'package:leopard_demo/widgets/status_area.dart';
 import 'package:leopard_demo/widgets/text_area.dart';
+//Import the font package
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(MyApp());
@@ -68,7 +70,6 @@ class _MyAppState extends State<MyApp> {
                     thumbShape: RoundSliderThumbShape(elevation: 3),
                     valueIndicatorColor: Colors.black87,
                     overlayColor: Colors.grey.withOpacity(0.2),
-                    // inactiveTrackColor: Colors.green,
                   ),
                   scaffoldBackgroundColor: Colors.white,
                   appBarTheme: AppBarTheme(
@@ -77,29 +78,42 @@ class _MyAppState extends State<MyApp> {
                           Colors.black //here you can give the text color
                       ),
                   textTheme: Theme.of(context).textTheme.apply(
-                        bodyColor: Colors.black, //<-- SEE HERE
-                        displayColor: Colors.black, //<-- SEE HERE
+                        bodyColor: Colors.black,
+                        displayColor: Colors.black,
                       )),
               home: GestureDetector(
                 onTap: () {
                   FocusManager.instance.primaryFocus?.unfocus();
-                  TextFormatter.formatTextList(
+                  TextFormatter.updateTranscriptTextList(
                       textEditingController.text, viewModel.transcriptTextList);
                 },
                 child: Scaffold(
                     appBar: AppBar(title: const Text('Transcript')),
                     resizeToAvoidBottomInset: false,
-                    body: SafeArea(
-                      child: Column(
-                        children: [
-                          TextArea(
-                              textEditingController: textEditingController),
-                          // ErrorMessage(),
-                          StatusArea(),
-
-                          SelectedFile(),
-                        ],
-                      ),
+                    body: Column(
+                      children: [
+                        TextArea(textEditingController: textEditingController),
+                        // ErrorMessage(),
+                        Container(
+                          padding: EdgeInsets.only(top: 20, bottom: 30),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black.withOpacity(0.1), //New
+                                  blurRadius: 1,
+                                  spreadRadius: 1,
+                                  offset: Offset(0, -3))
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              StatusArea(),
+                              SelectedFile(),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                     endDrawer: Container(
                         color: Colors.white,

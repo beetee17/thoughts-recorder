@@ -35,38 +35,51 @@ class _TextAreaState extends State<TextArea> {
       distinct: true,
       builder: (_, viewModel) {
         return Expanded(
-          flex: 5,
           child: Stack(children: [
             Container(
-              child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 8),
-                  alignment: Alignment.topCenter,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 50.0, horizontal: 10.0),
-                    child: showRawText
-                        ? RawText(
-                            textEditingController: widget.textEditingController,
-                          )
-                        : FormattedTextView(
-                            text: widget.textEditingController.text),
-                  )),
+              child: Padding(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom / 2),
+                child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 8),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: showRawText
+                          ? RawText(
+                              textEditingController:
+                                  widget.textEditingController,
+                            )
+                          : FormattedTextView(
+                              text: widget.textEditingController.text),
+                    )),
+              ),
             ),
-            Align(
+            Container(
               alignment: Alignment.bottomRight,
-              child: SecondaryIconButton(
-                  onPress: () {
-                    setState(() {
-                      showRawText = !showRawText;
-                    });
-                  },
-                  margin: EdgeInsets.only(top: 10.0, right: 10.0),
-                  icon: Icon(showRawText ? CupertinoIcons.eye : Icons.edit)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  SaveTranscriptButton(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  SecondaryIconButton(
+                      onPress: () {
+                        setState(() {
+                          showRawText = !showRawText;
+                        });
+                      },
+                      margin: EdgeInsets.only(bottom: 10.0, right: 10.0),
+                      icon:
+                          Icon(showRawText ? CupertinoIcons.eye : Icons.edit)),
+                ],
+              ),
             ),
-            Align(
-              alignment: Alignment.topRight,
-              child: SaveTranscriptButton(),
-            ),
+
+            // Align(
+            //   alignment: Alignment.topRight,
+            //   child: SaveTranscriptButton(),
+            // ),
           ]),
         );
       },

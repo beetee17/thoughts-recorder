@@ -44,7 +44,6 @@ class AudioState {
 
   static void initialisePlayer() {
     // INITIALISE AUDIO PLAYER
-    player.setReleaseMode(ReleaseMode.STOP);
     player.onDurationChanged.listen((Duration d) {
       seek(0);
       store.dispatch(AudioDurationChangeAction(d));
@@ -177,7 +176,7 @@ AudioState audioReducer(AudioState prevState, action) {
   } else if (action is AudioPlayerStateCompletedAction) {
     return prevState.copyWith(isPlaying: false);
   } else if (action is AudioPlaySuccessAction) {
-    return prevState.copyWith(isPlaying: true, finishedPlaying: true);
+    return prevState.copyWith(isPlaying: true, finishedPlaying: false);
   } else if (action is AudioResumeSuccessAction) {
     return prevState.copyWith(isPlaying: true, finishedPlaying: true);
   } else if (action is AudioPauseSuccessAction) {

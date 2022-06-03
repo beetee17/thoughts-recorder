@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:leopard_demo/widgets/quote.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../screens/settings.dart';
+import '../screens/settings_screen.dart';
 
 class Tutorial extends StatelessWidget {
   DEFAULT_SPAN(String content) {

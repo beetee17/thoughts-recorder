@@ -29,6 +29,7 @@ dependencies:
   redux_thunk: ^0.4.0
   settings_ui: ^2.0.2
   share_extend: ^2.0.0
+  shared_preferences: ^2.0.15
   url_launcher: ^6.1.2
   uuid: ^3.0.6
 

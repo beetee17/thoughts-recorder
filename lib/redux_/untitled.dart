@@ -7,6 +7,7 @@ import 'package:leopard_demo/mic_recorder.dart';
 import 'package:leopard_demo/redux_/audio.dart';
 import 'package:leopard_demo/utils/extensions.dart';
 import 'package:leopard_demo/utils/global_variables.dart';
+import 'package:leopard_demo/utils/persistence.dart';
 
 import 'package:leopard_flutter/leopard.dart';
 import 'package:leopard_flutter/leopard_error.dart';
@@ -144,10 +145,6 @@ class UntitledState {
   }
 
   static ThunkAction<AppState> initLeopard = (Store<AppState> store) async {
-    if (store.state.untitled.leopard != null &&
-        store.state.untitled.micRecorder != null) {
-      return;
-    }
     String platform = Platform.isAndroid
         ? "android"
         : Platform.isIOS
@@ -157,6 +154,7 @@ class UntitledState {
     String modelPath = "assets/models/ios/myModel-leopard.pv";
 
     try {
+      final accessKey = await Settings.getAccessKey();
       final leopard = await Leopard.create(accessKey, modelPath);
       final micRecorder = await MicRecorder.create(
           leopard.sampleRate, store.state.untitled.errorCallback);
@@ -165,9 +163,9 @@ class UntitledState {
     } on LeopardInvalidArgumentException catch (ex) {
       print('ERROR');
       store.state.untitled.errorCallback(LeopardInvalidArgumentException(
-          "Invalid Access Key." +
-              "\nPlease check that the access key entered in the Settings corresponds to " +
-              "the one in the Picovoice Console (https://console.picovoice.ai/). "));
+          "Invalid Access Key.\n"
+          "Please check that the access key entered in the Settings corresponds to "
+          "the one in the Picovoice Console (https://console.picovoice.ai/). "));
     } on LeopardActivationException {
       store.state.untitled.errorCallback(
           LeopardActivationException("Access Key activation error."));

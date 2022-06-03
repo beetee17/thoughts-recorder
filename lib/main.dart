@@ -17,9 +17,11 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_redux_dev_tools/flutter_redux_dev_tools.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
 import 'package:leopard_demo/redux_/untitled.dart';
-import 'package:leopard_demo/screens/settings.dart';
+import 'package:leopard_demo/screens/settings_screen.dart';
 import 'package:leopard_demo/utils/extensions.dart';
+import 'package:leopard_demo/utils/global_variables.dart';
 import 'package:leopard_demo/utils/pair.dart';
+import 'package:leopard_demo/utils/persistence.dart';
 import 'package:leopard_demo/widgets/error_message.dart';
 import 'package:leopard_demo/widgets/selected_file.dart';
 import 'package:leopard_demo/widgets/status_area.dart';
@@ -71,7 +73,9 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    store.dispatch(UntitledState.initLeopard);
+    Settings.setAccessKey(debugAccessKey).then((bool success) {
+      store.dispatch(UntitledState.initLeopard);
+    });
   }
 
   Color picoBlue = Color.fromRGBO(55, 125, 255, 1);

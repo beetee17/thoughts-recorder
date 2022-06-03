@@ -74,6 +74,7 @@ class JustAudioPlayerWidgetState extends State<JustAudioPlayerWidget>
     // Release decoders and buffers back to the operating system making them
     // available for other apps to use.
     // player.dispose();
+    player.stop();
     super.dispose();
   }
 

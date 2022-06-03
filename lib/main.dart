@@ -85,11 +85,7 @@ class _HomeState extends State<Home> {
             final TextEditingController textEditingController =
                 TextEditingController(text: viewModel.transcriptText);
             return GestureDetector(
-              onTap: () {
-                FocusManager.instance.primaryFocus?.unfocus();
-                TextFormatter.updateTranscriptTextList(
-                    textEditingController.text, viewModel.transcriptTextList);
-              },
+              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
               child: Scaffold(
                 appBar: AppBar(
                   title: const Text('Transcript'),
@@ -126,7 +122,7 @@ class _HomeState extends State<Home> {
                 body: Column(
                   children: [
                     viewModel.errorMessage == null
-                        ? TextArea(textEditingController: textEditingController)
+                        ? TextArea()
                         : ErrorMessage(errorMessage: viewModel.errorMessage!),
                     Container(
                       padding: EdgeInsets.only(top: 20, bottom: 30),
@@ -134,7 +130,7 @@ class _HomeState extends State<Home> {
                         color: Colors.white,
                         boxShadow: [
                           BoxShadow(
-                              color: Colors.black.withOpacity(0.1), //New
+                              color: Colors.black.withOpacity(0.1),
                               blurRadius: 1,
                               spreadRadius: 1,
                               offset: Offset(0, -3))

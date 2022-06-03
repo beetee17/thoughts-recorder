@@ -118,7 +118,7 @@ class _HomeState extends State<Home> {
                           MaterialPageRoute(
                               builder: (context) => Scaffold(
                                   appBar: AppBar(title: Text("Tutorial")),
-                                  body: const Tutorial())));
+                                  body: Tutorial())));
                     },
                   ),
                   actions: <Widget>[

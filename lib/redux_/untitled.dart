@@ -242,8 +242,7 @@ class UntitledState {
       List<int> combinedFrame, double startTime) async {
     // TODO: Handle if leopard is somehow not initialised.
     final transcript = await leopard!.process(combinedFrame);
-    return Pair(
-        BEGIN_FLAG + transcript.toLowerCase() + TERMINATING_FLAG, startTime);
+    return Pair(transcript.toLowerCase(), startTime);
   }
 
   Future<void> stopRecording() async {
@@ -307,8 +306,9 @@ class StatusTextChangeAction {
 }
 
 class UpdateTranscriptTextList {
-  List<Pair<String, double>> transcriptTextList;
-  UpdateTranscriptTextList(this.transcriptTextList);
+  int index;
+  Pair<String, double> partialTranscript;
+  UpdateTranscriptTextList(this.index, this.partialTranscript);
 }
 
 class ErrorCallbackAction {
@@ -461,7 +461,9 @@ UntitledState untitledReducer(UntitledState prevState, action) {
         combinedFrame: [],
         combinedDuration: 0.0);
   } else if (action is UpdateTranscriptTextList) {
-    return prevState.copyWith(transcriptTextList: action.transcriptTextList);
+    final newList = prevState.transcriptTextList;
+    newList[action.index] = action.partialTranscript;
+    return prevState.copyWith(transcriptTextList: newList);
   } else if (action is IncomingTranscriptAction) {
     final newTranscriptTextList = prevState.transcriptTextList;
     newTranscriptTextList.add(action.transcript);

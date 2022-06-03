@@ -10,8 +10,7 @@ import '../utils/pair.dart';
 import 'just_audio_player.dart';
 
 class FormattedTextView extends StatefulWidget {
-  final String text;
-  const FormattedTextView({Key? key, required this.text}) : super(key: key);
+  const FormattedTextView({Key? key}) : super(key: key);
 
   @override
   State<FormattedTextView> createState() => _FormattedTextViewState();

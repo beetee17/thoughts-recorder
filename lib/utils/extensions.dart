@@ -19,28 +19,6 @@ extension StringCasingExtension on String {
 }
 
 extension TextFormatter on String {
-  static final RegExp GET_ALL_BETWEEN_PATTERN =
-      RegExp('$BEGIN_FLAG(.*?)$TERMINATING_FLAG');
-  // match group 0 is inclusive, match group 1 is exclusive of []
-  static List<Pair<String, double>> updateTranscriptTextList(
-      String editedText, List<Pair<String, double>> transcriptTextList) {
-    List<Pair<String, double>> res = [];
-    int index = 0;
-    editedText.splitMapJoin(
-      GET_ALL_BETWEEN_PATTERN,
-      onMatch: (Match match) {
-        print(match.group(0));
-        res.add(transcriptTextList[index]
-            .map((left) => match.group(0)!, (right) => right));
-        index++;
-        return '';
-      },
-    );
-    store.dispatch(UpdateTranscriptTextList(res));
-
-    return res;
-  }
-
   static List<Pair<String, double>> formatTextList(
       List<Pair<String, double>> transcriptTextList) {
     final tmp = transcriptTextList
@@ -51,11 +29,7 @@ extension TextFormatter on String {
   }
 
   String formatText() {
-    String? match = GET_ALL_BETWEEN_PATTERN.firstMatch(this)?.group(1);
-    if (match == null) {
-      return '';
-    }
-    String formattedText = match.toUpperCase();
+    String formattedText = this.toUpperCase();
 
     formattedText = formattedText.replaceAll('COMMA', ',');
     formattedText = formattedText.replaceAll('FULL-STOP', '.');

@@ -162,20 +162,23 @@ class UntitledState {
       print('dispatching $leopard and $micRecorder');
       store.dispatch(InitAction(leopard, micRecorder));
     } on LeopardInvalidArgumentException catch (ex) {
+      print('ERROR');
       store.state.untitled.errorCallback(LeopardInvalidArgumentException(
-          "${ex.message}\nEnsure your accessKey '$accessKey' is a valid access key."));
+          "Invalid Access Key." +
+              "\nPlease check that the access key entered in the Settings corresponds to " +
+              "the one in the Picovoice Console (https://console.picovoice.ai/). "));
     } on LeopardActivationException {
       store.state.untitled.errorCallback(
-          LeopardActivationException("AccessKey activation error."));
+          LeopardActivationException("Access Key activation error."));
     } on LeopardActivationLimitException {
       store.state.untitled.errorCallback(LeopardActivationLimitException(
-          "AccessKey reached its device limit."));
+          "Access Key has reached its device limit."));
     } on LeopardActivationRefusedException {
       store.state.untitled.errorCallback(
-          LeopardActivationRefusedException("AccessKey refused."));
+          LeopardActivationRefusedException("Access Key was refused."));
     } on LeopardActivationThrottledException {
-      store.state.untitled.errorCallback(
-          LeopardActivationThrottledException("AccessKey has been throttled."));
+      store.state.untitled.errorCallback(LeopardActivationThrottledException(
+          "Access Key has been throttled."));
     } on LeopardException catch (ex) {
       store.state.untitled.errorCallback(ex);
     }

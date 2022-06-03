@@ -18,14 +18,18 @@ dependencies:
     sdk: flutter
   flutter_redux: ^0.10.0
   flutter_redux_dev_tools: ^0.5.2
+  flutter_svg: ^1.1.0
   flutter_voice_processor: ^1.0.7
   google_fonts: ^3.0.1
   leopard_flutter: ^1.0.3
+  modal_bottom_sheet: ^2.0.1
   path_provider: ^2.0.10
   provider: ^6.0.3
   redux_dev_tools: ^0.7.0
   redux_thunk: ^0.4.0
+  settings_ui: ^2.0.2
   share_extend: ^2.0.0
+  url_launcher: ^6.1.2
   uuid: ^3.0.6
 
 dev_dependencies:
@@ -39,3 +43,4 @@ flutter:
     - assets/models/android/leopard_params.pv
     - assets/models/ios/leopard_params.pv
     - assets/models/ios/myModel-leopard.pv
+    - assets/picovoice.svg

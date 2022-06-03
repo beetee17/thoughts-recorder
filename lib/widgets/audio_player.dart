@@ -40,15 +40,18 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
           return Container(
             child: Column(
               children: [
-                Container(
-                    child: Slider(
-                  value: double.parse(viewModel.audio.currentPos.toString()),
-                  min: 0,
-                  max: double.parse(viewModel.audio.duration.toString()),
-                  divisions: viewModel.audio.duration,
-                  label: viewModel.audio.currentPosLabel,
-                  onChanged: AudioState.seek,
-                )),
+                Transform.translate(
+                  offset: Offset(0, 10),
+                  child: Container(
+                      child: Slider(
+                    value: double.parse(viewModel.audio.currentPos.toString()),
+                    min: 0,
+                    max: double.parse(viewModel.audio.duration.toString()),
+                    divisions: viewModel.audio.duration,
+                    label: viewModel.audio.currentPosLabel,
+                    onChanged: AudioState.seek,
+                  )),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Row(

@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:leopard_demo/utils/extensions.dart';
 
 import '../redux_/audio.dart';
@@ -29,8 +30,8 @@ class _FormattedTextViewState extends State<FormattedTextView> {
             store.state.untitled.highlightedSpanIndex,
             store.state.audio.duration),
         builder: (_, viewModel) {
-          List<TextSpan> spans =
-              TextFormatter.splitText(widget.text, viewModel.transcriptTextList)
+          List<InlineSpan> spans =
+              TextFormatter.formatTextList(viewModel.transcriptTextList)
                   .asMap()
                   .map((index, pair) {
                     void onTapSpan() {
@@ -44,24 +45,31 @@ class _FormattedTextViewState extends State<FormattedTextView> {
 
                     TextStyle shouldHighlightSpan() {
                       if (viewModel.highlightedSpanIndex == index) {
-                        return TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.bold);
+                        return TextStyle(color: Colors.black);
                       }
-                      return TextStyle(color: Colors.black54);
+                      return TextStyle(color: Colors.black38);
                     }
 
-                    TextSpan span = TextSpan(
-                        text: '${pair.first} ',
-                        recognizer: TapGestureRecognizer()..onTap = onTapSpan,
-                        style: TextStyle(fontSize: 20)
-                            .merge(shouldHighlightSpan()));
+                    InlineSpan span = WidgetSpan(
+                        child: AnimatedDefaultTextStyle(
+                      child: GestureDetector(
+                        child: Text('${pair.first} '),
+                        onTap: onTapSpan,
+                      ),
+                      style: GoogleFonts.rubik(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w500,
+                              height: 1.4)
+                          .merge(shouldHighlightSpan()),
+                      duration: Duration(milliseconds: 300),
+                    ));
+
                     return MapEntry(index, span);
                   })
                   .values
                   .toList();
 
           return Container(
-            margin: EdgeInsets.only(top: 10, bottom: 15),
             child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 physics: RangeMaintainingScrollPhysics(),

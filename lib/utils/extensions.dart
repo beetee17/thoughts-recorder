@@ -2,6 +2,8 @@ import 'package:leopard_demo/redux_/rootStore.dart';
 import 'package:leopard_demo/redux_/untitled.dart';
 import 'package:leopard_demo/utils/pair.dart';
 
+import 'global_variables.dart';
+
 extension StringCasingExtension on String {
   String toCapitalized() => length > 0
       ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}'
@@ -17,50 +19,58 @@ extension StringCasingExtension on String {
 }
 
 extension TextFormatter on String {
-  static List<Pair<String, double>> splitText(
+  static final RegExp GET_ALL_BETWEEN_PATTERN =
+      RegExp('$BEGIN_FLAG(.*?)$TERMINATING_FLAG');
+  // match group 0 is inclusive, match group 1 is exclusive of []
+  static List<Pair<String, double>> updateTranscriptTextList(
       String editedText, List<Pair<String, double>> transcriptTextList) {
-    RegExp regex = RegExp(r'\[(.*?)\]');
     List<Pair<String, double>> res = [];
     int index = 0;
     editedText.splitMapJoin(
-      regex,
+      GET_ALL_BETWEEN_PATTERN,
       onMatch: (Match match) {
+        print(match.group(0));
         res.add(transcriptTextList[index]
-            .map((left) => match.group(1)!, (right) => right));
+            .map((left) => match.group(0)!, (right) => right));
         index++;
         return '';
       },
     );
+    store.dispatch(UpdateTranscriptTextList(res));
 
     return res;
   }
 
   static List<Pair<String, double>> formatTextList(
-      String editedText, List<Pair<String, double>> transcriptTextList) {
-    RegExp regex = RegExp(r'\[(.*?)\]');
-
-    final tmp = splitText(editedText, transcriptTextList)
+      List<Pair<String, double>> transcriptTextList) {
+    final tmp = transcriptTextList
         .map((pair) =>
             pair.map((first) => first.formatText(), (second) => second))
         .toList();
-    store.dispatch(ProcessAudioFileSuccessAction('', tmp));
     return tmp;
   }
 
   String formatText() {
-    String formattedText = this.toUpperCase();
+    String? match = GET_ALL_BETWEEN_PATTERN.firstMatch(this)?.group(1);
+    if (match == null) {
+      return '';
+    }
+    String formattedText = match.toUpperCase();
 
-    formattedText = formattedText.replaceAll(' COMMA', ',');
-    formattedText = formattedText.replaceAll(' FULL-STOP', '.');
-    formattedText = formattedText.replaceAll(' FULL STOP', '.');
-    formattedText = formattedText.replaceAll(' PERIOD', '.');
-    formattedText = formattedText.replaceAll(' SLASH ', '/');
-    formattedText = formattedText.replaceAll('AMPERSAND', '&');
+    formattedText = formattedText.replaceAll('COMMA', ',');
+    formattedText = formattedText.replaceAll('FULL-STOP', '.');
+    formattedText = formattedText.replaceAll('FULL STOP ', '.');
+
+    formattedText = formattedText.replaceAll('PERIOD', '.');
+    formattedText = formattedText.replaceAll('SLASH ', '/');
+
+    formattedText = formattedText.replaceAll('NEW LINE', '\n\n');
     formattedText = formattedText.replaceAll('START BRACKET', '(');
-    formattedText = formattedText.replaceAll(' FINISH BRACKET', ')');
+    formattedText = formattedText.replaceAll('FINISH BRACKET', ')');
+
     formattedText = formattedText.replaceAll('START QUOTE', '"');
-    formattedText = formattedText.replaceAll(' FINISH QUOTE', '"');
-    formattedText = formattedText.replaceAll('NEW LINE ', '\n');
+    formattedText = formattedText.replaceAll('FINISH QUOTE', '"');
+
     formattedText = formattedText.replaceAll('MAKE POINT', '\n-');
     formattedText = formattedText.replaceAll('MAKE SECTION', '\n\n##');
 
@@ -77,7 +87,12 @@ extension TextFormatter on String {
 
     // Remove any extra whitespace
     formattedText = formattedText.replaceAll(RegExp(' {2,}'), ' ');
-    return '[' + formattedText.capitalizeSentences().capitalizeNewLines() + ']';
+
+    // Remove whitespace before punctuation marks
+    formattedText = formattedText.replaceAllMapped(
+        RegExp(r'\s+([.,!":)])'), (Match m) => m.group(1)!);
+
+    return formattedText.capitalizeSentences().capitalizeNewLines();
   }
 }
 

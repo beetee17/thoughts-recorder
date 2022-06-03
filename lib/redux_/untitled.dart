@@ -35,7 +35,8 @@ class UntitledState {
   final List<Pair<String, double>> transcriptTextList;
   final int? highlightedSpanIndex;
 
-  String get transcriptText => transcriptTextList.map((p) => p.first).join(' ');
+  String get transcriptText =>
+      transcriptTextList.map((p) => p.first).join(' \n\n');
 
   final MicRecorder? micRecorder;
   final Leopard? leopard;
@@ -162,20 +163,23 @@ class UntitledState {
       print('dispatching $leopard and $micRecorder');
       store.dispatch(InitAction(leopard, micRecorder));
     } on LeopardInvalidArgumentException catch (ex) {
+      print('ERROR');
       store.state.untitled.errorCallback(LeopardInvalidArgumentException(
-          "${ex.message}\nEnsure your accessKey '$accessKey' is a valid access key."));
+          "Invalid Access Key." +
+              "\nPlease check that the access key entered in the Settings corresponds to " +
+              "the one in the Picovoice Console (https://console.picovoice.ai/). "));
     } on LeopardActivationException {
       store.state.untitled.errorCallback(
-          LeopardActivationException("AccessKey activation error."));
+          LeopardActivationException("Access Key activation error."));
     } on LeopardActivationLimitException {
       store.state.untitled.errorCallback(LeopardActivationLimitException(
-          "AccessKey reached its device limit."));
+          "Access Key has reached its device limit."));
     } on LeopardActivationRefusedException {
       store.state.untitled.errorCallback(
-          LeopardActivationRefusedException("AccessKey refused."));
+          LeopardActivationRefusedException("Access Key was refused."));
     } on LeopardActivationThrottledException {
-      store.state.untitled.errorCallback(
-          LeopardActivationThrottledException("AccessKey has been throttled."));
+      store.state.untitled.errorCallback(LeopardActivationThrottledException(
+          "Access Key has been throttled."));
     } on LeopardException catch (ex) {
       store.state.untitled.errorCallback(ex);
     }
@@ -294,10 +298,9 @@ class StatusTextChangeAction {
   StatusTextChangeAction(this.statusText);
 }
 
-class ProcessAudioFileSuccessAction {
-  String statusAreaText;
+class UpdateTranscriptTextList {
   List<Pair<String, double>> transcriptTextList;
-  ProcessAudioFileSuccessAction(this.statusAreaText, this.transcriptTextList);
+  UpdateTranscriptTextList(this.transcriptTextList);
 }
 
 class ErrorCallbackAction {
@@ -449,10 +452,8 @@ UntitledState untitledReducer(UntitledState prevState, action) {
         highlightedSpanIndex: null,
         combinedFrame: [],
         combinedDuration: 0.0);
-  } else if (action is ProcessAudioFileSuccessAction) {
-    return prevState.copyWith(
-        statusAreaText: action.statusAreaText,
-        transcriptTextList: action.transcriptTextList);
+  } else if (action is UpdateTranscriptTextList) {
+    return prevState.copyWith(transcriptTextList: action.transcriptTextList);
   } else if (action is IncomingTranscriptAction) {
     final newTranscriptTextList = prevState.transcriptTextList;
     newTranscriptTextList.add(action.transcript);
@@ -472,7 +473,7 @@ UntitledState untitledReducer(UntitledState prevState, action) {
     final int highlightIndex = prevState.transcriptTextList.lastIndexWhere(
         // We do not want the edge cases due to rounding errors
         (pair) =>
-            pair.second * 950 < action.newPosition.inMilliseconds.toDouble());
+            pair.second * 1000 <= action.newPosition.inMilliseconds.toDouble());
     return prevState.copyWith(highlightedSpanIndex: highlightIndex);
   } else if (action is StatusTextChangeAction) {
     return prevState.copyWith(statusAreaText: action.statusText);

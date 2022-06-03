@@ -74,22 +74,24 @@ class UntitledState {
     );
   }
 
-  UntitledState copyWith(
-      {String? errorMessage,
-      bool? isRecording,
-      bool? isProcessing,
-      double? recordedLength,
-      String? statusAreaText,
-      List<int>? combinedFrame,
-      double? combinedDuration,
-      List<Pair<String, double>>? transcriptTextList,
-      int? highlightedSpanIndex,
-      MicRecorder? micRecorder,
-      Leopard? leopard,
-      File? file,
-      bool shouldOverrideFile = false}) {
+  UntitledState copyWith({
+    String? errorMessage,
+    bool? isRecording,
+    bool? isProcessing,
+    double? recordedLength,
+    String? statusAreaText,
+    List<int>? combinedFrame,
+    double? combinedDuration,
+    List<Pair<String, double>>? transcriptTextList,
+    int? highlightedSpanIndex,
+    MicRecorder? micRecorder,
+    Leopard? leopard,
+    File? file,
+    bool shouldOverrideFile = false,
+    bool shouldOverrideError = false,
+  }) {
     return UntitledState(
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: shouldOverrideError ? errorMessage : this.errorMessage,
       isRecording: isRecording ?? this.isRecording,
       isProcessing: isProcessing ?? this.isProcessing,
       recordedLength: recordedLength ?? this.recordedLength,
@@ -418,7 +420,10 @@ UntitledState untitledReducer(UntitledState prevState, action) {
   }
   if (action is InitAction) {
     return prevState.copyWith(
-        leopard: action.leopard, micRecorder: action.micRecorder);
+        leopard: action.leopard,
+        micRecorder: action.micRecorder,
+        errorMessage: null,
+        shouldOverrideError: true);
   } else if (action is HighlightSpanAtIndex) {
     return prevState.copyWith(highlightedSpanIndex: action.index);
   } else if (action is AudioFileChangeAction) {
@@ -466,7 +471,8 @@ UntitledState untitledReducer(UntitledState prevState, action) {
         combinedFrame: action.combinedFrame,
         combinedDuration: action.combinedDuration);
   } else if (action is ErrorCallbackAction) {
-    return prevState.copyWith(errorMessage: action.errorMessage);
+    return prevState.copyWith(
+        errorMessage: action.errorMessage, shouldOverrideError: true);
   } else if (action is AudioPositionChangeAction) {
     final int highlightIndex = prevState.transcriptTextList.lastIndexWhere(
         // We do not want the edge cases due to rounding errors

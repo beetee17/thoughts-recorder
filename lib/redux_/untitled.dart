@@ -256,6 +256,7 @@ class UntitledState {
 
     try {
       final file = await micRecorder!.stopRecord();
+      await store.dispatch(AudioFileChangeAction(file));
       await store.dispatch(processRemainingFrames);
     } on LeopardException catch (ex) {
       print("Failed to stop audio capture: ${ex.message}");

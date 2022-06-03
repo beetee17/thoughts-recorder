@@ -37,11 +37,10 @@ class _FormattedTextViewState extends State<FormattedTextView> {
 
                     void onTapSpan() {
                       print("Text: $pair tapped");
-                      final seekTimeInMS =
-                          min(viewModel.audioDuration, pair.second) * 1000;
-                      print('seeking: ${seekTimeInMS / 1000}s');
-                      JustAudioPlayerWidgetState.player
-                          .seek(Duration(milliseconds: seekTimeInMS.toInt()));
+                      final Duration seekTime = DurationUtils.min(
+                          viewModel.audioDuration, pair.second);
+                      print('seeking: ${seekTime.inSeconds}s');
+                      JustAudioPlayerWidgetState.player.seek(seekTime);
                     }
 
                     TextStyle shouldHighlightSpan() {
@@ -98,11 +97,11 @@ class _FormattedTextViewState extends State<FormattedTextView> {
 }
 
 class FormattedTextVM {
-  List<Pair<String, double>> transcriptTextList;
+  List<Pair<String, Duration>> transcriptTextList;
   String text;
   void Function(int) highlightSpan;
   int? highlightedSpanIndex;
-  double audioDuration;
+  Duration audioDuration;
   FormattedTextVM(this.transcriptTextList, this.text, this.highlightSpan,
       this.highlightedSpanIndex, this.audioDuration);
   @override

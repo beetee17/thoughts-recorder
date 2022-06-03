@@ -11,7 +11,7 @@ import '../utils/pair.dart';
 
 class RawTextEditor extends StatefulWidget {
   final int index;
-  final Pair<String, double> partialTranscript;
+  final Pair<String, Duration> partialTranscript;
   const RawTextEditor(
       {Key? key, required this.partialTranscript, required this.index})
       : super(key: key);
@@ -63,17 +63,16 @@ class _RawTextEditorState extends State<RawTextEditor> {
                 decoration: InputDecoration(
                     prefix: GestureDetector(
                         child: Text(
-                            '${Duration(seconds: widget.partialTranscript.second.toInt()).toAudioDurationString()}  ',
+                            '${widget.partialTranscript.second.toAudioDurationString()} ',
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.normal)),
                         onTap: () {
-                          final seekTimeInMS = min(viewModel.audioDuration,
-                                  widget.partialTranscript.second) *
-                              1000;
-                          print('seeking: ${seekTimeInMS / 1000}s');
-                          JustAudioPlayerWidgetState.player.seek(
-                              Duration(milliseconds: seekTimeInMS.toInt()));
+                          final Duration seekTime = DurationUtils.min(
+                              viewModel.audioDuration,
+                              widget.partialTranscript.second);
+                          print('seeking: ${seekTime.inSeconds}s');
+                          JustAudioPlayerWidgetState.player.seek(seekTime);
                         })),
                 controller: _textEditingController),
           );
@@ -83,7 +82,7 @@ class _RawTextEditorState extends State<RawTextEditor> {
 
 class RawTextFieldVM {
   int? highlightedSpanIndex;
-  double audioDuration;
+  Duration audioDuration;
 
   RawTextFieldVM(this.highlightedSpanIndex, this.audioDuration);
 

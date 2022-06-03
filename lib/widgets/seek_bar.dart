@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:leopard_demo/utils/extensions.dart';
 
 class SeekBar extends StatefulWidget {
   final Duration duration;
@@ -94,20 +95,20 @@ class SeekBarState extends State<SeekBar> {
           ),
         ),
         Positioned(
-          right: 16.0,
+          right: 22.0,
           bottom: 0.0,
-          child: Text(
-              RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$')
-                      .firstMatch("$_remaining")
-                      ?.group(1) ??
-                  '$_remaining',
-              style: Theme.of(context).textTheme.caption),
+          child: Text(widget.duration.toAudioDurationString(),
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+        ),
+        Positioned(
+          left: 22.0,
+          bottom: 0.0,
+          child: Text(widget.position.toAudioDurationString(),
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
         ),
       ],
     );
   }
-
-  Duration get _remaining => widget.duration - widget.position;
 }
 
 class HiddenThumbComponentShape extends SliderComponentShape {

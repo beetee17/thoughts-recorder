@@ -2,6 +2,8 @@ import 'package:leopard_demo/redux_/rootStore.dart';
 import 'package:leopard_demo/redux_/untitled.dart';
 import 'package:leopard_demo/utils/pair.dart';
 
+import 'global_variables.dart';
+
 extension StringCasingExtension on String {
   String toCapitalized() => length > 0
       ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}'
@@ -17,7 +19,8 @@ extension StringCasingExtension on String {
 }
 
 extension TextFormatter on String {
-  static final RegExp GET_ALL_BETWEEN_PATTERN = RegExp(r'\[(.*?)\]');
+  static final RegExp GET_ALL_BETWEEN_PATTERN =
+      RegExp('$BEGIN_FLAG(.*?)$TERMINATING_FLAG');
   // match group 0 is inclusive, match group 1 is exclusive of []
   static List<Pair<String, double>> updateTranscriptTextList(
       String editedText, List<Pair<String, double>> transcriptTextList) {
@@ -53,27 +56,19 @@ extension TextFormatter on String {
       return '';
     }
     String formattedText = match.toUpperCase();
-    print(formattedText);
-    formattedText = formattedText.replaceAll(' COMMA', ',');
-    formattedText = formattedText.replaceAll(' FULL-STOP', '.');
-    formattedText = formattedText.replaceAll(' FULL STOP', '.');
+
+    formattedText = formattedText.replaceAll('COMMA', ',');
     formattedText = formattedText.replaceAll('FULL-STOP', '.');
     formattedText = formattedText.replaceAll('FULL STOP ', '.');
-    formattedText = formattedText.replaceAll('NEW LINE ', '\n\n');
-    formattedText = formattedText.replaceAll('NEW LINE', '\n\n');
 
-    formattedText = formattedText.replaceAll(' PERIOD', '.');
-    formattedText = formattedText.replaceAll(' SLASH ', '/');
     formattedText = formattedText.replaceAll('PERIOD', '.');
     formattedText = formattedText.replaceAll('SLASH ', '/');
 
-    formattedText = formattedText.replaceAll('AMPERSAND', '&');
+    formattedText = formattedText.replaceAll('NEW LINE', '\n\n');
     formattedText = formattedText.replaceAll('START BRACKET', '(');
-    formattedText = formattedText.replaceAll(' FINISH BRACKET', ')');
     formattedText = formattedText.replaceAll('FINISH BRACKET', ')');
 
     formattedText = formattedText.replaceAll('START QUOTE', '"');
-    formattedText = formattedText.replaceAll(' FINISH QUOTE', '"');
     formattedText = formattedText.replaceAll('FINISH QUOTE', '"');
 
     formattedText = formattedText.replaceAll('MAKE POINT', '\n-');
@@ -92,6 +87,11 @@ extension TextFormatter on String {
 
     // Remove any extra whitespace
     formattedText = formattedText.replaceAll(RegExp(' {2,}'), ' ');
+
+    // Remove whitespace before punctuation marks
+    formattedText = formattedText.replaceAllMapped(
+        RegExp(r'\s+([.,!":)])'), (Match m) => m.group(1)!);
+
     return formattedText.capitalizeSentences().capitalizeNewLines();
   }
 }

@@ -35,7 +35,8 @@ class UntitledState {
   final List<Pair<String, double>> transcriptTextList;
   final int? highlightedSpanIndex;
 
-  String get transcriptText => transcriptTextList.map((p) => p.first).join(' ');
+  String get transcriptText =>
+      transcriptTextList.map((p) => p.first).join(' \n\n');
 
   final MicRecorder? micRecorder;
   final Leopard? leopard;

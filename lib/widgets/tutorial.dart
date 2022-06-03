@@ -4,30 +4,28 @@ import 'package:flutter_svg/svg.dart';
 import 'package:leopard_demo/widgets/quote.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../screens/settings.dart';
+import '../screens/settings_screen.dart';
 
 class Tutorial extends StatelessWidget {
+  final TextStyle defaultStyle =
+      TextStyle(fontSize: 15, color: Colors.black, height: 1.75);
   DEFAULT_SPAN(String content) {
-    return TextSpan(text: content, style: TextStyle(color: Colors.black));
-  }
-
-  QUOTE_SPAN(String content) {
-    return TextSpan(text: content, style: TextStyle(color: Colors.black));
+    return TextSpan(text: content, style: defaultStyle);
   }
 
   BOLD_SPAN(String content) {
     return TextSpan(
         text: content,
-        style: TextStyle(fontWeight: FontWeight.w800, color: Colors.black));
+        style: defaultStyle.merge(TextStyle(fontWeight: FontWeight.w800)));
   }
 
   URL_SPAN(String content) {
     return TextSpan(
       text: content,
-      style: TextStyle(
+      style: defaultStyle.merge(TextStyle(
         decoration: TextDecoration.underline,
         color: Colors.blue,
-      ),
+      )),
       recognizer: TapGestureRecognizer()
         ..onTap = () {
           launchUrl(Uri.parse(content));
@@ -35,7 +33,7 @@ class Tutorial extends StatelessWidget {
     );
   }
 
-  const Tutorial({Key? key}) : super(key: key);
+  Tutorial({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

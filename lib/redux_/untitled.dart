@@ -7,6 +7,7 @@ import 'package:leopard_demo/mic_recorder.dart';
 import 'package:leopard_demo/redux_/audio.dart';
 import 'package:leopard_demo/utils/extensions.dart';
 import 'package:leopard_demo/utils/global_variables.dart';
+import 'package:leopard_demo/utils/persistence.dart';
 
 import 'package:leopard_flutter/leopard.dart';
 import 'package:leopard_flutter/leopard_error.dart';
@@ -73,22 +74,24 @@ class UntitledState {
     );
   }
 
-  UntitledState copyWith(
-      {String? errorMessage,
-      bool? isRecording,
-      bool? isProcessing,
-      double? recordedLength,
-      String? statusAreaText,
-      List<int>? combinedFrame,
-      double? combinedDuration,
-      List<Pair<String, double>>? transcriptTextList,
-      int? highlightedSpanIndex,
-      MicRecorder? micRecorder,
-      Leopard? leopard,
-      File? file,
-      bool shouldOverrideFile = false}) {
+  UntitledState copyWith({
+    String? errorMessage,
+    bool? isRecording,
+    bool? isProcessing,
+    double? recordedLength,
+    String? statusAreaText,
+    List<int>? combinedFrame,
+    double? combinedDuration,
+    List<Pair<String, double>>? transcriptTextList,
+    int? highlightedSpanIndex,
+    MicRecorder? micRecorder,
+    Leopard? leopard,
+    File? file,
+    bool shouldOverrideFile = false,
+    bool shouldOverrideError = false,
+  }) {
     return UntitledState(
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: shouldOverrideError ? errorMessage : this.errorMessage,
       isRecording: isRecording ?? this.isRecording,
       isProcessing: isProcessing ?? this.isProcessing,
       recordedLength: recordedLength ?? this.recordedLength,
@@ -144,10 +147,6 @@ class UntitledState {
   }
 
   static ThunkAction<AppState> initLeopard = (Store<AppState> store) async {
-    if (store.state.untitled.leopard != null &&
-        store.state.untitled.micRecorder != null) {
-      return;
-    }
     String platform = Platform.isAndroid
         ? "android"
         : Platform.isIOS
@@ -157,6 +156,7 @@ class UntitledState {
     String modelPath = "assets/models/ios/myModel-leopard.pv";
 
     try {
+      final accessKey = await Settings.getAccessKey();
       final leopard = await Leopard.create(accessKey, modelPath);
       final micRecorder = await MicRecorder.create(
           leopard.sampleRate, store.state.untitled.errorCallback);
@@ -165,9 +165,9 @@ class UntitledState {
     } on LeopardInvalidArgumentException catch (ex) {
       print('ERROR');
       store.state.untitled.errorCallback(LeopardInvalidArgumentException(
-          "Invalid Access Key." +
-              "\nPlease check that the access key entered in the Settings corresponds to " +
-              "the one in the Picovoice Console (https://console.picovoice.ai/). "));
+          "Invalid Access Key.\n"
+          "Please check that the access key entered in the Settings corresponds to "
+          "the one in the Picovoice Console (https://console.picovoice.ai/). "));
     } on LeopardActivationException {
       store.state.untitled.errorCallback(
           LeopardActivationException("Access Key activation error."));
@@ -420,7 +420,10 @@ UntitledState untitledReducer(UntitledState prevState, action) {
   }
   if (action is InitAction) {
     return prevState.copyWith(
-        leopard: action.leopard, micRecorder: action.micRecorder);
+        leopard: action.leopard,
+        micRecorder: action.micRecorder,
+        errorMessage: null,
+        shouldOverrideError: true);
   } else if (action is HighlightSpanAtIndex) {
     return prevState.copyWith(highlightedSpanIndex: action.index);
   } else if (action is AudioFileChangeAction) {
@@ -468,7 +471,8 @@ UntitledState untitledReducer(UntitledState prevState, action) {
         combinedFrame: action.combinedFrame,
         combinedDuration: action.combinedDuration);
   } else if (action is ErrorCallbackAction) {
-    return prevState.copyWith(errorMessage: action.errorMessage);
+    return prevState.copyWith(
+        errorMessage: action.errorMessage, shouldOverrideError: true);
   } else if (action is AudioPositionChangeAction) {
     final int highlightIndex = prevState.transcriptTextList.lastIndexWhere(
         // We do not want the edge cases due to rounding errors

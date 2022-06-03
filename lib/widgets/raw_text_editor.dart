@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
 import 'package:leopard_demo/redux_/untitled.dart';
 import 'package:leopard_demo/utils/extensions.dart';
+import 'package:leopard_demo/widgets/just_audio_player.dart';
 
 import '../utils/pair.dart';
 
@@ -36,8 +39,9 @@ class _RawTextEditorState extends State<RawTextEditor> {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, RawTextFieldVM>(
-        converter: (store) =>
-            RawTextFieldVM(store.state.untitled.highlightedSpanIndex),
+        converter: (store) => RawTextFieldVM(
+            store.state.untitled.highlightedSpanIndex,
+            store.state.untitled.recordedLength),
         builder: (_, viewModel) {
           TextStyle shouldHighlightSpan() {
             if (viewModel.highlightedSpanIndex == widget.index) {
@@ -57,9 +61,20 @@ class _RawTextEditorState extends State<RawTextEditor> {
                 maxLines: null,
                 style: shouldHighlightSpan(),
                 decoration: InputDecoration(
-                    prefixText:
-                        '${Duration(seconds: widget.partialTranscript.second.toInt()).toAudioDurationString()}  ',
-                    prefixStyle: TextStyle(color: Colors.grey)),
+                    prefix: GestureDetector(
+                        child: Text(
+                            '${Duration(seconds: widget.partialTranscript.second.toInt()).toAudioDurationString()}  ',
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.normal)),
+                        onTap: () {
+                          final seekTimeInMS = min(viewModel.audioDuration,
+                                  widget.partialTranscript.second) *
+                              1000;
+                          print('seeking: ${seekTimeInMS / 1000}s');
+                          JustAudioPlayerWidgetState.player.seek(
+                              Duration(milliseconds: seekTimeInMS.toInt()));
+                        })),
                 controller: _textEditingController),
           );
         });
@@ -68,15 +83,19 @@ class _RawTextEditorState extends State<RawTextEditor> {
 
 class RawTextFieldVM {
   int? highlightedSpanIndex;
-  RawTextFieldVM(this.highlightedSpanIndex);
+  double audioDuration;
+
+  RawTextFieldVM(this.highlightedSpanIndex, this.audioDuration);
+
   @override
   bool operator ==(other) {
     return (other is RawTextFieldVM) &&
-        (highlightedSpanIndex == other.highlightedSpanIndex);
+        (highlightedSpanIndex == other.highlightedSpanIndex) &&
+        (audioDuration == other.audioDuration);
   }
 
   @override
   int get hashCode {
-    return highlightedSpanIndex.hashCode;
+    return Object.hash(highlightedSpanIndex, audioDuration);
   }
 }

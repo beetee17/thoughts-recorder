@@ -33,27 +33,28 @@ class _FormattedTextViewState extends State<FormattedTextView> {
                   .map((index, pair) {
                     final List<String> words = pair.first.split(' ');
 
-                    Iterable<InlineSpan> sentenceSpans = words.map((word) {
-                      void onTapSpan() {
-                        print("Text: $pair tapped");
-                        final seekTimeInMS =
-                            min(viewModel.audioDuration, pair.second) * 1000;
-                        print('seeking: ${seekTimeInMS / 1000}s');
-                        JustAudioPlayerWidgetState.player
-                            .seek(Duration(milliseconds: seekTimeInMS.toInt()));
-                      }
+                    List<InlineSpan> sentenceSpans = List.empty(growable: true);
 
-                      TextStyle shouldHighlightSpan() {
-                        if (viewModel.highlightedSpanIndex == index) {
-                          return TextStyle(color: Colors.black);
-                        }
-                        return TextStyle(color: Colors.black38);
-                      }
+                    void onTapSpan() {
+                      print("Text: $pair tapped");
+                      final seekTimeInMS =
+                          min(viewModel.audioDuration, pair.second) * 1000;
+                      print('seeking: ${seekTimeInMS / 1000}s');
+                      JustAudioPlayerWidgetState.player
+                          .seek(Duration(milliseconds: seekTimeInMS.toInt()));
+                    }
 
-                      return WidgetSpan(
-                          child: AnimatedDefaultTextStyle(
+                    TextStyle shouldHighlightSpan() {
+                      if (viewModel.highlightedSpanIndex == index) {
+                        return TextStyle(color: Colors.black);
+                      }
+                      return TextStyle(color: Colors.black38);
+                    }
+
+                    Widget defaultSpan(String text) {
+                      return AnimatedDefaultTextStyle(
                         child: GestureDetector(
-                          child: Text('$word '),
+                          child: Text('$text '),
                           onTap: onTapSpan,
                         ),
                         style: GoogleFonts.rubik(
@@ -62,8 +63,24 @@ class _FormattedTextViewState extends State<FormattedTextView> {
                                 height: 1.4)
                             .merge(shouldHighlightSpan()),
                         duration: Duration(milliseconds: 300),
-                      ));
-                    });
+                      );
+                    }
+
+                    for (final word in words) {
+                      if (word.contains('\n')) {
+                        Iterable<InlineSpan> spans =
+                            word.split('\n').map((text) {
+                          return WidgetSpan(
+                              child: text.isEmpty
+                                  ? SizedBox(height: 10, width: double.infinity)
+                                  : defaultSpan(text));
+                        });
+                        sentenceSpans.addAll(spans);
+                      } else {
+                        sentenceSpans.add(WidgetSpan(child: defaultSpan(word)));
+                      }
+                    }
+
                     return MapEntry(index, sentenceSpans);
                   })
                   .values

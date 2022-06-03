@@ -36,6 +36,8 @@ extension TextFormatter on String {
     formattedText = formattedText.replaceAll('FULL STOP ', '.');
 
     formattedText = formattedText.replaceAll('PERIOD', '.');
+    formattedText = formattedText.replaceAll('QUESTION MARK', '?');
+    formattedText = formattedText.replaceAll('EXCLAMATION MARK', '!');
     formattedText = formattedText.replaceAll('SLASH ', '/');
 
     formattedText = formattedText.replaceAll('NEW LINE', '\n\n');
@@ -58,9 +60,6 @@ extension TextFormatter on String {
     // Deletes word preceding BACKSPACE
     formattedText =
         formattedText.replaceAll(RegExp(r'\w+(?= +BACKSPACE\b)'), '');
-
-    // Remove any extra whitespace
-    formattedText = formattedText.replaceAll(RegExp(' {2,}'), ' ');
 
     // Remove whitespace before punctuation marks
     formattedText = formattedText.replaceAllMapped(

@@ -19,8 +19,8 @@ extension StringCasingExtension on String {
 }
 
 extension TextFormatter on String {
-  static List<Pair<String, double>> formatTextList(
-      List<Pair<String, double>> transcriptTextList) {
+  static List<Pair<String, Duration>> formatTextList(
+      List<Pair<String, Duration>> transcriptTextList) {
     final tmp = transcriptTextList
         .map((pair) =>
             pair.map((first) => first.formatText(), (second) => second))
@@ -69,7 +69,15 @@ extension TextFormatter on String {
   }
 }
 
-extension DurationExtension on Duration {
+extension DurationUtils on Duration {
+  static Duration min(Duration a, Duration b) {
+    return a < b ? a : b;
+  }
+
+  static Duration max(Duration a, Duration b) {
+    return a > b ? a : b;
+  }
+
   String toAudioDurationString() {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     int hours = this.inHours;

@@ -33,7 +33,7 @@ class SaveTranscriptButton extends StatelessWidget {
 }
 
 class SaveTranscriptButtonVM {
-  List<Pair<String, double>> transcriptTextList;
+  List<Pair<String, Duration>> transcriptTextList;
 
   SaveTranscriptButtonVM(this.transcriptTextList);
   @override

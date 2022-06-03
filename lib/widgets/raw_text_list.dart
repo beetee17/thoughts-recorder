@@ -39,7 +39,7 @@ class _RawTextListState extends State<RawTextList> {
 }
 
 class RawTextListVM {
-  List<Pair<String, double>> transcriptTextList;
+  List<Pair<String, Duration>> transcriptTextList;
   RawTextListVM(this.transcriptTextList);
   @override
   bool operator ==(other) {

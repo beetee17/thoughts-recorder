@@ -161,7 +161,7 @@ class _HomeState extends State<Home> {
 
 class HomeVM {
   String transcriptText;
-  List<Pair<String, double>> transcriptTextList;
+  List<Pair<String, Duration>> transcriptTextList;
   String? errorMessage;
   HomeVM(this.transcriptText, this.transcriptTextList, this.errorMessage);
 

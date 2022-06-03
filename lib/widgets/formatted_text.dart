@@ -30,50 +30,54 @@ class _FormattedTextViewState extends State<FormattedTextView> {
             store.state.untitled.highlightedSpanIndex,
             store.state.audio.duration),
         builder: (_, viewModel) {
-          List<InlineSpan> spans =
+          List<InlineSpan> allSpans =
               TextFormatter.formatTextList(viewModel.transcriptTextList)
                   .asMap()
                   .map((index, pair) {
-                    void onTapSpan() {
-                      print("Text: ${pair.first} tapped");
-                      final seekTimeInMS = min(
-                          viewModel.audioDuration.toDouble(),
-                          pair.second * 1000);
-                      print('seeking: ${seekTimeInMS / 1000}s');
-                      AudioState.seek(seekTimeInMS);
-                    }
+                    final List<String> words = pair.first.split(' ');
 
-                    TextStyle shouldHighlightSpan() {
-                      if (viewModel.highlightedSpanIndex == index) {
-                        return TextStyle(color: Colors.black);
+                    Iterable<InlineSpan> sentenceSpans = words.map((word) {
+                      void onTapSpan() {
+                        print("Text: $word tapped");
+                        final seekTimeInMS = min(
+                            viewModel.audioDuration.toDouble(),
+                            pair.second * 1000);
+                        print('seeking: ${seekTimeInMS / 1000}s');
+                        AudioState.seek(seekTimeInMS);
                       }
-                      return TextStyle(color: Colors.black38);
-                    }
 
-                    InlineSpan span = WidgetSpan(
-                        child: AnimatedDefaultTextStyle(
-                      child: GestureDetector(
-                        child: Text('${pair.first} '),
-                        onTap: onTapSpan,
-                      ),
-                      style: GoogleFonts.rubik(
-                              fontSize: 28,
-                              fontWeight: FontWeight.w500,
-                              height: 1.4)
-                          .merge(shouldHighlightSpan()),
-                      duration: Duration(milliseconds: 300),
-                    ));
+                      TextStyle shouldHighlightSpan() {
+                        if (viewModel.highlightedSpanIndex == index) {
+                          return TextStyle(color: Colors.black);
+                        }
+                        return TextStyle(color: Colors.black38);
+                      }
 
-                    return MapEntry(index, span);
+                      return WidgetSpan(
+                          child: AnimatedDefaultTextStyle(
+                        child: GestureDetector(
+                          child: Text('$word '),
+                          onTap: onTapSpan,
+                        ),
+                        style: GoogleFonts.rubik(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w500,
+                                height: 1.4)
+                            .merge(shouldHighlightSpan()),
+                        duration: Duration(milliseconds: 300),
+                      ));
+                    });
+                    return MapEntry(index, sentenceSpans);
                   })
                   .values
+                  .expand((element) => element) // flattens nested list
                   .toList();
 
           return Container(
             child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 physics: RangeMaintainingScrollPhysics(),
-                child: RichText(text: TextSpan(children: spans))),
+                child: RichText(text: TextSpan(children: allSpans))),
           );
         });
   }

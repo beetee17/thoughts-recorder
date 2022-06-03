@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:leopard_demo/widgets/raw_text.dart';
+import 'package:leopard_demo/widgets/raw_text_list.dart';
 import 'package:leopard_demo/widgets/save_transcript_button.dart';
 import 'package:leopard_demo/widgets/secondary_icon_button.dart';
 

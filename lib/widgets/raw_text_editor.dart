@@ -6,51 +6,18 @@ import 'package:leopard_demo/utils/extensions.dart';
 
 import '../utils/pair.dart';
 
-class RawTextList extends StatefulWidget {
-  const RawTextList({Key? key}) : super(key: key);
-
-  @override
-  State<RawTextList> createState() => _RawTextListState();
-}
-
-class _RawTextListState extends State<RawTextList> {
-  @override
-  Widget build(BuildContext context) {
-    return StoreConnector<AppState, RawTextListVM>(
-        converter: ((store) =>
-            RawTextListVM(store.state.untitled.transcriptTextList)),
-        distinct: true,
-        builder: (_, viewModel) {
-          return ListView(
-            children: viewModel.transcriptTextList
-                .asMap()
-                .map((index, partialTranscript) {
-                  return MapEntry(
-                      index,
-                      RawTextField(
-                        index: index,
-                        partialTranscript: partialTranscript,
-                      ));
-                })
-                .values
-                .toList(),
-          );
-        });
-  }
-}
-
-class RawTextField extends StatefulWidget {
+class RawTextEditor extends StatefulWidget {
   final int index;
   final Pair<String, double> partialTranscript;
-  const RawTextField(
+  const RawTextEditor(
       {Key? key, required this.partialTranscript, required this.index})
       : super(key: key);
 
   @override
-  State<RawTextField> createState() => _RawTextFieldState();
+  State<RawTextEditor> createState() => _RawTextEditorState();
 }
 
-class _RawTextFieldState extends State<RawTextField> {
+class _RawTextEditorState extends State<RawTextEditor> {
   late TextEditingController _textEditingController;
 
   @override
@@ -96,21 +63,6 @@ class _RawTextFieldState extends State<RawTextField> {
                 controller: _textEditingController),
           );
         });
-  }
-}
-
-class RawTextListVM {
-  List<Pair<String, double>> transcriptTextList;
-  RawTextListVM(this.transcriptTextList);
-  @override
-  bool operator ==(other) {
-    return (other is RawTextListVM) &&
-        (transcriptTextList == other.transcriptTextList);
-  }
-
-  @override
-  int get hashCode {
-    return transcriptTextList.hashCode;
   }
 }
 

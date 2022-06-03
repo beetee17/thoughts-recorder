@@ -67,7 +67,7 @@ class MicRecorder {
         final Duration recordedLength = Duration(
             milliseconds: (_pcmData.length / _sampleRate * 1000).toInt());
         store.dispatch(StatusTextChangeAction(
-            "Recording : ${(recordedLength.inMilliseconds * 1000).toStringAsFixed(1)} / $maxRecordingLengthSecs seconds"));
+            "Recording : ${(recordedLength.inMilliseconds / 1000).toStringAsFixed(1)} / $maxRecordingLengthSecs seconds"));
         store.dispatch(getRecordedCallback(recordedLength, combinedFrame));
         combinedFrame = [];
       } else {

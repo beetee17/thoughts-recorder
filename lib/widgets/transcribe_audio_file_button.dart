@@ -9,8 +9,7 @@ class TranscribeAudioFileButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, TranscribeAudioFileButtonVM>(
-      converter: (store) => TranscribeAudioFileButtonVM(
-          store.state.audio.duration, store.state.untitled),
+      converter: (store) => TranscribeAudioFileButtonVM(store.state.untitled),
       builder: (_, viewModel) {
         return Padding(
           padding: const EdgeInsets.all(10.0),
@@ -25,18 +24,15 @@ class TranscribeAudioFileButton extends StatelessWidget {
 }
 
 class TranscribeAudioFileButtonVM {
-  int audioFileDuration;
   UntitledState state;
-  TranscribeAudioFileButtonVM(this.audioFileDuration, this.state);
+  TranscribeAudioFileButtonVM(this.state);
   @override
   bool operator ==(other) {
-    return (other is TranscribeAudioFileButtonVM) &&
-        (audioFileDuration == other.audioFileDuration) &&
-        (state == other.state);
+    return (other is TranscribeAudioFileButtonVM) && (state == other.state);
   }
 
   @override
   int get hashCode {
-    return Object.hash(audioFileDuration, state);
+    return state.hashCode;
   }
 }

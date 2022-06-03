@@ -10,7 +10,6 @@ environment:
   flutter: ">=2.8.1"
 
 dependencies:
-  audioplayers: ^0.20.1
   cupertino_icons: ^1.0.0
   ffmpeg_kit_flutter: ^4.5.1
   file_picker: ^4.5.1
@@ -21,6 +20,7 @@ dependencies:
   flutter_svg: ^1.1.0
   flutter_voice_processor: ^1.0.7
   google_fonts: ^3.0.1
+  just_audio: ^0.9.24
   leopard_flutter: ^1.0.3
   modal_bottom_sheet: ^2.0.1
   path_provider: ^2.0.10

@@ -64,12 +64,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     textAlign: TextAlign.end,
                                     autocorrect: false,
                                     onSubmitted: (newKey) {
-                                      print("SUBMITED $newKey");
                                       Settings.setAccessKey(newKey)
                                           .then((bool success) {
-                                        store.dispatch(
-                                            UntitledState.initLeopard);
-                                        print(success);
+                                        showDialog(
+                                          barrierDismissible: false,
+                                          builder: (ctx) => const Center(
+                                              child:
+                                                  CircularProgressIndicator()),
+                                          context: context,
+                                        );
+                                        InitLeopardAction().call(store).then(
+                                            (value) =>
+                                                Navigator.of(context).pop());
                                       });
                                     },
                                   ),
@@ -119,17 +125,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 value: UNEDITABLE_TEXT(r'\n\n- '),
                               ),
                             ],
-                          ),
-                          SettingsSection(tiles: [
-                            SettingsTile(
-                              title: Text('Restart'),
-                              trailing: IconButton(
-                                  onPressed: () {
-                                    store.dispatch(UntitledState.initLeopard);
-                                  },
-                                  icon: Icon(Icons.refresh_rounded)),
-                            )
-                          ])
+                          )
                         ],
                       ),
                     ),

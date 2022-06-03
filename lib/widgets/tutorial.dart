@@ -130,7 +130,7 @@ class Tutorial extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: FAQ,
           ),
         ],

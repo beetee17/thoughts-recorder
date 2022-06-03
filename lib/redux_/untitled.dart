@@ -23,7 +23,7 @@ class UntitledState {
 
   final bool isProcessing;
 
-  final Duration recordedLength;
+  final Duration audioDuration;
 
   final String statusAreaText;
 
@@ -48,7 +48,7 @@ class UntitledState {
       required this.file,
       required this.isRecording,
       required this.isProcessing,
-      required this.recordedLength,
+      required this.audioDuration,
       required this.statusAreaText,
       required this.combinedFrame,
       required this.combinedDuration,
@@ -65,7 +65,7 @@ class UntitledState {
       isRecording: false,
       leopard: null,
       micRecorder: null,
-      recordedLength: Duration.zero,
+      audioDuration: Duration.zero,
       statusAreaText: 'No audio file',
       transcriptTextList: [],
     );
@@ -91,7 +91,7 @@ class UntitledState {
       errorMessage: shouldOverrideError ? errorMessage : this.errorMessage,
       isRecording: isRecording ?? this.isRecording,
       isProcessing: isProcessing ?? this.isProcessing,
-      recordedLength: recordedLength ?? this.recordedLength,
+      audioDuration: recordedLength ?? this.audioDuration,
       statusAreaText: statusAreaText ?? this.statusAreaText,
       combinedFrame: combinedFrame ?? this.combinedFrame,
       combinedDuration: combinedDuration ?? this.combinedDuration,
@@ -114,7 +114,7 @@ class UntitledState {
         (errorMessage == other.errorMessage) &&
         (isRecording == other.isRecording) &&
         (isProcessing == other.isProcessing) &&
-        (recordedLength == other.recordedLength) &&
+        (audioDuration == other.audioDuration) &&
         (statusAreaText == other.statusAreaText) &&
         (combinedFrame == other.combinedFrame) &&
         (combinedDuration == other.combinedDuration) &&
@@ -137,7 +137,7 @@ class UntitledState {
       isRecording,
       leopard,
       micRecorder,
-      recordedLength,
+      audioDuration,
       statusAreaText,
       transcriptTextList,
     );
@@ -340,7 +340,7 @@ ThunkAction<AppState> processRemainingFrames = (Store<AppState> store) async {
   remainingFrames.addAll(state.micRecorder!.combinedFrame);
 
   final Duration startTime = DurationUtils.max(
-      Duration.zero, state.recordedLength - state.combinedDuration);
+      Duration.zero, state.audioDuration - state.combinedDuration);
   final remainingTranscript =
       await state.processCombined(state.combinedFrame, startTime);
   if (remainingTranscript.first.trim().isNotEmpty) {

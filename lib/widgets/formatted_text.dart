@@ -25,7 +25,7 @@ class _FormattedTextViewState extends State<FormattedTextView> {
             store.state.untitled.transcriptText,
             store.state.untitled.highlightSpan,
             store.state.untitled.highlightedSpanIndex,
-            store.state.untitled.recordedLength),
+            store.state.untitled.audioDuration),
         builder: (_, viewModel) {
           List<InlineSpan> allSpans =
               TextFormatter.formatTextList(viewModel.transcriptTextList)

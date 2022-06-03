@@ -41,7 +41,7 @@ class _RawTextEditorState extends State<RawTextEditor> {
     return StoreConnector<AppState, RawTextFieldVM>(
         converter: (store) => RawTextFieldVM(
             store.state.untitled.highlightedSpanIndex,
-            store.state.untitled.recordedLength),
+            store.state.untitled.audioDuration),
         builder: (_, viewModel) {
           TextStyle shouldHighlightSpan() {
             if (viewModel.highlightedSpanIndex == widget.index) {

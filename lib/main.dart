@@ -60,7 +60,14 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     Settings.setAccessKey(debugAccessKey).then((bool success) {
-      store.dispatch(UntitledState.initLeopard);
+      showDialog(
+        barrierDismissible: false,
+        builder: (ctx) => const Center(child: CircularProgressIndicator()),
+        context: context,
+      );
+      InitLeopardAction()
+          .call(store)
+          .then((value) => Navigator.of(context).pop());
     });
   }
 

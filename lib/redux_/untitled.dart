@@ -143,45 +143,6 @@ class UntitledState {
     );
   }
 
-  static ThunkAction<AppState> initLeopard = (Store<AppState> store) async {
-    String platform = Platform.isAndroid
-        ? "android"
-        : Platform.isIOS
-            ? "ios"
-            : throw LeopardRuntimeException(
-                "This demo supports iOS and Android only.");
-    String modelPath = "assets/models/ios/myModel-leopard.pv";
-
-    try {
-      final accessKey = await Settings.getAccessKey();
-      final leopard = await Leopard.create(accessKey, modelPath);
-      final micRecorder = await MicRecorder.create(
-          leopard.sampleRate, store.state.untitled.errorCallback);
-      print('dispatching $leopard and $micRecorder');
-      store.dispatch(InitAction(leopard, micRecorder));
-    } on LeopardInvalidArgumentException catch (ex) {
-      print('ERROR');
-      store.state.untitled.errorCallback(LeopardInvalidArgumentException(
-          "Invalid Access Key.\n"
-          "Please check that the access key entered in the Settings corresponds to "
-          "the one in the Picovoice Console (https://console.picovoice.ai/). "));
-    } on LeopardActivationException {
-      store.state.untitled.errorCallback(
-          LeopardActivationException("Access Key activation error."));
-    } on LeopardActivationLimitException {
-      store.state.untitled.errorCallback(LeopardActivationLimitException(
-          "Access Key has reached its device limit."));
-    } on LeopardActivationRefusedException {
-      store.state.untitled.errorCallback(
-          LeopardActivationRefusedException("Access Key was refused."));
-    } on LeopardActivationThrottledException {
-      store.state.untitled.errorCallback(LeopardActivationThrottledException(
-          "Access Key has been throttled."));
-    } on LeopardException catch (ex) {
-      store.state.untitled.errorCallback(ex);
-    }
-  };
-
   void highlightSpan(int index) {
     store.dispatch(HighlightSpanAtIndex(index));
   }
@@ -268,6 +229,48 @@ class InitAction {
   Leopard leopard;
   MicRecorder micRecorder;
   InitAction(this.leopard, this.micRecorder);
+}
+
+class InitLeopardAction implements CallableThunkAction<AppState> {
+  @override
+  Future<void> call(Store<AppState> store) async {
+    String platform = Platform.isAndroid
+        ? "android"
+        : Platform.isIOS
+            ? "ios"
+            : throw LeopardRuntimeException(
+                "This demo supports iOS and Android only.");
+    String modelPath = "assets/models/ios/myModel-leopard.pv";
+
+    try {
+      final accessKey = await Settings.getAccessKey();
+      final leopard = await Leopard.create(accessKey, modelPath);
+      final micRecorder = await MicRecorder.create(
+          leopard.sampleRate, store.state.untitled.errorCallback);
+      print('dispatching $leopard and $micRecorder');
+      store.dispatch(InitAction(leopard, micRecorder));
+    } on LeopardInvalidArgumentException catch (ex) {
+      print('ERROR');
+      store.state.untitled.errorCallback(LeopardInvalidArgumentException(
+          "Invalid Access Key.\n"
+          "Please check that the access key entered in the Settings corresponds to "
+          "the one in the Picovoice Console (https://console.picovoice.ai/). "));
+    } on LeopardActivationException {
+      store.state.untitled.errorCallback(
+          LeopardActivationException("Access Key activation error."));
+    } on LeopardActivationLimitException {
+      store.state.untitled.errorCallback(LeopardActivationLimitException(
+          "Access Key has reached its device limit."));
+    } on LeopardActivationRefusedException {
+      store.state.untitled.errorCallback(
+          LeopardActivationRefusedException("Access Key was refused."));
+    } on LeopardActivationThrottledException {
+      store.state.untitled.errorCallback(LeopardActivationThrottledException(
+          "Access Key has been throttled."));
+    } on LeopardException catch (ex) {
+      store.state.untitled.errorCallback(ex);
+    }
+  }
 }
 
 class HighlightSpanAtIndex {

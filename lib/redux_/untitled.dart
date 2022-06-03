@@ -472,7 +472,7 @@ UntitledState untitledReducer(UntitledState prevState, action) {
     final int highlightIndex = prevState.transcriptTextList.lastIndexWhere(
         // We do not want the edge cases due to rounding errors
         (pair) =>
-            pair.second * 950 < action.newPosition.inMilliseconds.toDouble());
+            pair.second * 1000 <= action.newPosition.inMilliseconds.toDouble());
     return prevState.copyWith(highlightedSpanIndex: highlightIndex);
   } else if (action is StatusTextChangeAction) {
     return prevState.copyWith(statusAreaText: action.statusText);

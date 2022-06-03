@@ -30,7 +30,7 @@ class _FormattedTextViewState extends State<FormattedTextView> {
             store.state.untitled.highlightedSpanIndex,
             store.state.audio.duration),
         builder: (_, viewModel) {
-          List<TextSpan> spans =
+          List<InlineSpan> spans =
               TextFormatter.formatTextList(viewModel.transcriptTextList)
                   .asMap()
                   .map((index, pair) {
@@ -47,17 +47,23 @@ class _FormattedTextViewState extends State<FormattedTextView> {
                       if (viewModel.highlightedSpanIndex == index) {
                         return TextStyle(color: Colors.black);
                       }
-                      return TextStyle(color: Colors.black54);
+                      return TextStyle(color: Colors.black38);
                     }
 
-                    TextSpan span = TextSpan(
-                        text: '${pair.first} ',
-                        recognizer: TapGestureRecognizer()..onTap = onTapSpan,
-                        style: GoogleFonts.rubik(
-                                fontSize: 28,
-                                fontWeight: FontWeight.w500,
-                                height: 1.4)
-                            .merge(shouldHighlightSpan()));
+                    InlineSpan span = WidgetSpan(
+                        child: AnimatedDefaultTextStyle(
+                      child: GestureDetector(
+                        child: Text('${pair.first} '),
+                        onTap: onTapSpan,
+                      ),
+                      style: GoogleFonts.rubik(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w500,
+                              height: 1.4)
+                          .merge(shouldHighlightSpan()),
+                      duration: Duration(milliseconds: 300),
+                    ));
+
                     return MapEntry(index, span);
                   })
                   .values

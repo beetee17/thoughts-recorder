@@ -108,10 +108,27 @@ class ErrorMessage extends StatelessWidget {
                         expand: true,
                         context: context,
                         builder: (context) => SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 40.0, horizontal: 10.0),
-                            child: FAQ,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 20.0, bottom: 20),
+                                child: Material(
+                                  child: Text(
+                                    'Getting Started',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child: FAQ,
+                              ),
+                            ],
                           ),
                         ),
                       ),

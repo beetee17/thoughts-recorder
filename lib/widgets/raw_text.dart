@@ -68,21 +68,34 @@ class _RawTextFieldState extends State<RawTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 0),
-      child: TextField(
-          onChanged: (updatedText) {
-            store.dispatch(UpdateTranscriptTextList(widget.index,
-                Pair(updatedText, widget.partialTranscript.second)));
-          },
-          maxLines: null,
-          decoration: InputDecoration(
-              // border: InputBorder.none,
-              prefixText:
-                  '${Duration(seconds: widget.partialTranscript.second.toInt()).toAudioDurationString()}  ',
-              prefixStyle: TextStyle(color: Colors.grey)),
-          controller: _textEditingController),
-    );
+    return StoreConnector<AppState, RawTextFieldVM>(
+        converter: (store) =>
+            RawTextFieldVM(store.state.untitled.highlightedSpanIndex),
+        builder: (_, viewModel) {
+          TextStyle shouldHighlightSpan() {
+            if (viewModel.highlightedSpanIndex == widget.index) {
+              return TextStyle(
+                  color: Colors.black, fontWeight: FontWeight.bold);
+            }
+            return TextStyle(color: Color.fromARGB(205, 0, 0, 0));
+          }
+
+          return Container(
+            padding: EdgeInsets.symmetric(vertical: 0),
+            child: TextField(
+                onChanged: (updatedText) {
+                  store.dispatch(UpdateTranscriptTextList(widget.index,
+                      Pair(updatedText, widget.partialTranscript.second)));
+                },
+                maxLines: null,
+                style: shouldHighlightSpan(),
+                decoration: InputDecoration(
+                    prefixText:
+                        '${Duration(seconds: widget.partialTranscript.second.toInt()).toAudioDurationString()}  ',
+                    prefixStyle: TextStyle(color: Colors.grey)),
+                controller: _textEditingController),
+          );
+        });
   }
 }
 
@@ -98,5 +111,20 @@ class RawTextListVM {
   @override
   int get hashCode {
     return transcriptTextList.hashCode;
+  }
+}
+
+class RawTextFieldVM {
+  int? highlightedSpanIndex;
+  RawTextFieldVM(this.highlightedSpanIndex);
+  @override
+  bool operator ==(other) {
+    return (other is RawTextFieldVM) &&
+        (highlightedSpanIndex == other.highlightedSpanIndex);
+  }
+
+  @override
+  int get hashCode {
+    return highlightedSpanIndex.hashCode;
   }
 }

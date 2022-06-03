@@ -26,6 +26,7 @@ import 'package:leopard_demo/widgets/status_area.dart';
 import 'package:leopard_demo/widgets/text_area.dart';
 //Import the font package
 import 'package:google_fonts/google_fonts.dart';
+import 'package:leopard_demo/widgets/tutorial.dart';
 
 void main() {
   runApp(MyApp());
@@ -102,6 +103,20 @@ class _HomeState extends State<Home> {
               child: Scaffold(
                 appBar: AppBar(
                   title: const Text('Transcript'),
+                  leading: IconButton(
+                    icon: Icon(
+                      Icons.info_outline_rounded,
+                      color: Colors.black,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Scaffold(
+                                  appBar: AppBar(title: Text("Tutorial")),
+                                  body: const Tutorial())));
+                    },
+                  ),
                   actions: <Widget>[
                     IconButton(
                       icon: Icon(

@@ -4,6 +4,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:leopard_demo/widgets/quote.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../screens/settings.dart';
+
 class Tutorial extends StatelessWidget {
   DEFAULT_SPAN(String content) {
     return TextSpan(text: content, style: TextStyle(color: Colors.black));
@@ -26,7 +28,7 @@ class Tutorial extends StatelessWidget {
         decoration: TextDecoration.underline,
         color: Colors.blue,
       ),
-      recognizer: new TapGestureRecognizer()
+      recognizer: TapGestureRecognizer()
         ..onTap = () {
           launchUrl(Uri.parse(content));
         },
@@ -48,6 +50,35 @@ class Tutorial extends StatelessWidget {
         ),
       ),
     ));
+    final InlineSpan SETTINGS_SPAN = WidgetSpan(
+        child: GestureDetector(
+            onTap: () {
+              print("PUSHED");
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SettingsScreen()));
+            },
+            child: RichText(
+              text: TextSpan(children: [
+                TextSpan(
+                  text: 'Settings',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w800, color: Colors.black),
+                ),
+                WidgetSpan(
+                  child: SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: Icon(
+                      Icons.settings,
+                      color: Colors.black,
+                      size: 20,
+                    ),
+                  ),
+                )
+              ]),
+            )));
 
     final RichText FAQ = RichText(
         text: TextSpan(children: [
@@ -81,7 +112,8 @@ class Tutorial extends StatelessWidget {
           "To get started, sign up for a Picovoice account at "),
       URL_SPAN("https://console.picovoice.ai"),
       DEFAULT_SPAN(
-          "\n\nAfter creating your free account, paste your unique access key into the Settings page.")
+          "\n\nAfter creating your free account, paste your unique access key into "),
+      SETTINGS_SPAN
     ]));
 
     return SingleChildScrollView(

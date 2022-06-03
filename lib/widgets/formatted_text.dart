@@ -1,15 +1,13 @@
 import 'dart:math';
-import 'dart:ui';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:leopard_demo/utils/extensions.dart';
 
-import '../redux_/audio.dart';
 import '../redux_/rootStore.dart';
 import '../utils/pair.dart';
+import 'just_audio_player.dart';
 
 class FormattedTextView extends StatefulWidget {
   final String text;
@@ -28,7 +26,7 @@ class _FormattedTextViewState extends State<FormattedTextView> {
             store.state.untitled.transcriptText,
             store.state.untitled.highlightSpan,
             store.state.untitled.highlightedSpanIndex,
-            store.state.audio.duration),
+            store.state.untitled.recordedLength),
         builder: (_, viewModel) {
           List<InlineSpan> allSpans =
               TextFormatter.formatTextList(viewModel.transcriptTextList)
@@ -38,12 +36,12 @@ class _FormattedTextViewState extends State<FormattedTextView> {
 
                     Iterable<InlineSpan> sentenceSpans = words.map((word) {
                       void onTapSpan() {
-                        print("Text: $word tapped");
-                        final seekTimeInMS = min(
-                            viewModel.audioDuration.toDouble(),
-                            pair.second * 1000);
+                        print("Text: $pair tapped");
+                        final seekTimeInMS =
+                            min(viewModel.audioDuration, pair.second) * 1000;
                         print('seeking: ${seekTimeInMS / 1000}s');
-                        AudioState.seek(seekTimeInMS);
+                        JustAudioPlayerWidgetState.player
+                            .seek(Duration(milliseconds: seekTimeInMS.toInt()));
                       }
 
                       TextStyle shouldHighlightSpan() {
@@ -88,7 +86,7 @@ class FormattedTextVM {
   String text;
   void Function(int) highlightSpan;
   int? highlightedSpanIndex;
-  int audioDuration;
+  double audioDuration;
   FormattedTextVM(this.transcriptTextList, this.text, this.highlightSpan,
       this.highlightedSpanIndex, this.audioDuration);
   @override

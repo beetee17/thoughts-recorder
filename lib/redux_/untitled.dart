@@ -1,10 +1,8 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:leopard_demo/mic_recorder.dart';
-import 'package:leopard_demo/redux_/audio.dart';
 import 'package:leopard_demo/utils/extensions.dart';
 import 'package:leopard_demo/utils/global_variables.dart';
 import 'package:leopard_demo/utils/persistence.dart';
@@ -224,7 +222,6 @@ class UntitledState {
 
   void removeSelectedFile() {
     store.dispatch(AudioFileChangeAction(null));
-    AudioState.stopPlayer();
   }
 
   // Recorder Functions
@@ -285,6 +282,16 @@ class AudioFileChangeAction {
   AudioFileChangeAction(this.file);
 }
 
+class AudioPositionChangeAction {
+  Duration newPosition;
+  AudioPositionChangeAction(this.newPosition);
+}
+
+class AudioDurationChangeAction {
+  Duration newDuration;
+  AudioDurationChangeAction(this.newDuration);
+}
+
 class StartRecordSuccessAction {}
 
 class ProcessedRemainingFramesAction {
@@ -341,12 +348,9 @@ ThunkAction<AppState> processRemainingFrames = (Store<AppState> store) async {
     await store.dispatch(ProcessedRemainingFramesAction(remainingTranscript));
   }
   await store.dispatch(AudioFileChangeAction(state.file));
-  AudioState.player = AudioPlayer();
-  AudioState.initialisePlayer();
 };
 
 ThunkAction<AppState> processCurrentAudioFile = (Store<AppState> store) async {
-  final double audioLength = store.state.audio.duration.toDouble();
   final UntitledState state = store.state.untitled;
   if (state.leopard == null || state.file == null) {
     return;
@@ -478,8 +482,12 @@ UntitledState untitledReducer(UntitledState prevState, action) {
     final int highlightIndex = prevState.transcriptTextList.lastIndexWhere(
         // We do not want the edge cases due to rounding errors
         (pair) =>
-            pair.second * 1000 <= action.newPosition.inMilliseconds.toDouble());
+            pair.second * 1000 - 100 <=
+            action.newPosition.inMilliseconds.toDouble());
     return prevState.copyWith(highlightedSpanIndex: highlightIndex);
+  } else if (action is AudioDurationChangeAction) {
+    return prevState.copyWith(
+        recordedLength: action.newDuration.inSeconds.toDouble());
   } else if (action is StatusTextChangeAction) {
     return prevState.copyWith(statusAreaText: action.statusText);
   } else {

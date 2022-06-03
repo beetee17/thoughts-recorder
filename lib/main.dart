@@ -1,16 +1,3 @@
-//
-// Copyright 2022 Picovoice Inc.
-//
-// You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
-// file accompanying this source.
-//
-// Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
-// an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
-// specific language governing permissions and limitations under the License.
-//
-
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -27,7 +14,6 @@ import 'package:leopard_demo/widgets/selected_file.dart';
 import 'package:leopard_demo/widgets/status_area.dart';
 import 'package:leopard_demo/widgets/text_area.dart';
 //Import the font package
-import 'package:google_fonts/google_fonts.dart';
 import 'package:leopard_demo/widgets/tutorial.dart';
 
 void main() {
@@ -157,6 +143,7 @@ class _HomeState extends State<Home> {
                       child: Column(
                         children: [
                           StatusArea(),
+                          SizedBox(height: 10),
                           SelectedFile(),
                         ],
                       ),

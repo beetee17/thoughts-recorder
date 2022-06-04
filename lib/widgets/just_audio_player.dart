@@ -16,7 +16,7 @@ import 'package:leopard_demo/widgets/widget_with_shadow.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../redux_/audio.dart';
-import '../redux_/untitled.dart';
+import '../redux_/transcriber.dart';
 
 class JustAudioPlayerWidget extends StatefulWidget {
   final File file;

@@ -5,7 +5,7 @@ import 'package:leopard_demo/utils/persistence.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import '../redux_/rootStore.dart';
-import '../redux_/untitled.dart';
+import '../redux_/transcriber.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);

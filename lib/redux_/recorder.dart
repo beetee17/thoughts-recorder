@@ -1,7 +1,7 @@
 import 'package:leopard_demo/mic_recorder.dart';
 import 'package:leopard_demo/redux_/leopard.dart';
 import 'package:leopard_demo/redux_/transcript.dart';
-import 'package:leopard_demo/redux_/untitled.dart';
+import 'package:leopard_demo/redux_/transcriber.dart';
 
 import 'package:leopard_flutter/leopard_error.dart';
 import 'package:redux/redux.dart';
@@ -127,7 +127,7 @@ ThunkAction<AppState> Function(Duration, List<int>) getRecordedCallback =
     (Duration length, List<int> frame) {
   return (Store<AppState> store) async {
     if (length.inSeconds < maxRecordingLengthSecs) {
-      UntitledState state = store.state.untitled;
+      TranscriberState state = store.state.transcriber;
       RecorderState recorder = store.state.recorder;
       LeopardState leopard = store.state.leopard;
 

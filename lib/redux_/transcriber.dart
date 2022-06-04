@@ -4,19 +4,20 @@ import 'package:leopard_demo/redux_/transcript.dart';
 import 'audio.dart';
 
 // Define your State
-class UntitledState {
+class TranscriberState {
   final List<int> combinedFrame;
   final Duration combinedDuration;
 
-  UntitledState({required this.combinedFrame, required this.combinedDuration});
+  TranscriberState(
+      {required this.combinedFrame, required this.combinedDuration});
 
-  static UntitledState empty() {
-    return UntitledState(combinedDuration: Duration.zero, combinedFrame: []);
+  static TranscriberState empty() {
+    return TranscriberState(combinedDuration: Duration.zero, combinedFrame: []);
   }
 
-  UntitledState copyWith(
+  TranscriberState copyWith(
       {List<int>? combinedFrame, Duration? combinedDuration}) {
-    return UntitledState(
+    return TranscriberState(
       combinedFrame: combinedFrame ?? this.combinedFrame,
       combinedDuration: combinedDuration ?? this.combinedDuration,
     );
@@ -30,7 +31,7 @@ class UntitledState {
 
   @override
   bool operator ==(other) {
-    return (other is UntitledState) &&
+    return (other is TranscriberState) &&
         (combinedFrame == other.combinedFrame) &&
         (combinedDuration == other.combinedDuration);
   }
@@ -45,7 +46,7 @@ class UntitledState {
 class StartProcessingAudioFileAction {}
 
 // Each reducer will handle actions related to the State Tree it cares about!
-UntitledState untitledReducer(UntitledState prevState, action) {
+TranscriberState transcriberReducer(TranscriberState prevState, action) {
   if (action is! AudioPositionChangeAction) {
     print(action);
   }

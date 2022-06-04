@@ -7,7 +7,7 @@ import 'package:leopard_demo/redux_/recorder.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
 import 'package:leopard_demo/redux_/status.dart';
 import 'package:leopard_demo/redux_/transcript.dart';
-import 'package:leopard_demo/redux_/untitled.dart';
+import 'package:leopard_demo/redux_/transcriber.dart';
 import 'package:leopard_demo/utils/extensions.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 import 'package:redux/redux.dart';
@@ -103,7 +103,7 @@ class AudioFileChangeAction {
 }
 
 ThunkAction<AppState> processCurrentAudioFile = (Store<AppState> store) async {
-  final UntitledState state = store.state.untitled;
+  final TranscriberState state = store.state.transcriber;
   final AudioState audio = store.state.audio;
   final LeopardState leopard = store.state.leopard;
 

@@ -4,7 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:leopard_demo/mic_recorder.dart';
 import 'package:leopard_demo/redux_/leopard.dart';
 import 'package:leopard_demo/redux_/recorder.dart';
-import 'package:leopard_demo/redux_/untitled.dart';
+import 'package:leopard_demo/redux_/transcriber.dart';
 import 'package:leopard_demo/utils/extensions.dart';
 import 'package:leopard_demo/utils/persistence.dart';
 
@@ -92,7 +92,7 @@ class ProcessedRemainingFramesAction {
 }
 
 ThunkAction<AppState> processRemainingFrames = (Store<AppState> store) async {
-  UntitledState state = store.state.untitled;
+  TranscriberState state = store.state.transcriber;
   LeopardState leopard = store.state.leopard;
   RecorderState recorder = store.state.recorder;
   AudioState audio = store.state.audio;

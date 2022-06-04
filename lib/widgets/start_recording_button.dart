@@ -11,9 +11,9 @@ class StartRecordingButton extends StatelessWidget {
     return StoreConnector<AppState, StartRecordingButtonVM>(
       distinct: true,
       converter: (store) => StartRecordingButtonVM(
-          store.state.untitled.startRecording,
-          store.state.untitled.stopRecording,
-          store.state.untitled.isRecording),
+          store.state.recorder.startRecording,
+          store.state.recorder.stopRecording,
+          store.state.recorder.isRecording),
       builder: (_, viewModel) {
         return Padding(
           padding: const EdgeInsets.all(10.0),

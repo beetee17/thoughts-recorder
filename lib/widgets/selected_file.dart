@@ -17,7 +17,7 @@ class SelectedFile extends StatelessWidget {
     return StoreConnector<AppState, SelectedFileVM>(
         distinct: true,
         converter: (store) => SelectedFileVM(
-            store.state.untitled.file, store.state.untitled.isRecording),
+            store.state.untitled.file, store.state.recorder.isRecording),
         builder: (_, viewModel) {
           return Container(
               child: viewModel.file == null

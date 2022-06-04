@@ -1,3 +1,4 @@
+import 'package:leopard_demo/redux_/recorder.dart';
 import 'package:leopard_demo/redux_/untitled.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:redux_thunk/redux_thunk.dart';
@@ -5,16 +6,16 @@ import 'package:redux_thunk/redux_thunk.dart';
 // Define your State
 class AppState {
   final UntitledState untitled;
-
-  AppState(this.untitled);
+  final RecorderState recorder;
+  AppState(this.untitled, this.recorder);
 
   static AppState empty() {
-    return AppState(UntitledState.empty());
+    return AppState(UntitledState.empty(), RecorderState.empty());
   }
 
   @override
   String toString() {
-    return '$untitled';
+    return '$untitled \n$recorder';
   }
 }
 
@@ -29,8 +30,9 @@ class AppState {
 // Each reducer will take in the part of the state tree they care about and the
 // current action, and return the new list of items or a new search query for
 // the constructor!
-AppState appStateReducer(AppState state, action) =>
-    AppState(untitledReducer(state.untitled, action));
+AppState appStateReducer(AppState state, action) => AppState(
+    untitledReducer(state.untitled, action),
+    recorderReducer(state.recorder, action));
 
 final store = DevToolsStore<AppState>(appStateReducer,
     initialState: AppState.empty(), middleware: [thunkMiddleware]);

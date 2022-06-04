@@ -1,4 +1,5 @@
 import 'package:leopard_demo/redux_/recorder.dart';
+import 'package:leopard_demo/redux_/status.dart';
 import 'package:leopard_demo/redux_/untitled.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:redux_thunk/redux_thunk.dart';
@@ -10,16 +11,17 @@ class AppState {
   final UntitledState untitled;
   final RecorderState recorder;
   final AudioState audio;
-  AppState(this.untitled, this.recorder, this.audio);
+  final StatusState status;
+  AppState(this.untitled, this.recorder, this.audio, this.status);
 
   static AppState empty() {
-    return AppState(
-        UntitledState.empty(), RecorderState.empty(), AudioState.empty());
+    return AppState(UntitledState.empty(), RecorderState.empty(),
+        AudioState.empty(), StatusState.empty());
   }
 
   @override
   String toString() {
-    return '$untitled \n$recorder \n$audio';
+    return '$untitled \n$recorder \n$audio \n$status';
   }
 }
 
@@ -37,7 +39,8 @@ class AppState {
 AppState appStateReducer(AppState state, action) => AppState(
     untitledReducer(state.untitled, action),
     recorderReducer(state.recorder, action),
-    audioReducer(state.audio, action));
+    audioReducer(state.audio, action),
+    statusReducer(state.status, action));
 
 final store = DevToolsStore<AppState>(appStateReducer,
     initialState: AppState.empty(), middleware: [thunkMiddleware]);

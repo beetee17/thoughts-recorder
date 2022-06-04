@@ -18,10 +18,6 @@ import 'audio.dart';
 
 // Define your State
 class UntitledState {
-  final String? errorMessage;
-
-  final String statusAreaText;
-
   final List<int> combinedFrame;
   final Duration combinedDuration;
 
@@ -34,10 +30,8 @@ class UntitledState {
   final Leopard? leopard;
 
   UntitledState(
-      {required this.errorMessage,
-      required this.highlightedSpanIndex,
+      {required this.highlightedSpanIndex,
       required this.leopard,
-      required this.statusAreaText,
       required this.combinedFrame,
       required this.combinedDuration,
       required this.transcriptTextList});
@@ -46,27 +40,20 @@ class UntitledState {
     return UntitledState(
       combinedDuration: Duration.zero,
       combinedFrame: [],
-      errorMessage: null,
       highlightedSpanIndex: null,
       leopard: null,
-      statusAreaText: 'No audio file',
       transcriptTextList: [],
     );
   }
 
   UntitledState copyWith({
-    String? errorMessage,
-    String? statusAreaText,
     List<int>? combinedFrame,
     Duration? combinedDuration,
     List<Pair<String, Duration>>? transcriptTextList,
     int? highlightedSpanIndex,
     Leopard? leopard,
-    bool shouldOverrideError = false,
   }) {
     return UntitledState(
-      errorMessage: shouldOverrideError ? errorMessage : this.errorMessage,
-      statusAreaText: statusAreaText ?? this.statusAreaText,
       combinedFrame: combinedFrame ?? this.combinedFrame,
       combinedDuration: combinedDuration ?? this.combinedDuration,
       transcriptTextList: transcriptTextList ?? this.transcriptTextList,
@@ -85,8 +72,6 @@ class UntitledState {
   @override
   bool operator ==(other) {
     return (other is UntitledState) &&
-        (errorMessage == other.errorMessage) &&
-        (statusAreaText == other.statusAreaText) &&
         (combinedFrame == other.combinedFrame) &&
         (combinedDuration == other.combinedDuration) &&
         (transcriptTextList == other.transcriptTextList) &&
@@ -99,10 +84,8 @@ class UntitledState {
     return Object.hash(
       combinedDuration,
       combinedFrame,
-      errorMessage,
       highlightedSpanIndex,
       leopard,
-      statusAreaText,
       transcriptTextList,
     );
   }
@@ -154,10 +137,6 @@ class UntitledState {
     final transcript = await leopard!.process(combinedFrame);
     return Pair(transcript.formatText(), startTime);
   }
-
-  void errorCallback(LeopardException error) {
-    store.dispatch(ErrorCallbackAction(error.message ?? error.toString()));
-  }
 }
 
 // Define your Actions
@@ -182,29 +161,29 @@ class InitLeopardAction implements CallableThunkAction<AppState> {
       final accessKey = await Settings.getAccessKey();
       final leopard = await Leopard.create(accessKey, modelPath);
       final micRecorder = await MicRecorder.create(
-          leopard.sampleRate, store.state.untitled.errorCallback);
+          leopard.sampleRate, store.state.status.errorCallback);
       print('dispatching $leopard and $micRecorder');
       store.dispatch(InitAction(leopard, micRecorder));
     } on LeopardInvalidArgumentException catch (ex) {
       print('ERROR');
-      store.state.untitled.errorCallback(LeopardInvalidArgumentException(
+      store.state.status.errorCallback(LeopardInvalidArgumentException(
           "Invalid Access Key.\n"
           "Please check that the access key entered in the Settings corresponds to "
           "the one in the Picovoice Console (https://console.picovoice.ai/). "));
     } on LeopardActivationException {
-      store.state.untitled.errorCallback(
+      store.state.status.errorCallback(
           LeopardActivationException("Access Key activation error."));
     } on LeopardActivationLimitException {
-      store.state.untitled.errorCallback(LeopardActivationLimitException(
+      store.state.status.errorCallback(LeopardActivationLimitException(
           "Access Key has reached its device limit."));
     } on LeopardActivationRefusedException {
-      store.state.untitled.errorCallback(
+      store.state.status.errorCallback(
           LeopardActivationRefusedException("Access Key was refused."));
     } on LeopardActivationThrottledException {
-      store.state.untitled.errorCallback(LeopardActivationThrottledException(
+      store.state.status.errorCallback(LeopardActivationThrottledException(
           "Access Key has been throttled."));
     } on LeopardException catch (ex) {
-      store.state.untitled.errorCallback(ex);
+      store.state.status.errorCallback(ex);
     }
   }
 }
@@ -226,20 +205,10 @@ class ProcessedRemainingFramesAction {
 
 class StartProcessingAudioFileAction {}
 
-class StatusTextChangeAction {
-  String statusText;
-  StatusTextChangeAction(this.statusText);
-}
-
 class UpdateTranscriptTextList {
   int index;
   Pair<String, Duration> partialTranscript;
   UpdateTranscriptTextList(this.index, this.partialTranscript);
-}
-
-class ErrorCallbackAction {
-  String errorMessage;
-  ErrorCallbackAction(this.errorMessage);
 }
 
 class RecordedCallbackAction {
@@ -285,16 +254,9 @@ UntitledState untitledReducer(UntitledState prevState, action) {
     print(action);
   }
   if (action is InitAction) {
-    return prevState.copyWith(
-        leopard: action.leopard, errorMessage: null, shouldOverrideError: true);
+    return prevState.copyWith(leopard: action.leopard);
   } else if (action is HighlightSpanAtIndex) {
     return prevState.copyWith(highlightedSpanIndex: action.index);
-  } else if (action is AudioFileChangeAction) {
-    final String? path = action.file?.path;
-    final String filename = path == null
-        ? 'No audio file'
-        : RegExp(r'[^\/]+$').allMatches(action.file!.path).last.group(0)!;
-    return prevState.copyWith(statusAreaText: '$filename');
   } else if (action is StartRecordSuccessAction) {
     return prevState.copyWith(
         transcriptTextList: [],
@@ -329,16 +291,11 @@ UntitledState untitledReducer(UntitledState prevState, action) {
     return prevState.copyWith(
         combinedFrame: action.combinedFrame,
         combinedDuration: action.combinedDuration);
-  } else if (action is ErrorCallbackAction) {
-    return prevState.copyWith(
-        errorMessage: action.errorMessage, shouldOverrideError: true);
   } else if (action is AudioPositionChangeAction) {
     final int highlightIndex = prevState.transcriptTextList.lastIndexWhere(
         // We do not want the edge cases due to rounding errors
         (pair) => pair.second <= action.newPosition);
     return prevState.copyWith(highlightedSpanIndex: highlightIndex);
-  } else if (action is StatusTextChangeAction) {
-    return prevState.copyWith(statusAreaText: action.statusText);
   } else {
     return prevState;
   }

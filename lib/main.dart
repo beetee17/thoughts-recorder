@@ -87,7 +87,7 @@ class _HomeState extends State<Home> {
           converter: (store) => HomeVM(
               store.state.untitled.transcriptText,
               store.state.untitled.transcriptTextList,
-              store.state.untitled.errorMessage),
+              store.state.status.errorMessage),
           builder: (_, viewModel) {
             final TextEditingController textEditingController =
                 TextEditingController(text: viewModel.transcriptText);

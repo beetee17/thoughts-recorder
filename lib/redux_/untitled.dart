@@ -19,8 +19,6 @@ import '../utils/pair.dart';
 class UntitledState {
   final String? errorMessage;
 
-  final bool isProcessing;
-
   final Duration audioDuration;
 
   final String statusAreaText;
@@ -42,7 +40,6 @@ class UntitledState {
       required this.highlightedSpanIndex,
       required this.leopard,
       required this.file,
-      required this.isProcessing,
       required this.audioDuration,
       required this.statusAreaText,
       required this.combinedFrame,
@@ -56,7 +53,6 @@ class UntitledState {
       errorMessage: null,
       file: null,
       highlightedSpanIndex: null,
-      isProcessing: false,
       leopard: null,
       audioDuration: Duration.zero,
       statusAreaText: 'No audio file',
@@ -66,7 +62,6 @@ class UntitledState {
 
   UntitledState copyWith({
     String? errorMessage,
-    bool? isProcessing,
     Duration? audioDuration,
     String? statusAreaText,
     List<int>? combinedFrame,
@@ -80,7 +75,6 @@ class UntitledState {
   }) {
     return UntitledState(
       errorMessage: shouldOverrideError ? errorMessage : this.errorMessage,
-      isProcessing: isProcessing ?? this.isProcessing,
       audioDuration: audioDuration ?? this.audioDuration,
       statusAreaText: statusAreaText ?? this.statusAreaText,
       combinedFrame: combinedFrame ?? this.combinedFrame,
@@ -103,7 +97,6 @@ class UntitledState {
   bool operator ==(other) {
     return (other is UntitledState) &&
         (errorMessage == other.errorMessage) &&
-        (isProcessing == other.isProcessing) &&
         (audioDuration == other.audioDuration) &&
         (statusAreaText == other.statusAreaText) &&
         (combinedFrame == other.combinedFrame) &&
@@ -122,7 +115,6 @@ class UntitledState {
       errorMessage,
       file,
       highlightedSpanIndex,
-      isProcessing,
       leopard,
       audioDuration,
       statusAreaText,

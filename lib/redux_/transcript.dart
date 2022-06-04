@@ -85,6 +85,29 @@ class UpdateTranscriptTextList {
   UpdateTranscriptTextList(this.index, this.partialTranscript);
 }
 
+class ProcessedRemainingFramesAction {
+  Pair<String, Duration> remainingTranscript;
+  ProcessedRemainingFramesAction(this.remainingTranscript);
+}
+
+ThunkAction<AppState> processRemainingFrames = (Store<AppState> store) async {
+  UntitledState state = store.state.untitled;
+  RecorderState recorder = store.state.recorder;
+  AudioState audio = store.state.audio;
+
+  final remainingFrames = state.combinedFrame;
+  remainingFrames.addAll(recorder.micRecorder!.combinedFrame);
+
+  final Duration startTime =
+      DurationUtils.max(Duration.zero, audio.duration - state.combinedDuration);
+  final remainingTranscript =
+      await state.processCombined(state.combinedFrame, startTime);
+  if (remainingTranscript.first.trim().isNotEmpty) {
+    await store.dispatch(ProcessedRemainingFramesAction(remainingTranscript));
+  }
+  await store.dispatch(AudioFileChangeAction(audio.file));
+};
+
 // Each reducer will handle actions related to the State Tree it cares about!
 TranscriptState transcriptReducer(TranscriptState prevState, action) {
   if (action is HighlightSpanAtIndex) {

@@ -128,49 +128,7 @@ class InitLeopardAction implements CallableThunkAction<AppState> {
   }
 }
 
-class AudioPositionChangeAction {
-  Duration newPosition;
-  AudioPositionChangeAction(this.newPosition);
-}
-
-class ProcessedRemainingFramesAction {
-  Pair<String, Duration> remainingTranscript;
-  ProcessedRemainingFramesAction(this.remainingTranscript);
-}
-
 class StartProcessingAudioFileAction {}
-
-class RecordedCallbackAction {
-  double recordedLength;
-  List<int> recordedFrame;
-  RecordedCallbackAction(this.recordedLength, this.recordedFrame);
-}
-
-class RecordedCallbackUpdateAction {
-  Duration recordedLength;
-  List<int> combinedFrame;
-  Duration combinedDuration;
-  RecordedCallbackUpdateAction(
-      this.recordedLength, this.combinedFrame, this.combinedDuration);
-}
-
-ThunkAction<AppState> processRemainingFrames = (Store<AppState> store) async {
-  UntitledState state = store.state.untitled;
-  RecorderState recorder = store.state.recorder;
-  AudioState audio = store.state.audio;
-
-  final remainingFrames = state.combinedFrame;
-  remainingFrames.addAll(recorder.micRecorder!.combinedFrame);
-
-  final Duration startTime =
-      DurationUtils.max(Duration.zero, audio.duration - state.combinedDuration);
-  final remainingTranscript =
-      await state.processCombined(state.combinedFrame, startTime);
-  if (remainingTranscript.first.trim().isNotEmpty) {
-    await store.dispatch(ProcessedRemainingFramesAction(remainingTranscript));
-  }
-  await store.dispatch(AudioFileChangeAction(audio.file));
-};
 
 // Each reducer will handle actions related to the State Tree it cares about!
 UntitledState untitledReducer(UntitledState prevState, action) {

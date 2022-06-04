@@ -108,6 +108,20 @@ class ResumeRecordSuccessAction {}
 
 class StopRecordSuccessAction {}
 
+class RecordedCallbackAction {
+  double recordedLength;
+  List<int> recordedFrame;
+  RecordedCallbackAction(this.recordedLength, this.recordedFrame);
+}
+
+class RecordedCallbackUpdateAction {
+  Duration recordedLength;
+  List<int> combinedFrame;
+  Duration combinedDuration;
+  RecordedCallbackUpdateAction(
+      this.recordedLength, this.combinedFrame, this.combinedDuration);
+}
+
 ThunkAction<AppState> Function(Duration, List<int>) getRecordedCallback =
     (Duration length, List<int> frame) {
   return (Store<AppState> store) async {

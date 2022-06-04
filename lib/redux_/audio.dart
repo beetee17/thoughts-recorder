@@ -5,6 +5,7 @@ import 'package:leopard_demo/mic_recorder.dart';
 import 'package:leopard_demo/redux_/recorder.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
 import 'package:leopard_demo/redux_/status.dart';
+import 'package:leopard_demo/redux_/transcript.dart';
 import 'package:leopard_demo/redux_/untitled.dart';
 import 'package:leopard_demo/utils/extensions.dart';
 import 'package:redux_thunk/redux_thunk.dart';
@@ -85,6 +86,11 @@ class AudioState {
   }
 }
 
+class AudioPositionChangeAction {
+  Duration newPosition;
+  AudioPositionChangeAction(this.newPosition);
+}
+
 class AudioDurationChangeAction {
   Duration newDuration;
   AudioDurationChangeAction(this.newDuration);
@@ -127,9 +133,6 @@ ThunkAction<AppState> processCurrentAudioFile = (Store<AppState> store) async {
 
 // Each reducer will handle actions related to the State Tree it cares about!
 AudioState audioReducer(AudioState prevState, action) {
-  if (action is! AudioPositionChangeAction) {
-    print(action);
-  }
   if (action is AudioFileChangeAction) {
     return prevState.copyWith(file: action.file, shouldOverrideFile: true);
   } else if (action is RecordedCallbackUpdateAction) {

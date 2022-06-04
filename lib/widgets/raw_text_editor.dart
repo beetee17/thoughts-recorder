@@ -42,7 +42,7 @@ class _RawTextEditorState extends State<RawTextEditor> {
         distinct: true,
         converter: (store) => RawTextFieldVM(
             store.state.untitled.highlightedSpanIndex,
-            store.state.untitled.audioDuration),
+            store.state.audio.duration),
         builder: (_, viewModel) {
           TextStyle shouldHighlightSpan() {
             if (viewModel.highlightedSpanIndex == widget.index) {

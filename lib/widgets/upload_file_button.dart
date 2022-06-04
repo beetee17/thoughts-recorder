@@ -13,7 +13,7 @@ class UploadFileButton extends StatelessWidget {
     return StoreConnector<AppState, UploadFileButtonVM>(
       distinct: true,
       converter: (store) => UploadFileButtonVM(
-          store.state.untitled.file,
+          store.state.audio.file,
           store.state.untitled.pickFile,
           store.state.untitled.removeSelectedFile),
       builder: (_, viewModel) {

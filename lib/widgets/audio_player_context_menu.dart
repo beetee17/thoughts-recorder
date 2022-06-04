@@ -17,7 +17,7 @@ class AudioPlayerContextMenu extends StatelessWidget {
     return StoreConnector<AppState, AudioPlayerContextMenuVM>(
       distinct: true,
       converter: (store) => AudioPlayerContextMenuVM(
-          store.state.untitled.file, store.state.untitled.removeSelectedFile),
+          store.state.audio.file, store.state.untitled.removeSelectedFile),
       builder: (_, viewModel) {
         return CupertinoContextMenu(
           actions: <Widget>[

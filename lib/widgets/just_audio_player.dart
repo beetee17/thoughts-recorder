@@ -15,6 +15,7 @@ import 'package:leopard_demo/widgets/seek_bar.dart';
 import 'package:leopard_demo/widgets/widget_with_shadow.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../redux_/audio.dart';
 import '../redux_/untitled.dart';
 
 class JustAudioPlayerWidget extends StatefulWidget {

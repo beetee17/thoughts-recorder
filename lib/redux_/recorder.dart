@@ -9,6 +9,7 @@ import 'package:redux_thunk/redux_thunk.dart';
 import '../utils/extensions.dart';
 import '../utils/global_variables.dart';
 import '../utils/pair.dart';
+import 'audio.dart';
 
 class RecorderState {
   final bool isRecording;

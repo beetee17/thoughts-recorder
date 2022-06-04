@@ -23,7 +23,7 @@ class _TextAreaState extends State<TextArea> {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, TextAreaVM>(
-      converter: (store) => TextAreaVM(store.state.untitled.file),
+      converter: (store) => TextAreaVM(store.state.audio.file),
       distinct: true,
       builder: (_, viewModel) {
         return Expanded(

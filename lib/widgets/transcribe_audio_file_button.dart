@@ -3,6 +3,8 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
 import 'package:leopard_demo/redux_/untitled.dart';
 
+import '../redux_/audio.dart';
+
 class TranscribeAudioFileButton extends StatelessWidget {
   const TranscribeAudioFileButton({Key? key}) : super(key: key);
 

@@ -3,19 +3,23 @@ import 'package:leopard_demo/redux_/untitled.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 
+import 'audio.dart';
+
 // Define your State
 class AppState {
   final UntitledState untitled;
   final RecorderState recorder;
-  AppState(this.untitled, this.recorder);
+  final AudioState audio;
+  AppState(this.untitled, this.recorder, this.audio);
 
   static AppState empty() {
-    return AppState(UntitledState.empty(), RecorderState.empty());
+    return AppState(
+        UntitledState.empty(), RecorderState.empty(), AudioState.empty());
   }
 
   @override
   String toString() {
-    return '$untitled \n$recorder';
+    return '$untitled \n$recorder \n$audio';
   }
 }
 
@@ -32,7 +36,8 @@ class AppState {
 // the constructor!
 AppState appStateReducer(AppState state, action) => AppState(
     untitledReducer(state.untitled, action),
-    recorderReducer(state.recorder, action));
+    recorderReducer(state.recorder, action),
+    audioReducer(state.audio, action));
 
 final store = DevToolsStore<AppState>(appStateReducer,
     initialState: AppState.empty(), middleware: [thunkMiddleware]);

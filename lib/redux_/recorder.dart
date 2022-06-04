@@ -23,7 +23,7 @@ class RecorderState {
       required this.isRecording});
   static RecorderState empty() {
     return RecorderState(
-        finishedRecording: false, isRecording: false, micRecorder: null);
+        finishedRecording: true, isRecording: false, micRecorder: null);
   }
 
   RecorderState copyWith(
@@ -59,7 +59,7 @@ class RecorderState {
       return;
     }
     try {
-      if (!isRecording && !finishedRecording) {
+      if (!finishedRecording) {
         await store.dispatch(ResumeRecordSuccessAction());
       } else {
         await micRecorder!.clearData();
@@ -79,7 +79,6 @@ class RecorderState {
 
     try {
       final file = await micRecorder!.stopRecord();
-      await store.dispatch(StopRecordSuccessAction());
       await store.dispatch(AudioFileChangeAction(file));
       await store.dispatch(processRemainingFrames);
     } on LeopardException catch (ex) {
@@ -106,8 +105,6 @@ class StartRecordSuccessAction {}
 class PauseRecordSuccessAction {}
 
 class ResumeRecordSuccessAction {}
-
-class StopRecordSuccessAction {}
 
 class RecordedCallbackAction {
   double recordedLength;
@@ -179,8 +176,8 @@ RecorderState recorderReducer(RecorderState prevState, action) {
     return prevState.copyWith(isRecording: true, finishedRecording: false);
   } else if (action is ResumeRecordSuccessAction) {
     return prevState.copyWith(isRecording: true, finishedRecording: false);
-  } else if (action is StopRecordSuccessAction) {
-    return prevState.copyWith(isRecording: true, finishedRecording: true);
+  } else if (action is AudioFileChangeAction) {
+    return prevState.copyWith(isRecording: false, finishedRecording: true);
   } else if (action is PauseRecordSuccessAction) {
     return prevState.copyWith(isRecording: false, finishedRecording: false);
   } else if (action is ProcessedRemainingFramesAction) {

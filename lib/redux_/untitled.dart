@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:leopard_demo/mic_recorder.dart';
 import 'package:leopard_demo/redux_/recorder.dart';
+import 'package:leopard_demo/redux_/transcript.dart';
 import 'package:leopard_demo/utils/extensions.dart';
 import 'package:leopard_demo/utils/persistence.dart';
 
@@ -21,52 +21,37 @@ class UntitledState {
   final List<int> combinedFrame;
   final Duration combinedDuration;
 
-  final List<Pair<String, Duration>> transcriptTextList;
-  final int? highlightedSpanIndex;
-
-  String get transcriptText =>
-      transcriptTextList.map((p) => p.first).join(' \n\n');
-
   final Leopard? leopard;
 
   UntitledState(
-      {required this.highlightedSpanIndex,
-      required this.leopard,
+      {required this.leopard,
       required this.combinedFrame,
-      required this.combinedDuration,
-      required this.transcriptTextList});
+      required this.combinedDuration});
 
   static UntitledState empty() {
     return UntitledState(
       combinedDuration: Duration.zero,
       combinedFrame: [],
-      highlightedSpanIndex: null,
       leopard: null,
-      transcriptTextList: [],
     );
   }
 
   UntitledState copyWith({
     List<int>? combinedFrame,
     Duration? combinedDuration,
-    List<Pair<String, Duration>>? transcriptTextList,
-    int? highlightedSpanIndex,
     Leopard? leopard,
   }) {
     return UntitledState(
       combinedFrame: combinedFrame ?? this.combinedFrame,
       combinedDuration: combinedDuration ?? this.combinedDuration,
-      transcriptTextList: transcriptTextList ?? this.transcriptTextList,
-      highlightedSpanIndex: highlightedSpanIndex ?? this.highlightedSpanIndex,
       leopard: leopard ?? this.leopard,
     );
   }
 
   @override
   String toString() {
-    return '\nhighlightedIndex:$highlightedSpanIndex\ncombinedDuration: $combinedDuration'
-        '\ncombinedFrames: ${combinedFrame.length} frames'
-        '\nTranscript: $transcriptTextList';
+    return '\ncombinedDuration: $combinedDuration'
+        '\ncombinedFrames: ${combinedFrame.length} frames';
   }
 
   @override
@@ -74,8 +59,6 @@ class UntitledState {
     return (other is UntitledState) &&
         (combinedFrame == other.combinedFrame) &&
         (combinedDuration == other.combinedDuration) &&
-        (transcriptTextList == other.transcriptTextList) &&
-        (highlightedSpanIndex == other.highlightedSpanIndex) &&
         (leopard == other.leopard);
   }
 
@@ -84,51 +67,8 @@ class UntitledState {
     return Object.hash(
       combinedDuration,
       combinedFrame,
-      highlightedSpanIndex,
       leopard,
-      transcriptTextList,
     );
-  }
-
-  void highlightSpan(int index) {
-    store.dispatch(HighlightSpanAtIndex(index));
-  }
-
-  // File Picker Functions
-  void pickFile({bool fromGallery = false}) {
-    // From SDK Documentation:
-    // The file needs to have a sample rate equal to or greater than Leopard.sampleRate.
-    // The supported formats are: FLAC, MP3, Ogg, Opus, Vorbis, WAV, and WebM.
-    // TODO: Now support any media file type through conversion of file via ffmpeg.
-    FilePicker.platform
-        .pickFiles(
-            type: fromGallery ? FileType.video : FileType.custom,
-            allowedExtensions: fromGallery
-                ? null
-                : [
-                    'flac',
-                    'mp3',
-                    'ogg',
-                    'opus',
-                    'vorbis',
-                    'wav',
-                    'webm',
-                    'mp4',
-                    'mov',
-                    'avi'
-                  ])
-        .then((res) {
-      if (res != null) {
-        store.dispatch(AudioFileChangeAction(File(res.files.single.path!)));
-        store.dispatch(processCurrentAudioFile);
-      } else {
-        // User canceled the picker
-      }
-    });
-  }
-
-  void removeSelectedFile() {
-    store.dispatch(AudioFileChangeAction(null));
   }
 
   Future<Pair<String, Duration>> processCombined(
@@ -140,10 +80,10 @@ class UntitledState {
 }
 
 // Define your Actions
-class InitAction {
+class InitialisationSuccessAction {
   Leopard leopard;
   MicRecorder micRecorder;
-  InitAction(this.leopard, this.micRecorder);
+  InitialisationSuccessAction(this.leopard, this.micRecorder);
 }
 
 class InitLeopardAction implements CallableThunkAction<AppState> {
@@ -163,7 +103,7 @@ class InitLeopardAction implements CallableThunkAction<AppState> {
       final micRecorder = await MicRecorder.create(
           leopard.sampleRate, store.state.status.errorCallback);
       print('dispatching $leopard and $micRecorder');
-      store.dispatch(InitAction(leopard, micRecorder));
+      store.dispatch(InitialisationSuccessAction(leopard, micRecorder));
     } on LeopardInvalidArgumentException catch (ex) {
       print('ERROR');
       store.state.status.errorCallback(LeopardInvalidArgumentException(
@@ -188,11 +128,6 @@ class InitLeopardAction implements CallableThunkAction<AppState> {
   }
 }
 
-class HighlightSpanAtIndex {
-  int index;
-  HighlightSpanAtIndex(this.index);
-}
-
 class AudioPositionChangeAction {
   Duration newPosition;
   AudioPositionChangeAction(this.newPosition);
@@ -204,12 +139,6 @@ class ProcessedRemainingFramesAction {
 }
 
 class StartProcessingAudioFileAction {}
-
-class UpdateTranscriptTextList {
-  int index;
-  Pair<String, Duration> partialTranscript;
-  UpdateTranscriptTextList(this.index, this.partialTranscript);
-}
 
 class RecordedCallbackAction {
   double recordedLength;
@@ -223,11 +152,6 @@ class RecordedCallbackUpdateAction {
   Duration combinedDuration;
   RecordedCallbackUpdateAction(
       this.recordedLength, this.combinedFrame, this.combinedDuration);
-}
-
-class IncomingTranscriptAction {
-  Pair<String, Duration> transcript;
-  IncomingTranscriptAction(this.transcript);
 }
 
 ThunkAction<AppState> processRemainingFrames = (Store<AppState> store) async {
@@ -253,49 +177,21 @@ UntitledState untitledReducer(UntitledState prevState, action) {
   if (action is! AudioPositionChangeAction) {
     print(action);
   }
-  if (action is InitAction) {
+  if (action is InitialisationSuccessAction) {
     return prevState.copyWith(leopard: action.leopard);
-  } else if (action is HighlightSpanAtIndex) {
-    return prevState.copyWith(highlightedSpanIndex: action.index);
   } else if (action is StartRecordSuccessAction) {
-    return prevState.copyWith(
-        transcriptTextList: [],
-        highlightedSpanIndex: null,
-        combinedFrame: [],
-        combinedDuration: Duration.zero);
-  } else if (action is ProcessedRemainingFramesAction) {
-    final newTranscriptTextList = prevState.transcriptTextList;
-    newTranscriptTextList.add(action.remainingTranscript);
-    return prevState.copyWith(
-        transcriptTextList: newTranscriptTextList, highlightedSpanIndex: 0);
+    return prevState
+        .copyWith(combinedFrame: [], combinedDuration: Duration.zero);
   } else if (action is StartProcessingAudioFileAction) {
-    return prevState.copyWith(
-        transcriptTextList: [],
-        highlightedSpanIndex: null,
-        combinedFrame: [],
-        combinedDuration: Duration.zero);
-  } else if (action is UpdateTranscriptTextList) {
-    final newList = prevState.transcriptTextList;
-    newList[action.index] = action.partialTranscript
-        .map((text) => text.formatText(), (startTime) => startTime);
-    return prevState.copyWith(transcriptTextList: newList);
+    return prevState
+        .copyWith(combinedFrame: [], combinedDuration: Duration.zero);
   } else if (action is IncomingTranscriptAction) {
-    final newTranscriptTextList = prevState.transcriptTextList;
-    newTranscriptTextList.add(action.transcript);
-    return prevState.copyWith(
-        transcriptTextList: newTranscriptTextList,
-        highlightedSpanIndex: newTranscriptTextList.length - 1,
-        combinedFrame: [],
-        combinedDuration: Duration.zero);
+    return prevState
+        .copyWith(combinedFrame: [], combinedDuration: Duration.zero);
   } else if (action is RecordedCallbackUpdateAction) {
     return prevState.copyWith(
         combinedFrame: action.combinedFrame,
         combinedDuration: action.combinedDuration);
-  } else if (action is AudioPositionChangeAction) {
-    final int highlightIndex = prevState.transcriptTextList.lastIndexWhere(
-        // We do not want the edge cases due to rounding errors
-        (pair) => pair.second <= action.newPosition);
-    return prevState.copyWith(highlightedSpanIndex: highlightIndex);
   } else {
     return prevState;
   }

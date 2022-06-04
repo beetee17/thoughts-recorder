@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:leopard_demo/mic_recorder.dart';
 import 'package:leopard_demo/redux_/recorder.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
@@ -44,6 +45,43 @@ class AudioState {
   @override
   int get hashCode {
     return Object.hash(file, duration);
+  }
+
+  // File Picker Functions
+  void pickFile({bool fromGallery = false}) {
+    // From SDK Documentation:
+    // The file needs to have a sample rate equal to or greater than Leopard.sampleRate.
+    // The supported formats are: FLAC, MP3, Ogg, Opus, Vorbis, WAV, and WebM.
+    // TODO: Now support any media file type through conversion of file via ffmpeg.
+    FilePicker.platform
+        .pickFiles(
+            type: fromGallery ? FileType.video : FileType.custom,
+            allowedExtensions: fromGallery
+                ? null
+                : [
+                    'flac',
+                    'mp3',
+                    'ogg',
+                    'opus',
+                    'vorbis',
+                    'wav',
+                    'webm',
+                    'mp4',
+                    'mov',
+                    'avi'
+                  ])
+        .then((res) {
+      if (res != null) {
+        store.dispatch(AudioFileChangeAction(File(res.files.single.path!)));
+        store.dispatch(processCurrentAudioFile);
+      } else {
+        // User canceled the picker
+      }
+    });
+  }
+
+  void removeSelectedFile() {
+    store.dispatch(AudioFileChangeAction(null));
   }
 }
 

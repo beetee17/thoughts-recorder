@@ -1,4 +1,5 @@
 import 'package:leopard_demo/mic_recorder.dart';
+import 'package:leopard_demo/redux_/transcript.dart';
 import 'package:leopard_demo/redux_/untitled.dart';
 
 import 'package:leopard_flutter/leopard_error.dart';
@@ -156,7 +157,7 @@ RecorderState recorderReducer(RecorderState prevState, action) {
   if (action is! AudioPositionChangeAction) {
     print(action);
   }
-  if (action is InitAction) {
+  if (action is InitialisationSuccessAction) {
     return prevState.copyWith(micRecorder: action.micRecorder);
   } else if (action is StartRecordSuccessAction) {
     return prevState.copyWith(isRecording: true, finishedRecording: false);

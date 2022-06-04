@@ -1,12 +1,10 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:leopard_demo/redux_/untitled.dart';
 import 'package:leopard_demo/utils/extensions.dart';
 import 'package:leopard_demo/widgets/just_audio_player.dart';
 
+import '../redux_/transcript.dart';
 import '../utils/pair.dart';
 
 class RawTextEditor extends StatefulWidget {
@@ -41,7 +39,7 @@ class _RawTextEditorState extends State<RawTextEditor> {
     return StoreConnector<AppState, RawTextFieldVM>(
         distinct: true,
         converter: (store) => RawTextFieldVM(
-            store.state.untitled.highlightedSpanIndex,
+            store.state.transcript.highlightedSpanIndex,
             store.state.audio.duration),
         builder: (_, viewModel) {
           TextStyle shouldHighlightSpan() {

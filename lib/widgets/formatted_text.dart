@@ -22,10 +22,10 @@ class _FormattedTextViewState extends State<FormattedTextView> {
     return StoreConnector<AppState, FormattedTextVM>(
         distinct: true,
         converter: (store) => FormattedTextVM(
-            store.state.untitled.transcriptTextList,
-            store.state.untitled.transcriptText,
-            store.state.untitled.highlightSpan,
-            store.state.untitled.highlightedSpanIndex,
+            store.state.transcript.transcriptTextList,
+            store.state.transcript.transcriptText,
+            store.state.transcript.highlightSpan,
+            store.state.transcript.highlightedSpanIndex,
             store.state.audio.duration),
         builder: (_, viewModel) {
           List<InlineSpan> allSpans =

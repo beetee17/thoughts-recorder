@@ -61,7 +61,7 @@ class ErrorCallbackAction {
 
 // Each reducer will handle actions related to the State Tree it cares about!
 StatusState statusReducer(StatusState prevState, action) {
-  if (action is InitAction) {
+  if (action is InitialisationSuccessAction) {
     return prevState.copyWith(errorMessage: null, shouldOverrideError: true);
   } else if (action is AudioFileChangeAction) {
     final String? path = action.file?.path;

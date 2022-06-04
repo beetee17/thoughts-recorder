@@ -12,10 +12,8 @@ class UploadFileButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return StoreConnector<AppState, UploadFileButtonVM>(
       distinct: true,
-      converter: (store) => UploadFileButtonVM(
-          store.state.audio.file,
-          store.state.untitled.pickFile,
-          store.state.untitled.removeSelectedFile),
+      converter: (store) => UploadFileButtonVM(store.state.audio.file,
+          store.state.audio.pickFile, store.state.audio.removeSelectedFile),
       builder: (_, viewModel) {
         return CupertinoContextMenu(
           actions: <Widget>[

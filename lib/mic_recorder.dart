@@ -88,8 +88,6 @@ class MicRecorder {
           "Cannot start audio recording - resources have already been released");
     }
 
-    _pcmData.clear();
-
     if (await _voiceProcessor?.hasRecordAudioPermission() ?? false) {
       try {
         await _voiceProcessor!.start();
@@ -101,6 +99,10 @@ class MicRecorder {
       throw LeopardRuntimeException(
           "User did not give permission to record audio.");
     }
+  }
+
+  Future<void> clearData() async {
+    _pcmData.clear();
   }
 
   Future<File> stopRecord() async {
@@ -117,6 +119,17 @@ class MicRecorder {
       return await writeWavFile();
     } catch (e) {
       throw LeopardIOException("Failed to save recorded audio to file.");
+    }
+  }
+
+  Future<void> pauseRecord() async {
+    if (_voiceProcessor == null) {
+      throw LeopardInvalidStateException(
+          "Cannot pause audio recording - resources have already been released");
+    }
+
+    if (_voiceProcessor?.isRecording ?? false) {
+      await _voiceProcessor!.stop();
     }
   }
 

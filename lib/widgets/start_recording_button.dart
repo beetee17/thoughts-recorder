@@ -9,6 +9,7 @@ class StartRecordingButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, StartRecordingButtonVM>(
+      distinct: true,
       converter: (store) => StartRecordingButtonVM(
           store.state.untitled.startRecording,
           store.state.untitled.stopRecording,

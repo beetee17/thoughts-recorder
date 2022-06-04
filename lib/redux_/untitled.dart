@@ -20,6 +20,7 @@ class UntitledState {
   final String? errorMessage;
 
   final bool isRecording;
+  final bool finishedRecording;
 
   final bool isProcessing;
 
@@ -46,6 +47,7 @@ class UntitledState {
       required this.micRecorder,
       required this.leopard,
       required this.file,
+      required this.finishedRecording,
       required this.isRecording,
       required this.isProcessing,
       required this.audioDuration,
@@ -62,6 +64,7 @@ class UntitledState {
       file: null,
       highlightedSpanIndex: null,
       isProcessing: false,
+      finishedRecording: false,
       isRecording: false,
       leopard: null,
       micRecorder: null,
@@ -74,6 +77,7 @@ class UntitledState {
   UntitledState copyWith({
     String? errorMessage,
     bool? isRecording,
+    bool? finishedRecording,
     bool? isProcessing,
     Duration? recordedLength,
     String? statusAreaText,
@@ -89,6 +93,7 @@ class UntitledState {
   }) {
     return UntitledState(
       errorMessage: shouldOverrideError ? errorMessage : this.errorMessage,
+      finishedRecording: finishedRecording ?? this.finishedRecording,
       isRecording: isRecording ?? this.isRecording,
       isProcessing: isProcessing ?? this.isProcessing,
       audioDuration: recordedLength ?? this.audioDuration,
@@ -112,6 +117,7 @@ class UntitledState {
   bool operator ==(other) {
     return (other is UntitledState) &&
         (errorMessage == other.errorMessage) &&
+        (finishedRecording == other.finishedRecording) &&
         (isRecording == other.isRecording) &&
         (isProcessing == other.isProcessing) &&
         (audioDuration == other.audioDuration) &&
@@ -134,6 +140,7 @@ class UntitledState {
       file,
       highlightedSpanIndex,
       isProcessing,
+      finishedRecording,
       isRecording,
       leopard,
       micRecorder,
@@ -190,8 +197,13 @@ class UntitledState {
       return;
     }
     try {
+      if (!isRecording && !finishedRecording) {
+        await store.dispatch(ResumeRecordSuccessAction());
+      } else {
+        await micRecorder!.clearData();
+        await store.dispatch(StartRecordSuccessAction());
+      }
       await micRecorder!.startRecord();
-      store.dispatch(StartRecordSuccessAction());
       print('Started recording: $transcriptTextList');
     } on LeopardException catch (ex) {
       print("Failed to start audio capture: ${ex.message}");
@@ -212,8 +224,22 @@ class UntitledState {
 
     try {
       final file = await micRecorder!.stopRecord();
+      await store.dispatch(StopRecordSuccessAction());
       await store.dispatch(AudioFileChangeAction(file));
       await store.dispatch(processRemainingFrames);
+    } on LeopardException catch (ex) {
+      print("Failed to stop audio capture: ${ex.message}");
+    }
+  }
+
+  Future<void> pauseRecording() async {
+    if (!isRecording || micRecorder == null) {
+      return;
+    }
+
+    try {
+      await micRecorder!.pauseRecord();
+      await store.dispatch(PauseRecordSuccessAction());
     } on LeopardException catch (ex) {
       print("Failed to stop audio capture: ${ex.message}");
     }
@@ -294,6 +320,12 @@ class AudioDurationChangeAction {
 }
 
 class StartRecordSuccessAction {}
+
+class PauseRecordSuccessAction {}
+
+class ResumeRecordSuccessAction {}
+
+class StopRecordSuccessAction {}
 
 class ProcessedRemainingFramesAction {
   Pair<String, Duration> remainingTranscript;
@@ -453,7 +485,14 @@ UntitledState untitledReducer(UntitledState prevState, action) {
         highlightedSpanIndex: null,
         combinedFrame: [],
         combinedDuration: Duration.zero,
-        isRecording: true);
+        isRecording: true,
+        finishedRecording: false);
+  } else if (action is ResumeRecordSuccessAction) {
+    return prevState.copyWith(isRecording: true, finishedRecording: false);
+  } else if (action is StopRecordSuccessAction) {
+    return prevState.copyWith(isRecording: true, finishedRecording: true);
+  } else if (action is PauseRecordSuccessAction) {
+    return prevState.copyWith(isRecording: false, finishedRecording: false);
   } else if (action is ProcessedRemainingFramesAction) {
     final newTranscriptTextList = prevState.transcriptTextList;
     newTranscriptTextList.add(action.remainingTranscript);

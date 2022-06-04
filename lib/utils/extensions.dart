@@ -1,5 +1,5 @@
 import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:leopard_demo/redux_/untitled.dart';
+import 'package:leopard_demo/redux_/transcriber.dart';
 import 'package:leopard_demo/utils/pair.dart';
 
 import 'global_variables.dart';

@@ -11,7 +11,7 @@ class PauseRecordingButton extends StatelessWidget {
     return StoreConnector<AppState, PauseRecordingButtonVM>(
       distinct: true,
       converter: (store) =>
-          PauseRecordingButtonVM(store.state.untitled.pauseRecording),
+          PauseRecordingButtonVM(store.state.recorder.pauseRecording),
       builder: (_, viewModel) {
         return IconButton(
             onPressed: viewModel.pauseRecording,

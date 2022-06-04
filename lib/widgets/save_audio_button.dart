@@ -19,7 +19,7 @@ class SaveAudioButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return StoreConnector<AppState, SaveAudioButtonVM>(
         distinct: true,
-        converter: (store) => SaveAudioButtonVM(store.state.untitled.file),
+        converter: (store) => SaveAudioButtonVM(store.state.audio.file),
         builder: (_, viewModel) {
           return Padding(
             padding: const EdgeInsets.all(10.0),

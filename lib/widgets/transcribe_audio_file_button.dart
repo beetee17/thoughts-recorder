@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:leopard_demo/redux_/untitled.dart';
+import 'package:leopard_demo/redux_/transcriber.dart';
+
+import '../redux_/audio.dart';
 
 class TranscribeAudioFileButton extends StatelessWidget {
   const TranscribeAudioFileButton({Key? key}) : super(key: key);
@@ -10,7 +12,8 @@ class TranscribeAudioFileButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return StoreConnector<AppState, TranscribeAudioFileButtonVM>(
       distinct: true,
-      converter: (store) => TranscribeAudioFileButtonVM(store.state.untitled),
+      converter: (store) =>
+          TranscribeAudioFileButtonVM(store.state.transcriber),
       builder: (_, viewModel) {
         return Padding(
           padding: const EdgeInsets.all(10.0),
@@ -25,7 +28,7 @@ class TranscribeAudioFileButton extends StatelessWidget {
 }
 
 class TranscribeAudioFileButtonVM {
-  UntitledState state;
+  TranscriberState state;
   TranscribeAudioFileButtonVM(this.state);
   @override
   bool operator ==(other) {

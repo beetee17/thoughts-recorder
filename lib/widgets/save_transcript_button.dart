@@ -19,7 +19,7 @@ class SaveTranscriptButton extends StatelessWidget {
     return StoreConnector<AppState, SaveTranscriptButtonVM>(
         distinct: true,
         converter: (store) =>
-            SaveTranscriptButtonVM(store.state.untitled.transcriptTextList),
+            SaveTranscriptButtonVM(store.state.transcript.transcriptTextList),
         builder: (_, viewModel) {
           return SecondaryIconButton(
               onPress: () => shareTranscript(

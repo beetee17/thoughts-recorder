@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_redux_dev_tools/flutter_redux_dev_tools.dart';
+import 'package:leopard_demo/redux_/leopard.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:leopard_demo/redux_/untitled.dart';
 import 'package:leopard_demo/screens/settings_screen.dart';
-import 'package:leopard_demo/utils/extensions.dart';
 import 'package:leopard_demo/utils/global_variables.dart';
 import 'package:leopard_demo/utils/pair.dart';
 import 'package:leopard_demo/utils/persistence.dart';
@@ -85,9 +84,9 @@ class _HomeState extends State<Home> {
       child: StoreConnector<AppState, HomeVM>(
           distinct: true,
           converter: (store) => HomeVM(
-              store.state.untitled.transcriptText,
-              store.state.untitled.transcriptTextList,
-              store.state.untitled.errorMessage),
+              store.state.transcript.transcriptText,
+              store.state.transcript.transcriptTextList,
+              store.state.status.errorMessage),
           builder: (_, viewModel) {
             final TextEditingController textEditingController =
                 TextEditingController(text: viewModel.transcriptText);

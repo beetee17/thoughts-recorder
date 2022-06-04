@@ -123,7 +123,7 @@ class RecordedCallbackUpdateAction {
 ThunkAction<AppState> Function(Duration, List<int>) getRecordedCallback =
     (Duration length, List<int> frame) {
   return (Store<AppState> store) async {
-    if (length.inSeconds < maxRecordingLengthSecs) {
+    if (length.inSeconds < maxRecordingLength.inSeconds) {
       TranscriberState state = store.state.transcriber;
       RecorderState recorder = store.state.recorder;
       LeopardState leopard = store.state.leopard;

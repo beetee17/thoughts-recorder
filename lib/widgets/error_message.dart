@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:leopard_demo/widgets/secondary_icon_button.dart';
-import 'package:leopard_demo/widgets/tutorial.dart';
+import 'package:Minutes/widgets/secondary_icon_button.dart';
+import 'package:Minutes/widgets/tutorial.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class ErrorMessage extends StatelessWidget {

@@ -1,8 +1,8 @@
-import 'package:leopard_demo/redux_/leopard.dart';
-import 'package:leopard_demo/redux_/recorder.dart';
-import 'package:leopard_demo/redux_/status.dart';
-import 'package:leopard_demo/redux_/transcript.dart';
-import 'package:leopard_demo/redux_/transcriber.dart';
+import 'package:Minutes/redux_/leopard.dart';
+import 'package:Minutes/redux_/recorder.dart';
+import 'package:Minutes/redux_/status.dart';
+import 'package:Minutes/redux_/transcript.dart';
+import 'package:Minutes/redux_/transcriber.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:leopard_demo/widgets/raw_text_editor.dart';
+import 'package:Minutes/redux_/rootStore.dart';
+import 'package:Minutes/widgets/raw_text_editor.dart';
 
 import '../utils/pair.dart';
 

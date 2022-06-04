@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:leopard_demo/widgets/pause_recording_button.dart';
-import 'package:leopard_demo/widgets/start_recording_button.dart';
-import 'package:leopard_demo/widgets/upload_file_button.dart';
+import 'package:Minutes/redux_/rootStore.dart';
+import 'package:Minutes/widgets/pause_recording_button.dart';
+import 'package:Minutes/widgets/start_recording_button.dart';
+import 'package:Minutes/widgets/upload_file_button.dart';
 
 import 'just_audio_player.dart';
 

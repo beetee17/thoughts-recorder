@@ -9,10 +9,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:leopard_demo/widgets/audio_player_context_menu.dart';
-import 'package:leopard_demo/widgets/seek_bar.dart';
-import 'package:leopard_demo/widgets/widget_with_shadow.dart';
+import 'package:Minutes/redux_/rootStore.dart';
+import 'package:Minutes/widgets/audio_player_context_menu.dart';
+import 'package:Minutes/widgets/seek_bar.dart';
+import 'package:Minutes/widgets/widget_with_shadow.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../redux_/audio.dart';

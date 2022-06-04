@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:leopard_demo/redux_/rootStore.dart';
+import 'package:Minutes/redux_/rootStore.dart';
 
 class UploadFileButton extends StatelessWidget {
   const UploadFileButton({Key? key}) : super(key: key);

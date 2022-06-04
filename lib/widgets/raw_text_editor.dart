@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:leopard_demo/utils/extensions.dart';
-import 'package:leopard_demo/widgets/just_audio_player.dart';
+import 'package:Minutes/redux_/rootStore.dart';
+import 'package:Minutes/utils/extensions.dart';
+import 'package:Minutes/widgets/just_audio_player.dart';
 
 import '../redux_/transcript.dart';
 import '../utils/pair.dart';

@@ -1,14 +1,14 @@
 import 'dart:io';
 
-import 'package:leopard_demo/mic_recorder.dart';
-import 'package:leopard_demo/utils/extensions.dart';
-import 'package:leopard_demo/utils/persistence.dart';
+import 'package:Minutes/mic_recorder.dart';
+import 'package:Minutes/utils/extensions.dart';
+import 'package:Minutes/utils/persistence.dart';
 
 import 'package:leopard_flutter/leopard.dart';
 import 'package:leopard_flutter/leopard_error.dart';
 
 import 'package:redux/redux.dart';
-import 'package:leopard_demo/redux_/rootStore.dart';
+import 'package:Minutes/redux_/rootStore.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 
 import '../utils/pair.dart';

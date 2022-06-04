@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:leopard_demo/utils/extensions.dart';
+import 'package:Minutes/utils/extensions.dart';
 
 import '../redux_/rootStore.dart';
 import '../utils/pair.dart';

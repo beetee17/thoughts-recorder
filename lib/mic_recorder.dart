@@ -17,10 +17,10 @@ import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter/return_code.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_voice_processor/flutter_voice_processor.dart';
-import 'package:leopard_demo/redux_/recorder.dart';
-import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:leopard_demo/redux_/status.dart';
-import 'package:leopard_demo/utils/global_variables.dart';
+import 'package:Minutes/redux_/recorder.dart';
+import 'package:Minutes/redux_/rootStore.dart';
+import 'package:Minutes/redux_/status.dart';
+import 'package:Minutes/utils/global_variables.dart';
 import 'package:leopard_flutter/leopard_error.dart';
 import 'package:path_provider/path_provider.dart';
 

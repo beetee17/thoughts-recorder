@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:leopard_demo/widgets/quote.dart';
+import 'package:Minutes/widgets/quote.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../screens/settings_screen.dart';

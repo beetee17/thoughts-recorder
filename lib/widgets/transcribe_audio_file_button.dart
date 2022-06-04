@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:leopard_demo/redux_/transcriber.dart';
+import 'package:Minutes/redux_/rootStore.dart';
+import 'package:Minutes/redux_/transcriber.dart';
 
 import '../redux_/audio.dart';
 

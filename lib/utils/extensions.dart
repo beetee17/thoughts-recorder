@@ -1,6 +1,6 @@
-import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:leopard_demo/redux_/transcriber.dart';
-import 'package:leopard_demo/utils/pair.dart';
+import 'package:Minutes/redux_/rootStore.dart';
+import 'package:Minutes/redux_/transcriber.dart';
+import 'package:Minutes/utils/pair.dart';
 
 import 'global_variables.dart';
 

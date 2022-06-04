@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:leopard_demo/utils/extensions.dart';
-import 'package:leopard_demo/widgets/secondary_icon_button.dart';
+import 'package:Minutes/redux_/rootStore.dart';
+import 'package:Minutes/utils/extensions.dart';
+import 'package:Minutes/widgets/secondary_icon_button.dart';
 import 'package:share_extend/share_extend.dart';
 
 import '../utils/pair.dart';

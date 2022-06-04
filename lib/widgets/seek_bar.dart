@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:leopard_demo/utils/extensions.dart';
+import 'package:Minutes/utils/extensions.dart';
 
 class SeekBar extends StatefulWidget {
   final Duration duration;

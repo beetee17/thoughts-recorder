@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:leopard_demo/redux_/rootStore.dart';
+import 'package:Minutes/redux_/rootStore.dart';
 import 'package:share_extend/share_extend.dart';
 
 class AudioPlayerContextMenu extends StatelessWidget {

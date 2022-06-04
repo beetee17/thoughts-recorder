@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_redux_dev_tools/flutter_redux_dev_tools.dart';
-import 'package:leopard_demo/redux_/leopard.dart';
-import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:leopard_demo/screens/settings_screen.dart';
-import 'package:leopard_demo/utils/global_variables.dart';
-import 'package:leopard_demo/utils/pair.dart';
-import 'package:leopard_demo/utils/persistence.dart';
-import 'package:leopard_demo/widgets/error_message.dart';
-import 'package:leopard_demo/widgets/selected_file.dart';
-import 'package:leopard_demo/widgets/status_area.dart';
-import 'package:leopard_demo/widgets/text_area.dart';
+import 'package:Minutes/redux_/leopard.dart';
+import 'package:Minutes/redux_/rootStore.dart';
+import 'package:Minutes/screens/settings_screen.dart';
+import 'package:Minutes/utils/global_variables.dart';
+import 'package:Minutes/utils/pair.dart';
+import 'package:Minutes/utils/persistence.dart';
+import 'package:Minutes/widgets/error_message.dart';
+import 'package:Minutes/widgets/selected_file.dart';
+import 'package:Minutes/widgets/status_area.dart';
+import 'package:Minutes/widgets/text_area.dart';
 //Import the font package
-import 'package:leopard_demo/widgets/tutorial.dart';
+import 'package:Minutes/widgets/tutorial.dart';
 
 void main() {
   runApp(MyApp());

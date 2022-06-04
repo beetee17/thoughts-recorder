@@ -1,5 +1,5 @@
-import 'package:leopard_demo/redux_/recorder.dart';
-import 'package:leopard_demo/redux_/transcript.dart';
+import 'package:Minutes/redux_/recorder.dart';
+import 'package:Minutes/redux_/transcript.dart';
 
 import 'audio.dart';
 

@@ -1,14 +1,14 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:leopard_demo/mic_recorder.dart';
-import 'package:leopard_demo/redux_/leopard.dart';
-import 'package:leopard_demo/redux_/recorder.dart';
-import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:leopard_demo/redux_/status.dart';
-import 'package:leopard_demo/redux_/transcript.dart';
-import 'package:leopard_demo/redux_/transcriber.dart';
-import 'package:leopard_demo/utils/extensions.dart';
+import 'package:Minutes/mic_recorder.dart';
+import 'package:Minutes/redux_/leopard.dart';
+import 'package:Minutes/redux_/recorder.dart';
+import 'package:Minutes/redux_/rootStore.dart';
+import 'package:Minutes/redux_/status.dart';
+import 'package:Minutes/redux_/transcript.dart';
+import 'package:Minutes/redux_/transcriber.dart';
+import 'package:Minutes/utils/extensions.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 import 'package:redux/redux.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:leopard_demo/widgets/widget_with_shadow.dart';
+import 'package:Minutes/redux_/rootStore.dart';
+import 'package:Minutes/widgets/widget_with_shadow.dart';
 
 class StartRecordingButton extends StatelessWidget {
   const StartRecordingButton({Key? key}) : super(key: key);

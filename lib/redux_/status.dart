@@ -1,9 +1,9 @@
-import 'package:leopard_demo/redux_/leopard.dart';
-import 'package:leopard_demo/redux_/transcriber.dart';
+import 'package:Minutes/redux_/leopard.dart';
+import 'package:Minutes/redux_/transcriber.dart';
 
 import 'package:leopard_flutter/leopard_error.dart';
 
-import 'package:leopard_demo/redux_/rootStore.dart';
+import 'package:Minutes/redux_/rootStore.dart';
 
 import 'audio.dart';
 

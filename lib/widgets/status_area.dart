@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:leopard_demo/redux_/rootStore.dart';
+import 'package:Minutes/redux_/rootStore.dart';
 
 class StatusArea extends StatelessWidget {
   const StatusArea({Key? key}) : super(key: key);

@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:leopard_demo/redux_/rootStore.dart';
-import 'package:leopard_demo/widgets/raw_text_list.dart';
-import 'package:leopard_demo/widgets/save_transcript_button.dart';
-import 'package:leopard_demo/widgets/secondary_icon_button.dart';
+import 'package:Minutes/redux_/rootStore.dart';
+import 'package:Minutes/widgets/raw_text_list.dart';
+import 'package:Minutes/widgets/save_transcript_button.dart';
+import 'package:Minutes/widgets/secondary_icon_button.dart';
 
 import 'formatted_text.dart';
 

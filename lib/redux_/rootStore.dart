@@ -1,3 +1,4 @@
+import 'package:leopard_demo/redux_/leopard.dart';
 import 'package:leopard_demo/redux_/recorder.dart';
 import 'package:leopard_demo/redux_/status.dart';
 import 'package:leopard_demo/redux_/transcript.dart';
@@ -14,13 +15,19 @@ class AppState {
   final AudioState audio;
   final StatusState status;
   final TranscriptState transcript;
+  final LeopardState leopard;
 
-  AppState(
-      this.untitled, this.recorder, this.audio, this.status, this.transcript);
+  AppState(this.untitled, this.recorder, this.audio, this.status,
+      this.transcript, this.leopard);
 
   static AppState empty() {
-    return AppState(UntitledState.empty(), RecorderState.empty(),
-        AudioState.empty(), StatusState.empty(), TranscriptState.empty());
+    return AppState(
+        UntitledState.empty(),
+        RecorderState.empty(),
+        AudioState.empty(),
+        StatusState.empty(),
+        TranscriptState.empty(),
+        LeopardState.empty());
   }
 
   @override
@@ -45,7 +52,8 @@ AppState appStateReducer(AppState state, action) => AppState(
     recorderReducer(state.recorder, action),
     audioReducer(state.audio, action),
     statusReducer(state.status, action),
-    transcriptReducer(state.transcript, action));
+    transcriptReducer(state.transcript, action),
+    leopardReducer(state.leopard, action));
 
 final store = DevToolsStore<AppState>(appStateReducer,
     initialState: AppState.empty(), middleware: [thunkMiddleware]);

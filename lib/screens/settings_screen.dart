@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:leopard_demo/redux_/leopard.dart';
 import 'package:leopard_demo/utils/persistence.dart';
 import 'package:settings_ui/settings_ui.dart';
 

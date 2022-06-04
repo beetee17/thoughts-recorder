@@ -1,4 +1,5 @@
 import 'package:leopard_demo/mic_recorder.dart';
+import 'package:leopard_demo/redux_/leopard.dart';
 import 'package:leopard_demo/redux_/transcript.dart';
 import 'package:leopard_demo/redux_/untitled.dart';
 
@@ -126,10 +127,11 @@ ThunkAction<AppState> Function(Duration, List<int>) getRecordedCallback =
     (Duration length, List<int> frame) {
   return (Store<AppState> store) async {
     if (length.inSeconds < maxRecordingLengthSecs) {
-      String singleFrameTranscript =
-          await store.state.untitled.leopard!.process(frame);
       UntitledState state = store.state.untitled;
       RecorderState recorder = store.state.recorder;
+      LeopardState leopard = store.state.leopard;
+
+      String singleFrameTranscript = await leopard.instance!.process(frame);
 
       List<int> newCombinedFrame = state.combinedFrame;
       newCombinedFrame.addAll(frame);
@@ -150,7 +152,7 @@ ThunkAction<AppState> Function(Duration, List<int>) getRecordedCallback =
 
           // we want the startTime of the text rather than the end
           Pair<String, Duration> incomingTranscript =
-              await state.processCombined(newCombinedFrame, startTime);
+              await leopard.processCombined(newCombinedFrame, startTime);
           await store.dispatch(IncomingTranscriptAction(incomingTranscript));
         } else {
           await store.dispatch(RecordedCallbackUpdateAction(

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:leopard_demo/mic_recorder.dart';
+import 'package:leopard_demo/redux_/leopard.dart';
 import 'package:leopard_demo/redux_/recorder.dart';
 import 'package:leopard_demo/redux_/untitled.dart';
 import 'package:leopard_demo/utils/extensions.dart';
@@ -92,6 +93,7 @@ class ProcessedRemainingFramesAction {
 
 ThunkAction<AppState> processRemainingFrames = (Store<AppState> store) async {
   UntitledState state = store.state.untitled;
+  LeopardState leopard = store.state.leopard;
   RecorderState recorder = store.state.recorder;
   AudioState audio = store.state.audio;
 
@@ -101,7 +103,7 @@ ThunkAction<AppState> processRemainingFrames = (Store<AppState> store) async {
   final Duration startTime =
       DurationUtils.max(Duration.zero, audio.duration - state.combinedDuration);
   final remainingTranscript =
-      await state.processCombined(state.combinedFrame, startTime);
+      await leopard.processCombined(state.combinedFrame, startTime);
   if (remainingTranscript.first.trim().isNotEmpty) {
     await store.dispatch(ProcessedRemainingFramesAction(remainingTranscript));
   }

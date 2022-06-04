@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:leopard_demo/mic_recorder.dart';
+import 'package:leopard_demo/redux_/leopard.dart';
 import 'package:leopard_demo/redux_/recorder.dart';
 import 'package:leopard_demo/redux_/rootStore.dart';
 import 'package:leopard_demo/redux_/status.dart';
@@ -104,7 +105,9 @@ class AudioFileChangeAction {
 ThunkAction<AppState> processCurrentAudioFile = (Store<AppState> store) async {
   final UntitledState state = store.state.untitled;
   final AudioState audio = store.state.audio;
-  if (state.leopard == null || audio.file == null) {
+  final LeopardState leopard = store.state.leopard;
+
+  if (leopard.instance == null || audio.file == null) {
     return;
   }
 
@@ -122,7 +125,8 @@ ThunkAction<AppState> processCurrentAudioFile = (Store<AppState> store) async {
   for (final frame in allFrames) {
     data.addAll(frame);
     final Duration transcribedLength = Duration(
-        milliseconds: (data.length / state.leopard!.sampleRate * 1000).toInt());
+        milliseconds:
+            (data.length / leopard.instance!.sampleRate * 1000).toInt());
     await store.dispatch(getRecordedCallback(transcribedLength, frame));
     await store.dispatch(StatusTextChangeAction(
         "Transcribed ${(transcribedLength.inMilliseconds / 1000).toStringAsFixed(1)} seconds..."));

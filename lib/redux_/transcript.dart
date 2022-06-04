@@ -1,15 +1,7 @@
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
-import 'package:Minutes/mic_recorder.dart';
 import 'package:Minutes/redux_/leopard.dart';
 import 'package:Minutes/redux_/recorder.dart';
 import 'package:Minutes/redux_/transcriber.dart';
 import 'package:Minutes/utils/extensions.dart';
-import 'package:Minutes/utils/persistence.dart';
-
-import 'package:leopard_flutter/leopard.dart';
-import 'package:leopard_flutter/leopard_error.dart';
 
 import 'package:redux/redux.dart';
 import 'package:Minutes/redux_/rootStore.dart';

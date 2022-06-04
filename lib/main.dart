@@ -58,7 +58,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    Settings.setAccessKey(debugAccessKey).then((bool success) {
+    Settings.getAccessKey().then((value) {
       showDialog(
         barrierDismissible: false,
         builder: (ctx) => const Center(child: CircularProgressIndicator()),

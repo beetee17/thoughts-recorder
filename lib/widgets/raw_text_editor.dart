@@ -39,6 +39,7 @@ class _RawTextEditorState extends State<RawTextEditor> {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, RawTextFieldVM>(
+        distinct: true,
         converter: (store) => RawTextFieldVM(
             store.state.untitled.highlightedSpanIndex,
             store.state.untitled.audioDuration),

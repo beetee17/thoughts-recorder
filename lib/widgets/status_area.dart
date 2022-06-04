@@ -8,6 +8,7 @@ class StatusArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, StatusAreaVM>(
+        distinct: true,
         converter: (store) => StatusAreaVM(store.state.untitled.statusAreaText),
         builder: (_, viewModel) {
           return Text(

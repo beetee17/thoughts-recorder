@@ -17,6 +17,7 @@ class SaveTranscriptButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, SaveTranscriptButtonVM>(
+        distinct: true,
         converter: (store) =>
             SaveTranscriptButtonVM(store.state.untitled.transcriptTextList),
         builder: (_, viewModel) {

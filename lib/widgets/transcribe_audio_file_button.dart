@@ -9,6 +9,7 @@ class TranscribeAudioFileButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, TranscribeAudioFileButtonVM>(
+      distinct: true,
       converter: (store) => TranscribeAudioFileButtonVM(store.state.untitled),
       builder: (_, viewModel) {
         return Padding(

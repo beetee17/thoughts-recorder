@@ -20,6 +20,7 @@ class _FormattedTextViewState extends State<FormattedTextView> {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, FormattedTextVM>(
+        distinct: true,
         converter: (store) => FormattedTextVM(
             store.state.untitled.transcriptTextList,
             store.state.untitled.transcriptText,
@@ -110,6 +111,7 @@ class FormattedTextVM {
         (transcriptTextList == other.transcriptTextList) &&
         (text == other.text) &&
         (highlightSpan == other.highlightSpan) &&
+        (highlightedSpanIndex == other.highlightedSpanIndex) &&
         (audioDuration == other.audioDuration);
   }
 

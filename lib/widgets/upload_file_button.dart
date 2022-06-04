@@ -11,6 +11,7 @@ class UploadFileButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, UploadFileButtonVM>(
+      distinct: true,
       converter: (store) => UploadFileButtonVM(
           store.state.untitled.file,
           store.state.untitled.pickFile,

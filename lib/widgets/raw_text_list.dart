@@ -16,9 +16,9 @@ class _RawTextListState extends State<RawTextList> {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, RawTextListVM>(
+        distinct: true,
         converter: ((store) =>
             RawTextListVM(store.state.untitled.transcriptTextList)),
-        distinct: true,
         builder: (_, viewModel) {
           return ListView(
             children: viewModel.transcriptTextList

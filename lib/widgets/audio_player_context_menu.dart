@@ -15,6 +15,7 @@ class AudioPlayerContextMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, AudioPlayerContextMenuVM>(
+      distinct: true,
       converter: (store) => AudioPlayerContextMenuVM(
           store.state.untitled.file, store.state.untitled.removeSelectedFile),
       builder: (_, viewModel) {

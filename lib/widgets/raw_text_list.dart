@@ -18,7 +18,7 @@ class _RawTextListState extends State<RawTextList> {
     return StoreConnector<AppState, RawTextListVM>(
         distinct: true,
         converter: ((store) =>
-            RawTextListVM(store.state.untitled.transcriptTextList)),
+            RawTextListVM(store.state.transcript.transcriptTextList)),
         builder: (_, viewModel) {
           return ListView(
             children: viewModel.transcriptTextList

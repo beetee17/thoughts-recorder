@@ -106,12 +106,6 @@ class PauseRecordSuccessAction {}
 
 class ResumeRecordSuccessAction {}
 
-class RecordedCallbackAction {
-  double recordedLength;
-  List<int> recordedFrame;
-  RecordedCallbackAction(this.recordedLength, this.recordedFrame);
-}
-
 class RecordedCallbackUpdateAction {
   Duration recordedLength;
   List<int> combinedFrame;

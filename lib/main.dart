@@ -70,7 +70,6 @@ class _HomeState extends State<Home> {
     });
   }
 
-  Color picoBlue = Color.fromRGBO(55, 125, 255, 1);
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(

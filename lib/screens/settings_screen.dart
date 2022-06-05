@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:Minutes/redux_/leopard.dart';
@@ -56,12 +57,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             title: Text('Set Up'),
                             tiles: <SettingsTile>[
                               SettingsTile(
+                                leading: Icon(Icons.key),
+                                title: Text('Access Key'),
                                 trailing: Expanded(
-                                  child: TextField(
+                                  flex: 2,
+                                  child: CupertinoTextField(
                                     controller: snapshot.data,
-                                    decoration:
-                                        InputDecoration.collapsed(hintText: ''),
-                                    textAlign: TextAlign.end,
+                                    decoration: BoxDecoration(),
+                                    clearButtonMode:
+                                        OverlayVisibilityMode.always,
                                     autocorrect: false,
                                     onSubmitted: (newKey) {
                                       Settings.setAccessKey(newKey)
@@ -80,8 +84,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     },
                                   ),
                                 ),
-                                leading: Icon(Icons.key),
-                                title: Text('Access Key'),
                               ),
                             ],
                           ),

@@ -15,31 +15,37 @@ class UploadFileButton extends StatelessWidget {
       converter: (store) => UploadFileButtonVM(store.state.audio.file,
           store.state.audio.pickFile, store.state.audio.removeSelectedFile),
       builder: (_, viewModel) {
-        return CupertinoContextMenu(
-          actions: <Widget>[
-            CupertinoContextMenuAction(
-              trailingIcon: CupertinoIcons.folder_open,
-              child: const Text('Choose Files'),
-              onPressed: () {
-                viewModel.pickFile(fromGallery: false);
-                Navigator.of(context).pop();
-              },
+        return PopupMenuButton(
+            icon: Icon(
+              Icons.file_upload_outlined,
+              color: Color.fromARGB(180, 0, 0, 0),
+              size: 30,
             ),
-            CupertinoContextMenuAction(
-              trailingIcon: CupertinoIcons.photo_on_rectangle,
-              child: const Text('Photo Library'),
-              onPressed: () {
-                viewModel.pickFile(fromGallery: true);
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-          child: Icon(
-            Icons.file_upload_outlined,
-            color: Color.fromARGB(180, 0, 0, 0),
-            size: 30,
-          ),
-        );
+            itemBuilder: (context) {
+              return [
+                PopupMenuItem(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Icon(CupertinoIcons.folder_open),
+                        SizedBox(height: 10, width: 10),
+                        Text('Choose Files'),
+                      ],
+                    ),
+                    onTap: () => viewModel.pickFile(fromGallery: false)),
+                PopupMenuItem(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Icon(CupertinoIcons.photo_on_rectangle),
+                      SizedBox(height: 10, width: 10),
+                      Text('Photo Library'),
+                    ],
+                  ),
+                  onTap: () => viewModel.pickFile(fromGallery: true),
+                )
+              ];
+            });
       },
     );
   }

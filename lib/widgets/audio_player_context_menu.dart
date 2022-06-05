@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:Minutes/redux_/rootStore.dart';
 import 'package:share_extend/share_extend.dart';
@@ -19,31 +20,37 @@ class AudioPlayerContextMenu extends StatelessWidget {
       converter: (store) => AudioPlayerContextMenuVM(
           store.state.audio.file, store.state.audio.removeSelectedFile),
       builder: (_, viewModel) {
-        return CupertinoContextMenu(
-          actions: <Widget>[
-            CupertinoContextMenuAction(
-              trailingIcon: CupertinoIcons.trash,
-              child: const Text('Delete Audio'),
-              onPressed: () {
-                viewModel.removeFile();
-                Navigator.of(context).pop();
-              },
+        return PopupMenuButton(
+            icon: Icon(
+              CupertinoIcons.ellipsis,
+              color: Color.fromARGB(180, 0, 0, 0),
+              size: 30,
             ),
-            CupertinoContextMenuAction(
-              trailingIcon: CupertinoIcons.share,
-              child: const Text('Share Audio'),
-              onPressed: () {
-                shareTranscript(viewModel.file);
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-          child: Icon(
-            CupertinoIcons.ellipsis,
-            color: Color.fromARGB(180, 0, 0, 0),
-            size: 30,
-          ),
-        );
+            itemBuilder: (context) {
+              return [
+                PopupMenuItem(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Icon(CupertinoIcons.trash),
+                        SizedBox(height: 10, width: 10),
+                        Text('Delete Audio'),
+                      ],
+                    ),
+                    onTap: viewModel.removeFile),
+                PopupMenuItem(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Icon(CupertinoIcons.share),
+                      SizedBox(height: 10, width: 10),
+                      Text('Share Audio'),
+                    ],
+                  ),
+                  onTap: () => shareTranscript(viewModel.file),
+                )
+              ];
+            });
       },
     );
   }

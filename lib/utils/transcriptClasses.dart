@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:Minutes/utils/extensions.dart';
 import 'package:path_provider/path_provider.dart';
 
 class TranscriptPair {
@@ -61,14 +62,18 @@ class Transcript {
 }
 
 class TranscriptFileHandler {
-  static final Future<Directory> directory = getApplicationDocumentsDirectory();
+  static final Future<Directory> appRootDirectory =
+      getApplicationDocumentsDirectory();
+  static final Future<Directory> appFilesDirectory =
+      appRootDirectory.then((dir) => Directory('${dir.path}/files'));
+
   static void save(Transcript transcript) async {
-    final Directory dir = await directory;
-    final String filename = transcript.audio.path;
+    final Directory dir = await appFilesDirectory;
+    final String filename = transcript.audio.getFileName();
 
     final File saveFile =
-        await File('${dir.path}/files/$filename.txt').create(recursive: true);
-
+        await File('${dir.path}/$filename.txt').create(recursive: true);
+    print('saved to ${saveFile.path}');
     saveFile.writeAsString(jsonEncode(transcript));
   }
 
@@ -78,7 +83,7 @@ class TranscriptFileHandler {
   }
 
   static Future<void> loadTest() async {
-    final Directory dir = await directory;
+    final Directory dir = await appRootDirectory;
     String transcriptFile =
         await File('${dir.path}/files/testing.txt').readAsString();
 

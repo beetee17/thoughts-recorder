@@ -1,3 +1,4 @@
+import 'package:Minutes/screens/files_screen.dart';
 import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -118,6 +119,18 @@ class _HomeState extends State<Home> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const SettingsScreen()));
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.file_copy,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const FilesScreen()));
                       },
                     )
                   ],

@@ -21,8 +21,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     _accessKeyController = Settings.getAccessKey().then((key) =>
-        _accessKeyController = Future.delayed(
-            Duration.zero, (() => TextEditingController(text: key))));
+        Future.delayed(Duration.zero, () => TextEditingController(text: key)));
   }
 
   Text UNEDITABLE_TEXT(String content) {

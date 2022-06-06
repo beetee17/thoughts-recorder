@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:Minutes/utils/transcriptClasses.dart';
 
 extension StringCasingExtension on String {
@@ -12,6 +14,12 @@ extension StringCasingExtension on String {
       toCapitalized().split('. ').map((str) => str.toCapitalized()).join('. ');
   String capitalizeNewLines() =>
       toCapitalized().split('\n').map((str) => str.toCapitalized()).join('\n');
+}
+
+extension Filename on File {
+  String getFileName() {
+    return RegExp(r'[^\/]+$').allMatches(this.path).last.group(0)!;
+  }
 }
 
 extension TextFormatter on String {

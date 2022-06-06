@@ -2,6 +2,7 @@ import 'package:Minutes/mic_recorder.dart';
 import 'package:Minutes/redux_/leopard.dart';
 import 'package:Minutes/redux_/transcript.dart';
 import 'package:Minutes/redux_/transcriber.dart';
+import 'package:Minutes/utils/transcriptClasses.dart';
 
 import 'package:leopard_flutter/leopard_error.dart';
 import 'package:redux/redux.dart';
@@ -10,7 +11,6 @@ import 'package:redux_thunk/redux_thunk.dart';
 
 import '../utils/extensions.dart';
 import '../utils/global_variables.dart';
-import '../utils/pair.dart';
 import 'audio.dart';
 
 class RecorderState {
@@ -142,7 +142,7 @@ ThunkAction<AppState> Function(Duration, List<int>) getRecordedCallback =
               DurationUtils.max(Duration.zero, length - newCombinedDuration);
 
           // we want the startTime of the text rather than the end
-          Pair<String, Duration> incomingTranscript =
+          TranscriptPair incomingTranscript =
               await leopard.processCombined(newCombinedFrame, startTime);
           await store.dispatch(IncomingTranscriptAction(incomingTranscript));
         } else {

@@ -45,15 +45,29 @@ class Transcript {
             .map((item) => TranscriptPair.fromJson(item))
             .toList(),
         audio = File(map['audio']);
+
+  @override
+  bool operator ==(final Object other) {
+    return other is Transcript &&
+        transcript == other.transcript &&
+        audio == other.audio;
+  }
+
+  @override
+  int get hashCode => Object.hash(transcript, audio);
+
+  @override
+  String toString() => '(${transcript.toString()}, ${audio.path})';
 }
 
 class TranscriptFileHandler {
   static final Future<Directory> directory = getApplicationDocumentsDirectory();
   static void save(Transcript transcript) async {
     final Directory dir = await directory;
+    final String filename = transcript.audio.path;
 
     final File saveFile =
-        await File('${dir.path}/files/testing.txt').create(recursive: true);
+        await File('${dir.path}/files/$filename.txt').create(recursive: true);
 
     saveFile.writeAsString(jsonEncode(transcript));
   }

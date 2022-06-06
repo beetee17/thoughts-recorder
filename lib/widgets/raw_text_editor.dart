@@ -1,3 +1,4 @@
+import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:Minutes/redux_/rootStore.dart';
@@ -5,11 +6,10 @@ import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/widgets/just_audio_player.dart';
 
 import '../redux_/transcript.dart';
-import '../utils/pair.dart';
 
 class RawTextEditor extends StatefulWidget {
   final int index;
-  final Pair<String, Duration> partialTranscript;
+  final TranscriptPair partialTranscript;
   const RawTextEditor(
       {Key? key, required this.partialTranscript, required this.index})
       : super(key: key);
@@ -25,7 +25,7 @@ class _RawTextEditorState extends State<RawTextEditor> {
   void initState() {
     super.initState();
     _textEditingController =
-        TextEditingController(text: widget.partialTranscript.first);
+        TextEditingController(text: widget.partialTranscript.text);
   }
 
   @override
@@ -54,22 +54,24 @@ class _RawTextEditorState extends State<RawTextEditor> {
             padding: EdgeInsets.symmetric(vertical: 0),
             child: TextField(
                 onChanged: (updatedText) {
-                  store.dispatch(UpdateTranscriptTextList(widget.index,
-                      Pair(updatedText, widget.partialTranscript.second)));
+                  store.dispatch(UpdateTranscriptTextList(
+                      widget.index,
+                      TranscriptPair(
+                          updatedText, widget.partialTranscript.startTime)));
                 },
                 maxLines: null,
                 style: shouldHighlightSpan(),
                 decoration: InputDecoration(
                     prefix: GestureDetector(
                         child: Text(
-                            '${widget.partialTranscript.second.toAudioDurationString()} ',
+                            '${widget.partialTranscript.startTime.toAudioDurationString()} ',
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.normal)),
                         onTap: () {
                           final Duration seekTime = DurationUtils.min(
                               viewModel.audioDuration,
-                              widget.partialTranscript.second);
+                              widget.partialTranscript.startTime);
                           print('seeking: ${seekTime.inSeconds}s');
                           JustAudioPlayerWidgetState.player.seek(seekTime);
                         })),

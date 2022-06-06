@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -48,7 +48,31 @@ class AudioPlayerContextMenu extends StatelessWidget {
                     ],
                   ),
                   onTap: () => shareTranscript(viewModel.file),
-                )
+                ),
+                PopupMenuItem(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Icon(CupertinoIcons.share),
+                      SizedBox(height: 10, width: 10),
+                      Text('Save'),
+                    ],
+                  ),
+                  onTap: () => TranscriptFileHandler.save(Transcript(
+                      viewModel.file!,
+                      store.state.transcript.transcriptTextList)),
+                ),
+                PopupMenuItem(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Icon(CupertinoIcons.share),
+                      SizedBox(height: 10, width: 10),
+                      Text('Load'),
+                    ],
+                  ),
+                  onTap: TranscriptFileHandler.loadTest,
+                ),
               ];
             });
       },

@@ -1,12 +1,10 @@
-import 'dart:math';
-
+import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:Minutes/utils/extensions.dart';
 
 import '../redux_/rootStore.dart';
-import '../utils/pair.dart';
 import 'just_audio_player.dart';
 
 class FormattedTextView extends StatefulWidget {
@@ -32,14 +30,14 @@ class _FormattedTextViewState extends State<FormattedTextView> {
               TextFormatter.formatTextList(viewModel.transcriptTextList)
                   .asMap()
                   .map((index, pair) {
-                    final List<String> words = pair.first.split(' ');
+                    final List<String> words = pair.text.split(' ');
 
                     List<InlineSpan> sentenceSpans = List.empty(growable: true);
 
                     void onTapSpan() {
                       print("Text: $pair tapped");
                       final Duration seekTime = DurationUtils.min(
-                          viewModel.audioDuration, pair.second);
+                          viewModel.audioDuration, pair.startTime);
                       print('seeking: ${seekTime.inSeconds}s');
                       JustAudioPlayerWidgetState.player.seek(seekTime);
                     }
@@ -98,7 +96,7 @@ class _FormattedTextViewState extends State<FormattedTextView> {
 }
 
 class FormattedTextVM {
-  List<Pair<String, Duration>> transcriptTextList;
+  List<TranscriptPair> transcriptTextList;
   String text;
   void Function(int) highlightSpan;
   int? highlightedSpanIndex;

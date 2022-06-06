@@ -1,3 +1,4 @@
+import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -5,8 +6,6 @@ import 'package:flutter_redux_dev_tools/flutter_redux_dev_tools.dart';
 import 'package:Minutes/redux_/leopard.dart';
 import 'package:Minutes/redux_/rootStore.dart';
 import 'package:Minutes/screens/settings_screen.dart';
-import 'package:Minutes/utils/global_variables.dart';
-import 'package:Minutes/utils/pair.dart';
 import 'package:Minutes/utils/persistence.dart';
 import 'package:Minutes/widgets/error_message.dart';
 import 'package:Minutes/widgets/selected_file.dart';
@@ -166,7 +165,7 @@ class _HomeState extends State<Home> {
 
 class HomeVM {
   String transcriptText;
-  List<Pair<String, Duration>> transcriptTextList;
+  List<TranscriptPair> transcriptTextList;
   String? errorMessage;
   HomeVM(this.transcriptText, this.transcriptTextList, this.errorMessage);
 

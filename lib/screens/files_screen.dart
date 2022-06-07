@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:Minutes/widgets/files_list.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 import '../redux_/rootStore.dart';
@@ -22,12 +20,16 @@ class _FilesScreenState extends State<FilesScreen> {
   void initState() {
     super.initState();
 
-    // Find files
+    // Find txt files
     _files = TranscriptFileHandler.appFilesDirectory.then((dir) => dir
         .list()
         .toList()
         .then((entities) => Future.delayed(
-            Duration.zero, () => entities.whereType<File>().toList())));
+            Duration.zero,
+            () => entities
+                .whereType<File>()
+                .where((file) => file.path.endsWith('.txt'))
+                .toList())));
   }
 
   @override

@@ -16,7 +16,6 @@ import 'package:Minutes/widgets/widget_with_shadow.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../redux_/audio.dart';
-import '../redux_/transcriber.dart';
 
 class JustAudioPlayerWidget extends StatefulWidget {
   final File file;
@@ -37,15 +36,16 @@ class JustAudioPlayerWidgetState extends State<JustAudioPlayerWidget>
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.black,
     ));
-    _init();
+    init(widget.file);
   }
 
-  Future<void> _init() async {
+  static Future<void> init(File file) async {
     // Inform the operating system of our app's audio attributes etc.
     // We pick a reasonable default for an app that plays speech.
     final session = await AudioSession.instance;
 
     await session.configure(const AudioSessionConfiguration.speech());
+
     // Listen to errors during playback.
     player.playbackEventStream.listen((event) {},
         onError: (Object e, StackTrace stackTrace) {
@@ -63,9 +63,10 @@ class JustAudioPlayerWidgetState extends State<JustAudioPlayerWidget>
     });
     // Try to load audio from source and catch any errors.
     try {
-      await player.setAudioSource(AudioSource.uri(Uri.file(widget.file.path)));
+      await player
+          .setAudioSource(AudioSource.uri(Uri.file(file.path, windows: false)));
     } catch (e) {
-      print("Error loading audio source: $e");
+      print("Error loading audio source ${file.path}: $e");
     }
   }
 

@@ -63,5 +63,12 @@
 	<string>App allows users to transcribe video files from gallery</string>
 	<key>NSCameraUsageDescription</key>
 	<string>App allows users to transcribe video files from camera</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSAllowsArbitraryLoadsForMedia</key>
+		<true/>
+	</dict>
 </dict>
 </plist>

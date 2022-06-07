@@ -83,6 +83,19 @@ class ProcessedRemainingFramesAction {
   ProcessedRemainingFramesAction(this.remainingTranscript);
 }
 
+class SetTranscriptListAction {
+  List<TranscriptPair> transcriptList;
+  SetTranscriptListAction(this.transcriptList);
+}
+
+ThunkAction<AppState> Function(Transcript) loadTranscript =
+    (Transcript transcript) {
+  return (Store<AppState> store) async {
+    await store.dispatch(SetTranscriptListAction(transcript.transcript));
+    await store.dispatch(AudioFileChangeAction(transcript.audio));
+  };
+};
+
 ThunkAction<AppState> processRemainingFrames = (Store<AppState> store) async {
   TranscriberState state = store.state.transcriber;
   LeopardState leopard = store.state.leopard;
@@ -122,6 +135,8 @@ TranscriptState transcriptReducer(TranscriptState prevState, action) {
     newList[action.index] = action.partialTranscript
         .map((text) => text.formatText(), (startTime) => startTime);
     return prevState.copyWith(transcriptTextList: newList);
+  } else if (action is SetTranscriptListAction) {
+    return prevState.copyWith(transcriptTextList: action.transcriptList);
   } else if (action is IncomingTranscriptAction) {
     final newTranscriptTextList = prevState.transcriptTextList;
     newTranscriptTextList.add(action.transcript);

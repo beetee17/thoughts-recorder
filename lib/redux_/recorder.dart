@@ -161,9 +161,6 @@ ThunkAction<AppState> Function(Duration, List<int>) getRecordedCallback =
 
 // Each reducer will handle actions related to the State Tree it cares about!
 RecorderState recorderReducer(RecorderState prevState, action) {
-  if (action is! AudioPositionChangeAction) {
-    print(action);
-  }
   if (action is InitialisationSuccessAction) {
     return prevState.copyWith(micRecorder: action.micRecorder);
   } else if (action is StartRecordSuccessAction) {

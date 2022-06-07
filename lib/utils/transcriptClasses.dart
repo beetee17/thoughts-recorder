@@ -36,8 +36,8 @@ class TranscriptPair {
 
 class Transcript {
   final List<TranscriptPair> transcript;
-  final File audio;
-  const Transcript(this.audio, this.transcript);
+  File audio;
+  Transcript(this.audio, this.transcript);
 
   Map toJson() => {'transcript': transcript, 'audio': audio.path};
 
@@ -64,6 +64,7 @@ class Transcript {
 class TranscriptFileHandler {
   static final Future<Directory> appRootDirectory =
       getApplicationDocumentsDirectory();
+
   static final Future<Directory> appFilesDirectory =
       appRootDirectory.then((dir) => Directory('${dir.path}/files'));
 
@@ -73,12 +74,17 @@ class TranscriptFileHandler {
 
     final File saveFile =
         await File('${dir.path}/$filename.txt').create(recursive: true);
+
+    // Copy audio file to app documents
+    transcript.audio = await transcript.audio.copy('${dir.path}/$filename');
+    await saveFile.writeAsString(jsonEncode(transcript));
+
     print('saved to ${saveFile.path}');
-    saveFile.writeAsString(jsonEncode(transcript));
   }
 
   static Future<Transcript> load(String path) async {
     String transcriptFile = await File(path).readAsString();
+
     return Transcript.fromJson(jsonDecode(transcriptFile));
   }
 

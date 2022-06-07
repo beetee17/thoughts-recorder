@@ -2,10 +2,14 @@ import 'dart:io';
 
 import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/utils/transcriptClasses.dart';
+import 'package:Minutes/widgets/just_audio_player.dart';
+import 'package:Minutes/widgets/secondary_icon_button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 import '../redux_/rootStore.dart';
+import '../redux_/transcript.dart';
 
 class FilesList extends StatefulWidget {
   final List<File> files;
@@ -21,7 +25,7 @@ class _FilesListState extends State<FilesList> {
   void initState() {
     super.initState();
 
-    // Find files
+    // Decode files to transcripts
     _transcripts = Future.wait(
         widget.files.map((e) => TranscriptFileHandler.load(e.path)).toList());
   }
@@ -52,9 +56,27 @@ class _FilesListState extends State<FilesList> {
                                 padding: const EdgeInsets.all(10.0),
                                 child: SizedBox(
                                     height: 100,
-                                    child: Center(
-                                        child: Text(
-                                            transcript.audio.getFileName()))),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          transcript.audio.getFileName(),
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        SecondaryIconButton(
+                                            onPress: () {
+                                              store.dispatch(
+                                                  loadTranscript(transcript));
+                                              JustAudioPlayerWidgetState.init(
+                                                  transcript.audio);
+                                              Navigator.pop(context);
+                                            },
+                                            icon: Icon(CupertinoIcons
+                                                .arrow_right_circle_fill),
+                                            margin: EdgeInsets.zero)
+                                      ],
+                                    )),
                               ),
                             ),
                           )

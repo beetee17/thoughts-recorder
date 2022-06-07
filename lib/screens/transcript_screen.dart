@@ -59,8 +59,11 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
               onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
               child: Scaffold(
                 appBar: AppBar(
-                  title: const Text('Transcript'),
-                ),
+                    title: const Text('Transcript'),
+                    leading: IconButton(
+                      icon: Icon(Icons.arrow_back_ios),
+                      onPressed: () => Navigator.of(context).pop(),
+                    )),
                 resizeToAvoidBottomInset: false,
                 body: Column(
                   children: [

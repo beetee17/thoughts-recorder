@@ -15,12 +15,12 @@ import 'package:Minutes/widgets/text_area.dart';
 //Import the font package
 import 'package:Minutes/widgets/tutorial.dart';
 
-class Home extends StatefulWidget {
+class TranscriptScreen extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _TranscriptScreenState createState() => _TranscriptScreenState();
 }
 
-class _HomeState extends State<Home> {
+class _TranscriptScreenState extends State<TranscriptScreen> {
   @override
   void initState() {
     super.initState();

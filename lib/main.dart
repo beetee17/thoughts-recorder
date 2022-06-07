@@ -1,4 +1,4 @@
-import 'package:Minutes/screens/home_screen.dart';
+import 'package:Minutes/screens/transcript_screen.dart';
 import 'package:flutter/material.dart';
 //Import the font package
 
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Home(),
+      home: TranscriptScreen(),
       // debugShowCheckedModeBanner: false,
       theme: ThemeData(
           sliderTheme: SliderThemeData(

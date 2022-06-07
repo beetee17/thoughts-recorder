@@ -65,18 +65,19 @@ class TranscriptFileHandler {
   static final Future<Directory> appRootDirectory =
       getApplicationDocumentsDirectory();
 
-  static final Future<Directory> appFilesDirectory =
-      appRootDirectory.then((dir) => Directory('${dir.path}/files'));
+  static final Future<Directory> appFilesDirectory = appRootDirectory
+      .then((dir) => Directory('${dir.path}/files').create(recursive: true));
 
   static void save(Transcript transcript) async {
     final Directory dir = await appFilesDirectory;
     final String filename = transcript.audio.getFileName();
 
-    final File saveFile =
-        await File('${dir.path}/$filename.txt').create(recursive: true);
+    final File saveFile = await File('${dir.absolute.path}/$filename.txt')
+        .create(recursive: true);
 
     // Copy audio file to app documents
-    transcript.audio = await transcript.audio.copy('${dir.path}/$filename');
+    transcript.audio =
+        await transcript.audio.copy('${dir.absolute.path}/$filename');
     await saveFile.writeAsString(jsonEncode(transcript));
 
     print('saved to ${saveFile.path}');
@@ -86,17 +87,5 @@ class TranscriptFileHandler {
     String transcriptFile = await File(path).readAsString();
 
     return Transcript.fromJson(jsonDecode(transcriptFile));
-  }
-
-  static Future<void> loadTest() async {
-    final Directory dir = await appRootDirectory;
-    String transcriptFile =
-        await File('${dir.path}/files/testing.txt').readAsString();
-
-    final decodedJSON = jsonDecode(transcriptFile);
-    print(decodedJSON);
-
-    Transcript test = Transcript.fromJson(decodedJSON);
-    print(test);
   }
 }

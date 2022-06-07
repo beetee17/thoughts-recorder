@@ -63,8 +63,7 @@ class JustAudioPlayerWidgetState extends State<JustAudioPlayerWidget>
     });
     // Try to load audio from source and catch any errors.
     try {
-      await player
-          .setAudioSource(AudioSource.uri(Uri.file(file.path, windows: false)));
+      await player.setFilePath(file.path);
     } catch (e) {
       print("Error loading audio source ${file.path}: $e");
     }

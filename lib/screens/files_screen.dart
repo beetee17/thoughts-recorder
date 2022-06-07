@@ -61,69 +61,68 @@ class _FilesScreenState extends State<FilesScreen> {
     return FutureBuilder<List<File>>(
         future: _files,
         builder: (BuildContext context, AsyncSnapshot<List<File>> snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-              return const CircularProgressIndicator();
-
-            default:
-              return StoreProvider(
-                store: store,
-                child: Scaffold(
-                  appBar: AppBar(
-                    title: const Text('Minutes'),
-                    leading: IconButton(
-                      icon: Icon(
-                        Icons.info_outline_rounded,
-                        color: Colors.black,
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Scaffold(
-                                    appBar: AppBar(title: Text("Tutorial")),
-                                    body: Tutorial())));
-                      },
-                    ),
-                    actions: <Widget>[
-                      IconButton(
-                        icon: Icon(
-                          Icons.settings,
-                          color: Colors.black,
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const SettingsScreen()));
-                        },
-                      ),
-                    ],
+          return StoreProvider(
+            store: store,
+            child: Scaffold(
+              appBar: AppBar(
+                title: const Text('Minutes'),
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.info_outline_rounded,
+                    color: Colors.black,
                   ),
-                  body: snapshot.hasError
-                      ? RefreshIndicator(
-                          onRefresh: () => getFiles(),
-                          child: ListView(
-                              children: [Text('Error: ${snapshot.error}')]))
-                      : FilesList(
-                          files: snapshot.data!,
-                          onRefresh: getFiles,
-                        ),
-                  floatingActionButton: FloatingActionButton(
-                    child: Icon(Icons.add),
-                    backgroundColor: Colors.blue.shade800,
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Scaffold(
+                                appBar: AppBar(title: Text("Tutorial")),
+                                body: Tutorial())));
+                  },
+                ),
+                actions: <Widget>[
+                  IconButton(
+                    icon: Icon(
+                      Icons.settings,
+                      color: Colors.black,
+                    ),
                     onPressed: () {
-                      ClearAllAction().call(store).then((value) =>
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TranscriptScreen())));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SettingsScreen()));
                     },
                   ),
-                ),
-              );
-          }
+                ],
+              ),
+              body: Stack(children: [
+                snapshot.hasError
+                    ? RefreshIndicator(
+                        onRefresh: () => getFiles(),
+                        child: ListView(
+                            children: [Text('Error: ${snapshot.error}')]))
+                    : FilesList(
+                        files: snapshot.data!,
+                        onRefresh: getFiles,
+                      ),
+                snapshot.connectionState == ConnectionState.waiting
+                    ? Center(child: const CircularProgressIndicator())
+                    : Container()
+              ]),
+              floatingActionButton: FloatingActionButton(
+                child: Icon(Icons.add),
+                backgroundColor: Colors.blue.shade800,
+                onPressed: () {
+                  ClearAllAction().call(store).then((value) => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => TranscriptScreen()))
+                      .then((_) => getFiles()));
+                  // Refresh page when coming back here
+                },
+              ),
+            ),
+          );
         });
   }
 }

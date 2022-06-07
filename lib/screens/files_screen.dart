@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:Minutes/screens/transcript_screen.dart';
 import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:Minutes/widgets/files_list.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +51,15 @@ class _FilesScreenState extends State<FilesScreen> {
                   child: Scaffold(
                     appBar: AppBar(title: const Text('Minutes')),
                     body: FilesList(files: snapshot.data!),
+                    floatingActionButton: FloatingActionButton(
+                      child: Icon(Icons.add),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => TranscriptScreen()));
+                      },
+                    ),
                   ),
                 );
               }

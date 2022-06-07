@@ -6,13 +6,10 @@ import 'package:Minutes/widgets/just_audio_player.dart';
 import 'package:Minutes/widgets/secondary_icon_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_redux/flutter_redux.dart';
 
-import '../redux_/leopard.dart';
 import '../redux_/rootStore.dart';
 import '../redux_/transcript.dart';
 import '../screens/transcript_screen.dart';
-import '../utils/persistence.dart';
 
 class FilesList extends StatefulWidget {
   final List<File> files;
@@ -31,17 +28,6 @@ class _FilesListState extends State<FilesList> {
     // Decode files to transcripts
     _transcripts = Future.wait(
         widget.files.map((e) => TranscriptFileHandler.load(e.path)).toList());
-
-    Settings.getAccessKey().then((value) {
-      showDialog(
-        barrierDismissible: false,
-        builder: (ctx) => const Center(child: CircularProgressIndicator()),
-        context: context,
-      );
-      InitLeopardAction()
-          .call(store)
-          .then((value) => Navigator.of(context).pop());
-    });
   }
 
   @override

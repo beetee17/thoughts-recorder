@@ -7,7 +7,9 @@ import 'package:Minutes/widgets/files_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
+import '../redux_/leopard.dart';
 import '../redux_/rootStore.dart';
+import '../utils/persistence.dart';
 import '../widgets/tutorial.dart';
 
 class FilesScreen extends StatefulWidget {
@@ -33,6 +35,16 @@ class _FilesScreenState extends State<FilesScreen> {
                 .whereType<File>()
                 .where((file) => file.path.endsWith('.txt'))
                 .toList())));
+    Settings.getAccessKey().then((value) {
+      showDialog(
+        barrierDismissible: false,
+        builder: (ctx) => const Center(child: CircularProgressIndicator()),
+        context: context,
+      );
+      InitLeopardAction()
+          .call(store)
+          .then((value) => Navigator.of(context).pop());
+    });
   }
 
   @override

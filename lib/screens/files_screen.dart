@@ -25,16 +25,6 @@ class _FilesScreenState extends State<FilesScreen> {
   void initState() {
     super.initState();
 
-    // Find txt files
-    _files = TranscriptFileHandler.appFilesDirectory.then((dir) => dir
-        .list()
-        .toList()
-        .then((entities) => Future.delayed(
-            Duration.zero,
-            () => entities
-                .whereType<File>()
-                .where((file) => file.path.endsWith('.txt'))
-                .toList())));
     Settings.getAccessKey().then((value) {
       showDialog(
         barrierDismissible: false,
@@ -45,6 +35,25 @@ class _FilesScreenState extends State<FilesScreen> {
           .call(store)
           .then((value) => Navigator.of(context).pop());
     });
+
+    getFiles();
+  }
+
+  Future<void> getFiles() {
+    return Future.delayed(
+        Duration.zero,
+        () => setState(() {
+              // Find txt files
+              _files = TranscriptFileHandler.appFilesDirectory.then((dir) => dir
+                  .list()
+                  .toList()
+                  .then((entities) => Future.delayed(
+                      Duration.zero,
+                      () => entities
+                          .whereType<File>()
+                          .where((file) => file.path.endsWith('.txt'))
+                          .toList())));
+            }));
   }
 
   @override
@@ -57,57 +66,61 @@ class _FilesScreenState extends State<FilesScreen> {
               return const CircularProgressIndicator();
 
             default:
-              if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else {
-                return StoreProvider(
-                  store: store,
-                  child: Scaffold(
-                    appBar: AppBar(
-                      title: const Text('Minutes'),
-                      leading: IconButton(
+              return StoreProvider(
+                store: store,
+                child: Scaffold(
+                  appBar: AppBar(
+                    title: const Text('Minutes'),
+                    leading: IconButton(
+                      icon: Icon(
+                        Icons.info_outline_rounded,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Scaffold(
+                                    appBar: AppBar(title: Text("Tutorial")),
+                                    body: Tutorial())));
+                      },
+                    ),
+                    actions: <Widget>[
+                      IconButton(
                         icon: Icon(
-                          Icons.info_outline_rounded,
+                          Icons.settings,
                           color: Colors.black,
                         ),
                         onPressed: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Scaffold(
-                                      appBar: AppBar(title: Text("Tutorial")),
-                                      body: Tutorial())));
+                                  builder: (context) =>
+                                      const SettingsScreen()));
                         },
                       ),
-                      actions: <Widget>[
-                        IconButton(
-                          icon: Icon(
-                            Icons.settings,
-                            color: Colors.black,
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const SettingsScreen()));
-                          },
-                        ),
-                      ],
-                    ),
-                    body: FilesList(files: snapshot.data!),
-                    floatingActionButton: FloatingActionButton(
-                      child: Icon(Icons.add),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => TranscriptScreen()));
-                      },
-                    ),
+                    ],
                   ),
-                );
-              }
+                  body: snapshot.hasError
+                      ? RefreshIndicator(
+                          onRefresh: () => getFiles(),
+                          child: ListView(
+                              children: [Text('Error: ${snapshot.error}')]))
+                      : FilesList(
+                          files: snapshot.data!,
+                          onRefresh: getFiles,
+                        ),
+                  floatingActionButton: FloatingActionButton(
+                    child: Icon(Icons.add),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => TranscriptScreen()));
+                    },
+                  ),
+                ),
+              );
           }
         });
   }

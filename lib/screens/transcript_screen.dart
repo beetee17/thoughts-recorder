@@ -22,21 +22,6 @@ class TranscriptScreen extends StatefulWidget {
 
 class _TranscriptScreenState extends State<TranscriptScreen> {
   @override
-  void initState() {
-    super.initState();
-    Settings.getAccessKey().then((value) {
-      showDialog(
-        barrierDismissible: false,
-        builder: (ctx) => const Center(child: CircularProgressIndicator()),
-        context: context,
-      );
-      InitLeopardAction()
-          .call(store)
-          .then((value) => Navigator.of(context).pop());
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.white, // Only honored in Android M and above

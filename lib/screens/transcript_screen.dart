@@ -46,9 +46,9 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
     ));
     return StoreProvider<AppState>(
       store: store,
-      child: StoreConnector<AppState, HomeVM>(
+      child: StoreConnector<AppState, TranscriptScreenVM>(
           distinct: true,
-          converter: (store) => HomeVM(
+          converter: (store) => TranscriptScreenVM(
               store.state.transcript.transcriptText,
               store.state.transcript.transcriptTextList,
               store.state.status.errorMessage),
@@ -102,15 +102,16 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
   }
 }
 
-class HomeVM {
+class TranscriptScreenVM {
   String transcriptText;
   List<TranscriptPair> transcriptTextList;
   String? errorMessage;
-  HomeVM(this.transcriptText, this.transcriptTextList, this.errorMessage);
+  TranscriptScreenVM(
+      this.transcriptText, this.transcriptTextList, this.errorMessage);
 
   @override
   bool operator ==(other) {
-    return (other is HomeVM) &&
+    return (other is TranscriptScreenVM) &&
         (transcriptText == other.transcriptText) &&
         (transcriptTextList == other.transcriptTextList) &&
         (errorMessage == other.errorMessage);

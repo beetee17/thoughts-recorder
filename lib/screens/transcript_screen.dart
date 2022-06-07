@@ -44,64 +44,61 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
           Brightness.dark, // Only honored in Android M and above
       statusBarBrightness: Brightness.light, // Only honored in iOS
     ));
-    return StoreProvider<AppState>(
-      store: store,
-      child: StoreConnector<AppState, TranscriptScreenVM>(
-          distinct: true,
-          converter: (store) => TranscriptScreenVM(
-              store.state.transcript.transcriptText,
-              store.state.transcript.transcriptTextList,
-              store.state.status.errorMessage),
-          builder: (_, viewModel) {
-            final TextEditingController textEditingController =
-                TextEditingController(text: viewModel.transcriptText);
-            return GestureDetector(
-              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-              child: Scaffold(
-                appBar: AppBar(
-                    title: const Text('Transcript'),
-                    leading: IconButton(
-                      icon: Icon(Icons.arrow_back_ios),
-                      onPressed: () => Navigator.of(context).pop(),
-                    )),
-                resizeToAvoidBottomInset: false,
-                body: Column(
-                  children: [
-                    viewModel.errorMessage == null
-                        ? TextArea()
-                        : ErrorMessage(errorMessage: viewModel.errorMessage!),
-                    Container(
-                      padding: EdgeInsets.only(top: 20, bottom: 30),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 1,
-                              spreadRadius: 1,
-                              offset: Offset(0, -3))
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          StatusArea(),
-                          SizedBox(height: 10),
-                          SelectedFile(),
-                        ],
-                      ),
+    return StoreConnector<AppState, TranscriptScreenVM>(
+        distinct: true,
+        converter: (store) => TranscriptScreenVM(
+            store.state.transcript.transcriptText,
+            store.state.transcript.transcriptTextList,
+            store.state.status.errorMessage),
+        builder: (_, viewModel) {
+          final TextEditingController textEditingController =
+              TextEditingController(text: viewModel.transcriptText);
+          return GestureDetector(
+            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+            child: Scaffold(
+              appBar: AppBar(
+                  title: const Text('Transcript'),
+                  leading: IconButton(
+                    icon: Icon(Icons.arrow_back_ios),
+                    onPressed: () => Navigator.of(context).pop(),
+                  )),
+              resizeToAvoidBottomInset: false,
+              body: Column(
+                children: [
+                  viewModel.errorMessage == null
+                      ? TextArea()
+                      : ErrorMessage(errorMessage: viewModel.errorMessage!),
+                  Container(
+                    padding: EdgeInsets.only(top: 20, bottom: 30),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 1,
+                            spreadRadius: 1,
+                            offset: Offset(0, -3))
+                      ],
                     ),
-                  ],
-                ),
-                endDrawer: Container(
-                    color: Colors.white,
-                    child: ReduxDevTools<AppState>(
-                      store,
-                      stateMaxLines: 10,
-                    )),
+                    child: Column(
+                      children: [
+                        StatusArea(),
+                        SizedBox(height: 10),
+                        SelectedFile(),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            );
-          }),
-    );
+              endDrawer: Container(
+                  color: Colors.white,
+                  child: ReduxDevTools<AppState>(
+                    store,
+                    stateMaxLines: 10,
+                  )),
+            ),
+          );
+        });
   }
 }
 

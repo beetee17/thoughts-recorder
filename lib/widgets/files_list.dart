@@ -45,48 +45,45 @@ class _FilesListState extends State<FilesList> {
               if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else {
-                return StoreProvider(
-                  store: store,
-                  child: ListView(
-                      children: snapshot.data!
-                          .map(
-                            (transcript) => Card(
-                              elevation: 5,
-                              margin: const EdgeInsets.all(10.0),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: SizedBox(
-                                    height: 100,
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          transcript.audio.getFileName(),
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                        SecondaryIconButton(
-                                            onPress: () {
-                                              store.dispatch(
-                                                  loadTranscript(transcript));
-                                              JustAudioPlayerWidgetState.init(
-                                                  transcript.audio);
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          TranscriptScreen()));
-                                            },
-                                            icon: Icon(CupertinoIcons
-                                                .arrow_right_circle_fill),
-                                            margin: EdgeInsets.zero)
-                                      ],
-                                    )),
-                              ),
+                return ListView(
+                    children: snapshot.data!
+                        .map(
+                          (transcript) => Card(
+                            elevation: 5,
+                            margin: const EdgeInsets.all(10.0),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: SizedBox(
+                                  height: 100,
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        transcript.audio.getFileName(),
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      SecondaryIconButton(
+                                          onPress: () {
+                                            store.dispatch(
+                                                loadTranscript(transcript));
+                                            JustAudioPlayerWidgetState.init(
+                                                transcript.audio);
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        TranscriptScreen()));
+                                          },
+                                          icon: Icon(CupertinoIcons
+                                              .arrow_right_circle_fill),
+                                          margin: EdgeInsets.zero)
+                                    ],
+                                  )),
                             ),
-                          )
-                          .toList()),
-                );
+                          ),
+                        )
+                        .toList());
               }
           }
         });

@@ -114,10 +114,11 @@ class _FilesScreenState extends State<FilesScreen> {
                     child: Icon(Icons.add),
                     backgroundColor: Colors.blue.shade800,
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => TranscriptScreen()));
+                      ClearAllAction().call(store).then((value) =>
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TranscriptScreen())));
                     },
                   ),
                 ),

@@ -5,7 +5,7 @@ import 'package:Minutes/redux_/transcript.dart';
 import 'package:Minutes/redux_/transcriber.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:redux_thunk/redux_thunk.dart';
-
+import 'package:redux/redux.dart';
 import 'audio.dart';
 
 // Define your State
@@ -33,6 +33,14 @@ class AppState {
   @override
   String toString() {
     return '$transcriber \n$recorder \n$audio \n$status \n$transcript';
+  }
+}
+
+class ClearAllAction implements CallableThunkAction<AppState> {
+  @override
+  Future<void> call(Store<AppState> store) async {
+    await store.dispatch(AudioFileChangeAction(null));
+    await store.dispatch(SetTranscriptListAction([]));
   }
 }
 

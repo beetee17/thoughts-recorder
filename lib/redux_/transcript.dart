@@ -62,6 +62,8 @@ class TranscriptState {
   }
 }
 
+class ClearAllAction {}
+
 class HighlightSpanAtIndex {
   int index;
   HighlightSpanAtIndex(this.index);

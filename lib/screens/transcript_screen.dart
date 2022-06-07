@@ -60,46 +60,6 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
               child: Scaffold(
                 appBar: AppBar(
                   title: const Text('Transcript'),
-                  leading: IconButton(
-                    icon: Icon(
-                      Icons.info_outline_rounded,
-                      color: Colors.black,
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Scaffold(
-                                  appBar: AppBar(title: Text("Tutorial")),
-                                  body: Tutorial())));
-                    },
-                  ),
-                  actions: <Widget>[
-                    IconButton(
-                      icon: Icon(
-                        Icons.settings,
-                        color: Colors.black,
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const SettingsScreen()));
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.file_copy,
-                        color: Colors.black,
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const FilesScreen()));
-                      },
-                    )
-                  ],
                 ),
                 resizeToAvoidBottomInset: false,
                 body: Column(

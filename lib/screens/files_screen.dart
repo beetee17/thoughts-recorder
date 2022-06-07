@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:Minutes/screens/settings_screen.dart';
 import 'package:Minutes/screens/transcript_screen.dart';
 import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:Minutes/widgets/files_list.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 import '../redux_/rootStore.dart';
+import '../widgets/tutorial.dart';
 
 class FilesScreen extends StatefulWidget {
   const FilesScreen({Key? key}) : super(key: key);
@@ -49,7 +51,38 @@ class _FilesScreenState extends State<FilesScreen> {
                 return StoreProvider(
                   store: store,
                   child: Scaffold(
-                    appBar: AppBar(title: const Text('Minutes')),
+                    appBar: AppBar(
+                      title: const Text('Minutes'),
+                      leading: IconButton(
+                        icon: Icon(
+                          Icons.info_outline_rounded,
+                          color: Colors.black,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Scaffold(
+                                      appBar: AppBar(title: Text("Tutorial")),
+                                      body: Tutorial())));
+                        },
+                      ),
+                      actions: <Widget>[
+                        IconButton(
+                          icon: Icon(
+                            Icons.settings,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SettingsScreen()));
+                          },
+                        ),
+                      ],
+                    ),
                     body: FilesList(files: snapshot.data!),
                     floatingActionButton: FloatingActionButton(
                       child: Icon(Icons.add),

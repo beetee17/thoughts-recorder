@@ -48,7 +48,7 @@ class _FilesScreenState extends State<FilesScreen> {
                 return StoreProvider(
                   store: store,
                   child: Scaffold(
-                    appBar: AppBar(title: const Text('Files')),
+                    appBar: AppBar(title: const Text('Minutes')),
                     body: FilesList(files: snapshot.data!),
                   ),
                 );

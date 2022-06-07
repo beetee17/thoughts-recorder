@@ -30,7 +30,7 @@ class AudioPlayerContextMenu extends StatelessWidget {
               return [
                 PopupMenuItem(
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Icon(CupertinoIcons.trash),
                         SizedBox(height: 10, width: 10),
@@ -40,7 +40,7 @@ class AudioPlayerContextMenu extends StatelessWidget {
                     onTap: viewModel.removeFile),
                 PopupMenuItem(
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Icon(CupertinoIcons.share),
                       SizedBox(height: 10, width: 10),
@@ -51,11 +51,11 @@ class AudioPlayerContextMenu extends StatelessWidget {
                 ),
                 PopupMenuItem(
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Icon(CupertinoIcons.share),
+                      Icon(CupertinoIcons.doc),
                       SizedBox(height: 10, width: 10),
-                      Text('Save'),
+                      Text('Save Note'),
                     ],
                   ),
                   onTap: () => TranscriptFileHandler.save(Transcript(

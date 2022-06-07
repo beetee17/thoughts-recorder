@@ -112,6 +112,7 @@ class _FilesScreenState extends State<FilesScreen> {
                         ),
                   floatingActionButton: FloatingActionButton(
                     child: Icon(Icons.add),
+                    backgroundColor: Colors.blue.shade800,
                     onPressed: () {
                       Navigator.push(
                           context,

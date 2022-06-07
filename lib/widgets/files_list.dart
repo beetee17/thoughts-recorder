@@ -10,6 +10,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 
 import '../redux_/rootStore.dart';
 import '../redux_/transcript.dart';
+import '../screens/transcript_screen.dart';
 
 class FilesList extends StatefulWidget {
   final List<File> files;
@@ -70,7 +71,11 @@ class _FilesListState extends State<FilesList> {
                                                   loadTranscript(transcript));
                                               JustAudioPlayerWidgetState.init(
                                                   transcript.audio);
-                                              Navigator.pop(context);
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          TranscriptScreen()));
                                             },
                                             icon: Icon(CupertinoIcons
                                                 .arrow_right_circle_fill),

@@ -40,14 +40,14 @@ class TranscriptPair {
   String toString() => '(${text.toString()}, ${startTime.toString()})';
 }
 
-class Transcript {
+class SaveFile {
   final List<TranscriptPair> transcript;
   File audio;
-  Transcript(this.audio, this.transcript);
+  SaveFile(this.audio, this.transcript);
 
   Map toJson() => {'transcript': transcript, 'audio': audio.name};
 
-  static Future<Transcript> fromJson(Map<String, dynamic> map) async {
+  static Future<SaveFile> fromJson(Map<String, dynamic> map) async {
     final Directory filesDirectory =
         await TranscriptFileHandler.appFilesDirectory;
 
@@ -57,12 +57,12 @@ class Transcript {
         .map((item) => TranscriptPair.fromJson(item))
         .toList();
 
-    return Transcript(audio, transcript);
+    return SaveFile(audio, transcript);
   }
 
   @override
   bool operator ==(final Object other) {
-    return other is Transcript &&
+    return other is SaveFile &&
         transcript == other.transcript &&
         audio == other.audio;
   }
@@ -81,7 +81,7 @@ class TranscriptFileHandler {
   static final Future<Directory> appFilesDirectory = appRootDirectory.then(
       (dir) => Directory(path.join(dir.path, 'files')).create(recursive: true));
 
-  static Future<void> save(BuildContext context, Transcript transcript,
+  static Future<void> save(BuildContext context, SaveFile transcript,
       {bool force = false}) async {
     // Need to check that filename is not duplicate and non-empty
     try {
@@ -102,8 +102,8 @@ class TranscriptFileHandler {
                     String newPath =
                         (await transcript.audio.getNonDuplicate()).path;
                     File newAudio = await transcript.audio.copy(newPath);
-                    Transcript newTranscript =
-                        Transcript(newAudio, transcript.transcript);
+                    SaveFile newTranscript =
+                        SaveFile(newAudio, transcript.transcript);
                     save(context, newTranscript)
                         .then((_) => Navigator.of(context).pop());
                   },
@@ -132,14 +132,13 @@ class TranscriptFileHandler {
     }
   }
 
-  static Future<Transcript> load(String path) async {
+  static Future<SaveFile> load(String path) async {
     String transcriptFile = await File(path).readAsString();
     print(transcriptFile);
-    return Transcript.fromJson(jsonDecode(transcriptFile));
+    return SaveFile.fromJson(jsonDecode(transcriptFile));
   }
 
-  static Future<void> delete(
-      BuildContext context, Transcript transcript) async {
+  static Future<void> delete(BuildContext context, SaveFile transcript) async {
     try {
       final Directory dir = await appFilesDirectory;
       final String saveFilePath =

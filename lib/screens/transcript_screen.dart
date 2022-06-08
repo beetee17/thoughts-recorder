@@ -16,7 +16,7 @@ import 'package:Minutes/widgets/text_area.dart';
 //Import the font package
 
 class TranscriptScreen extends StatefulWidget {
-  final Transcript? transcript;
+  final SaveFile? transcript;
 
   const TranscriptScreen({Key? key, this.transcript}) : super(key: key);
 
@@ -83,7 +83,7 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
                           IconButton(
                               onPressed: () => TranscriptFileHandler.save(
                                   context,
-                                  Transcript(
+                                  SaveFile(
                                       viewModel.file!,
                                       store.state.transcript
                                           .transcriptTextList)),

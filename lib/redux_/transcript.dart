@@ -90,8 +90,8 @@ class SetTranscriptListAction {
   SetTranscriptListAction(this.transcriptList);
 }
 
-ThunkAction<AppState> Function(Transcript) loadTranscript =
-    (Transcript transcript) {
+ThunkAction<AppState> Function(SaveFile) loadTranscript =
+    (SaveFile transcript) {
   return (Store<AppState> store) async {
     await store.dispatch(SetTranscriptListAction(transcript.transcript));
     await store.dispatch(AudioFileChangeAction(transcript.audio));

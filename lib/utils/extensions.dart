@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:Minutes/utils/transcriptClasses.dart';
+import 'package:path/path.dart' as path;
 
 extension StringCasingExtension on String {
   String toCapitalized() => length > 0
@@ -16,12 +17,10 @@ extension StringCasingExtension on String {
       toCapitalized().split('\n').map((str) => str.toCapitalized()).join('\n');
 }
 
-extension Filename on File? {
-  String getFileName({String? defaultText}) {
-    return this == null
-        ? defaultText ?? ''
-        : RegExp(r'[^\/]+$').allMatches(this!.path).last.group(0)!;
-  }
+extension Filename on File {
+  String get name => path.basename(this.path);
+
+  String get nameWithoutExtension => path.basenameWithoutExtension(this.path);
 }
 
 extension TextFormatter on String {

@@ -44,7 +44,7 @@ class _FilesListState extends State<FilesList> {
                                   child: Column(
                                     children: [
                                       Text(
-                                        transcript.audio.getFileName(),
+                                        transcript.audio.nameWithoutExtension,
                                         style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.w600),

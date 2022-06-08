@@ -68,7 +68,7 @@ StatusState statusReducer(StatusState prevState, action) {
   } else if (action is AudioFileChangeAction) {
     final String? path = action.file?.path;
     final String filename =
-        action.file == null ? 'No audio file' : action.file!.getFileName();
+        action.file == null ? 'No audio file' : action.file!.name;
     return prevState.copyWith(statusAreaText: '$filename');
   } else if (action is ErrorCallbackAction) {
     return prevState.copyWith(

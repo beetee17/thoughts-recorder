@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../redux_/rootStore.dart';
+import 'package:path/path.dart' as path;
 
 class TranscriptPair {
   final String text;
@@ -44,13 +45,13 @@ class Transcript {
   File audio;
   Transcript(this.audio, this.transcript);
 
-  Map toJson() => {'transcript': transcript, 'audio': audio.getFileName()};
+  Map toJson() => {'transcript': transcript, 'audio': audio.name};
 
   static Future<Transcript> fromJson(Map<String, dynamic> map) async {
     final Directory filesDirectory =
         await TranscriptFileHandler.appFilesDirectory;
 
-    final File audio = File('${filesDirectory.path}/${map['audio']}');
+    final File audio = File(path.join(filesDirectory.path, map['audio']));
 
     final List<TranscriptPair> transcript = (map['transcript'] as List<dynamic>)
         .map((item) => TranscriptPair.fromJson(item))
@@ -77,23 +78,25 @@ class TranscriptFileHandler {
   static final Future<Directory> appRootDirectory =
       getApplicationDocumentsDirectory();
 
-  static final Future<Directory> appFilesDirectory = appRootDirectory
-      .then((dir) => Directory('${dir.path}/files').create(recursive: true));
+  static final Future<Directory> appFilesDirectory = appRootDirectory.then(
+      (dir) => Directory(path.join(dir.path, 'files')).create(recursive: true));
 
   static void save(BuildContext context, Transcript transcript) async {
     // Need to check that filename is not duplicate and non-empty
     try {
       final Directory dir = await appFilesDirectory;
-      final String filename = transcript.audio.getFileName();
+      final String saveFilePath =
+          path.join(dir.path, '${transcript.audio.nameWithoutExtension}.txt');
 
-      final File saveFile =
-          await File('${dir.path}/${filename}.txt').create(recursive: true);
+      final File saveFile = await File(saveFilePath).create(recursive: true);
 
       // Copy audio file to app documents
-      transcript.audio = await transcript.audio.copy('${dir.path}/$filename');
+      final String audioFilePath = path.join(dir.path, transcript.audio.name);
+      transcript.audio = await transcript.audio.copy(audioFilePath);
+
       await saveFile.writeAsString(jsonEncode(transcript));
 
-      print('saved to ${saveFile.path}');
+      print('saved to $saveFilePath');
     } catch (err) {
       showAlertDialog(context, 'Error saving file', err.toString());
     }
@@ -109,9 +112,10 @@ class TranscriptFileHandler {
       BuildContext context, Transcript transcript) async {
     try {
       final Directory dir = await appFilesDirectory;
-      final String filename = transcript.audio.getFileName();
+      final String saveFilePath =
+          path.join(dir.path, '${transcript.audio.nameWithoutExtension}.txt');
 
-      transcript.audio.delete().then((_) => File('${dir.path}/$filename.txt')
+      transcript.audio.delete().then((_) => File(saveFilePath)
           .delete()
           .then((_) => store.dispatch(refreshFiles)));
     } catch (err) {

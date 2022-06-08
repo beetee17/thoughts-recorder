@@ -44,8 +44,8 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
           // TODO: Move to own widget so that it does not rebuild during transcription process
           final TextEditingController filenameEditingController =
               TextEditingController(
-                  text: widget.transcript?.audio.getFileName() ??
-                      viewModel.file.getFileName());
+                  text: widget.transcript?.audio.nameWithoutExtension ??
+                      viewModel.file?.nameWithoutExtension);
 
           return GestureDetector(
             onTap: () => FocusManager.instance.primaryFocus?.unfocus(),

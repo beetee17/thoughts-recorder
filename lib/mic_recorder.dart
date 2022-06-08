@@ -23,6 +23,7 @@ import 'package:Minutes/redux_/status.dart';
 import 'package:Minutes/utils/global_variables.dart';
 import 'package:leopard_flutter/leopard_error.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 typedef ProcessErrorCallback = Function(LeopardException error);
 
@@ -138,7 +139,7 @@ class MicRecorder {
     final int sampleRate = 16000;
 
     final directory = await getApplicationDocumentsDirectory();
-    final wavFile = File('${directory.path}/recording.wav');
+    final wavFile = File(path.join(directory.path, 'recording.wav'));
 
     final bytesBuilder = BytesBuilder();
 
@@ -188,7 +189,7 @@ class MicRecorder {
 
   static Future<List<int>?> getFramesFromFile(File file) async {
     final directory = await getApplicationDocumentsDirectory();
-    final String outputFilePath = '${directory.path}/output.pcm';
+    final String outputFilePath = path.join(directory.path, 'output.pcm');
 
     // see https://stackoverflow.com/questions/4854513/can-ffmpeg-convert-audio-to-raw-pcm-if-so-how
     final session = await FFmpegKit.execute(

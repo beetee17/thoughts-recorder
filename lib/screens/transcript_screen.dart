@@ -44,7 +44,7 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
           // TODO: Move to own widget so that it does not rebuild during transcription process
           final TextEditingController filenameEditingController =
               TextEditingController(
-                  text: widget.transcript?.filename ??
+                  text: widget.transcript?.audio.getFileName() ??
                       viewModel.file.getFileName());
 
           return GestureDetector(
@@ -84,7 +84,6 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
                               onPressed: () => TranscriptFileHandler.save(
                                   context,
                                   Transcript(
-                                      filenameEditingController.text,
                                       viewModel.file!,
                                       store.state.transcript
                                           .transcriptTextList)),

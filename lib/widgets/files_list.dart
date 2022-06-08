@@ -1,4 +1,5 @@
 import 'package:Minutes/redux_/files.dart';
+import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:Minutes/widgets/secondary_icon_button.dart';
 import 'package:flutter/cupertino.dart';
@@ -43,7 +44,7 @@ class _FilesListState extends State<FilesList> {
                                   child: Column(
                                     children: [
                                       Text(
-                                        transcript.filename,
+                                        transcript.audio.getFileName(),
                                         style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.w600),

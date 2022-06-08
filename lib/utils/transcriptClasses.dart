@@ -80,18 +80,23 @@ class TranscriptFileHandler {
   static final Future<Directory> appFilesDirectory = appRootDirectory
       .then((dir) => Directory('${dir.path}/files').create(recursive: true));
 
-  static void save(Transcript transcript) async {
-    final Directory dir = await appFilesDirectory;
-    final String filename = transcript.audio.getFileName();
+  static void save(BuildContext context, Transcript transcript) async {
+    // Need to check that filename is not duplicate and non-empty
+    try {
+      final Directory dir = await appFilesDirectory;
+      final String filename = transcript.audio.getFileName();
 
-    final File saveFile =
-        await File('${dir.path}/$filename.txt').create(recursive: true);
+      final File saveFile =
+          await File('${dir.path}/${filename}.txt').create(recursive: true);
 
-    // Copy audio file to app documents
-    transcript.audio = await transcript.audio.copy('${dir.path}/$filename');
-    await saveFile.writeAsString(jsonEncode(transcript));
+      // Copy audio file to app documents
+      transcript.audio = await transcript.audio.copy('${dir.path}/$filename');
+      await saveFile.writeAsString(jsonEncode(transcript));
 
-    print('saved to ${saveFile.path}');
+      print('saved to ${saveFile.path}');
+    } catch (err) {
+      showAlertDialog(context, 'Error saving file', err.toString());
+    }
   }
 
   static Future<Transcript> load(String path) async {

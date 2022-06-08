@@ -1,5 +1,4 @@
 import 'package:Minutes/redux_/files.dart';
-import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:Minutes/widgets/secondary_icon_button.dart';
 import 'package:flutter/cupertino.dart';
@@ -44,7 +43,7 @@ class _FilesListState extends State<FilesList> {
                                   child: Column(
                                     children: [
                                       Text(
-                                        transcript.audio.getFileName(),
+                                        transcript.filename,
                                         style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.w600),
@@ -59,11 +58,14 @@ class _FilesListState extends State<FilesList> {
                                                     loadTranscript(transcript));
 
                                                 Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                TranscriptScreen()))
-                                                    .then((_) => store.dispatch(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            TranscriptScreen(
+                                                              transcript:
+                                                                  transcript,
+                                                            ))).then((_) =>
+                                                    store.dispatch(
                                                         refreshFiles));
                                               },
                                               icon: Icon(CupertinoIcons

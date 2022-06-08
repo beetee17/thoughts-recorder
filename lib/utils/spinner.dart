@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-showSpinnerAfter<T>(BuildContext context, Future<T> Function() asyncFuction) {
+showSpinnerUntil<T>(BuildContext context, Future<T> Function() asyncFuction) {
   showDialog(
     barrierDismissible: false,
     builder: (ctx) => const Center(child: CircularProgressIndicator()),

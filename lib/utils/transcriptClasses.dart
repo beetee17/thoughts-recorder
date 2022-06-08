@@ -183,7 +183,8 @@ class TranscriptFileHandler {
   static Future<void> rename(
       BuildContext context, SaveFileContents? prevContents, String newName,
       {bool force = false}) async {
-    if (prevContents == null) {
+    if (prevContents == null ||
+        prevContents.audio.nameWithoutExtension == newName) {
       return;
     }
     if (newName.trim().isEmpty) {

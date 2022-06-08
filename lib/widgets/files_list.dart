@@ -59,7 +59,8 @@ class _FilesListState extends State<FilesList> {
                                     showSpinnerUntil(
                                         ctx,
                                         () => TranscriptFileHandler.delete(
-                                            ctx, transcript));
+                                            ctx, transcript)).then((value) =>
+                                        store.dispatch(refreshFiles));
                                   },
                                   backgroundColor:
                                       CupertinoColors.destructiveRed,

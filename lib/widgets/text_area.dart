@@ -12,7 +12,8 @@ import 'package:Minutes/widgets/secondary_icon_button.dart';
 import 'formatted_text.dart';
 
 class TextArea extends StatefulWidget {
-  const TextArea({Key? key}) : super(key: key);
+  final PageController pageController;
+  const TextArea({Key? key, required this.pageController}) : super(key: key);
 
   @override
   State<TextArea> createState() => _TextAreaState();
@@ -34,11 +35,12 @@ class _TextAreaState extends State<TextArea> {
                     bottom: MediaQuery.of(context).viewInsets.bottom / 2),
                 child: Container(
                     margin: EdgeInsets.symmetric(horizontal: 8),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: viewModel.showMinutes
-                          ? RawTextList()
-                          : FormattedTextView(),
+                    child: PageView(
+                      controller: widget.pageController,
+                      onPageChanged: (pageNumber) {
+                        store.dispatch(ToggleMinutesViewAction());
+                      },
+                      children: [RawTextList(), FormattedTextView()],
                     )),
               ),
             ),
@@ -59,7 +61,7 @@ class _TextAreaState extends State<TextArea> {
 class TextAreaVM {
   File? file;
   bool showMinutes;
-  int? get groupvalue => showMinutes ? 0 : 1;
+  int get pageNumber => showMinutes ? 0 : 1;
 
   TextAreaVM(this.file, this.showMinutes);
   @override

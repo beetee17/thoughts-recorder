@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:Minutes/utils/extensions.dart';
+import 'package:Minutes/utils/spinner.dart';
 import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +50,8 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
               TextEditingController(
                   text: widget.transcript?.audio.nameWithoutExtension ??
                       viewModel.file?.nameWithoutExtension);
+          PageController pageController =
+              PageController(initialPage: viewModel.groupvalue);
 
           return GestureDetector(
             onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -84,13 +87,15 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
                   actions: viewModel.file != null
                       ? [
                           IconButton(
-                              onPressed: () => TranscriptFileHandler.save(
+                              onPressed: () => showSpinnerUntil(
                                   ctx,
-                                  SaveFileContents(
-                                      viewModel.file!,
-                                      store
-                                          .state.transcript.transcriptTextList),
-                                  filenameEditingController.text),
+                                  () => TranscriptFileHandler.save(
+                                      ctx,
+                                      SaveFileContents(
+                                          viewModel.file!,
+                                          store.state.transcript
+                                              .transcriptTextList),
+                                      filenameEditingController.text)),
                               icon: Icon(CupertinoIcons.doc))
                         ]
                       : [],
@@ -102,7 +107,7 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
               body: Column(
                 children: [
                   viewModel.errorMessage == null
-                      ? TextArea()
+                      ? TextArea(pageController: pageController)
                       : ErrorMessage(errorMessage: viewModel.errorMessage!),
                   Container(
                     padding: EdgeInsets.only(top: 20, bottom: 30),
@@ -120,7 +125,11 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(bottom: 15.0),
-                          child: TextViewSegmentedControl(),
+                          child: TextViewSegmentedControl(
+                              onChange: (groupvalue) =>
+                                  pageController.animateToPage(groupvalue,
+                                      duration: Duration(milliseconds: 300),
+                                      curve: Curves.easeInOut)),
                         ),
                         StatusArea(),
                         SizedBox(height: 10),
@@ -148,7 +157,7 @@ class TranscriptScreenVM {
   List<TranscriptPair> transcriptTextList;
   String? errorMessage;
   bool showMinutes;
-  int? get groupvalue => showMinutes ? 0 : 1;
+  int get groupvalue => showMinutes ? 0 : 1;
   TranscriptScreenVM(this.file, this.transcriptText, this.transcriptTextList,
       this.errorMessage, this.showMinutes);
 

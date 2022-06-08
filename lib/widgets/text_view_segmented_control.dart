@@ -5,8 +5,10 @@ import '../redux_/rootStore.dart';
 import '../redux_/ui.dart';
 
 class TextViewSegmentedControl extends StatelessWidget {
+  final Function(int) onChange;
   const TextViewSegmentedControl({
     Key? key,
+    required this.onChange,
   }) : super(key: key);
 
   @override
@@ -17,9 +19,7 @@ class TextViewSegmentedControl extends StatelessWidget {
         builder: (_, viewModel) {
           return CupertinoSlidingSegmentedControl(
             children: {0: Text('Minutes'), 1: Text('Preview')},
-            onValueChanged: (newValue) {
-              store.dispatch(ToggleMinutesViewAction());
-            },
+            onValueChanged: (newValue) => onChange(newValue as int),
             groupValue: viewModel.groupvalue,
           );
         });
@@ -28,7 +28,7 @@ class TextViewSegmentedControl extends StatelessWidget {
 
 class TextViewSegmentedControlVM {
   bool showMinutes;
-  int? get groupvalue => showMinutes ? 0 : 1;
+  int get groupvalue => showMinutes ? 0 : 1;
   TextViewSegmentedControlVM(this.showMinutes);
   @override
   bool operator ==(other) {

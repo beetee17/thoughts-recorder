@@ -1,8 +1,9 @@
-import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:Minutes/redux_/rootStore.dart';
 import 'package:Minutes/widgets/raw_text_editor.dart';
+
+import '../utils/transcript_pair.dart';
 
 class RawTextList extends StatefulWidget {
   const RawTextList({Key? key}) : super(key: key);

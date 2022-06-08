@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:Minutes/utils/transcriptClasses.dart';
+import 'package:Minutes/utils/transcript_pair.dart';
 import 'package:path/path.dart' as path;
 
 extension StringCasingExtension on String {

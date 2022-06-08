@@ -2,7 +2,6 @@ import 'package:Minutes/mic_recorder.dart';
 import 'package:Minutes/redux_/leopard.dart';
 import 'package:Minutes/redux_/transcript.dart';
 import 'package:Minutes/redux_/transcriber.dart';
-import 'package:Minutes/utils/transcriptClasses.dart';
 
 import 'package:leopard_flutter/leopard_error.dart';
 import 'package:redux/redux.dart';
@@ -11,6 +10,7 @@ import 'package:redux_thunk/redux_thunk.dart';
 
 import '../utils/extensions.dart';
 import '../utils/global_variables.dart';
+import '../utils/transcript_pair.dart';
 import 'audio.dart';
 
 class RecorderState {

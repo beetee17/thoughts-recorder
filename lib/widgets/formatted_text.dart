@@ -1,10 +1,10 @@
-import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:Minutes/utils/extensions.dart';
 
 import '../redux_/rootStore.dart';
+import '../utils/transcript_pair.dart';
 import 'just_audio_player.dart';
 
 class FormattedTextView extends StatefulWidget {

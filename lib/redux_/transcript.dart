@@ -2,12 +2,13 @@ import 'package:Minutes/redux_/leopard.dart';
 import 'package:Minutes/redux_/recorder.dart';
 import 'package:Minutes/redux_/transcriber.dart';
 import 'package:Minutes/utils/extensions.dart';
-import 'package:Minutes/utils/transcriptClasses.dart';
 
 import 'package:redux/redux.dart';
 import 'package:Minutes/redux_/rootStore.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 
+import '../utils/save_file_contents.dart';
+import '../utils/transcript_pair.dart';
 import 'audio.dart';
 
 class TranscriptState {

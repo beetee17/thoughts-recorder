@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:Minutes/mic_recorder.dart';
 import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/utils/persistence.dart';
-import 'package:Minutes/utils/transcriptClasses.dart';
 
 import 'package:leopard_flutter/leopard.dart';
 import 'package:leopard_flutter/leopard_error.dart';
@@ -11,6 +10,8 @@ import 'package:leopard_flutter/leopard_error.dart';
 import 'package:redux/redux.dart';
 import 'package:Minutes/redux_/rootStore.dart';
 import 'package:redux_thunk/redux_thunk.dart';
+
+import '../utils/transcript_pair.dart';
 
 class LeopardState {
   final Leopard? instance;

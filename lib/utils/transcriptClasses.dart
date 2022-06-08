@@ -3,74 +3,11 @@ import 'dart:io';
 
 import 'package:Minutes/utils/alert_dialog.dart';
 import 'package:Minutes/utils/extensions.dart';
+import 'package:Minutes/utils/save_file_contents.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:path/path.dart' as path;
-
-class TranscriptPair {
-  final String text;
-  final Duration startTime;
-  TranscriptPair(this.text, this.startTime);
-
-  TranscriptPair map(String Function(String) leftMapper,
-      Duration Function(Duration) rightMapper) {
-    return TranscriptPair(leftMapper(text), rightMapper(startTime));
-  }
-
-  Map toJson() => {'text': text, 'startTime': startTime.inMilliseconds};
-
-  TranscriptPair.fromJson(Map<String, dynamic> map)
-      : text = map['text'],
-        startTime = Duration(milliseconds: map['startTime']);
-
-  @override
-  bool operator ==(final Object other) {
-    return other is TranscriptPair &&
-        text == other.text &&
-        startTime == other.startTime;
-  }
-
-  @override
-  int get hashCode => Object.hash(text, startTime);
-
-  @override
-  String toString() => '(${text.toString()}, ${startTime.toString()})';
-}
-
-class SaveFileContents {
-  final List<TranscriptPair> transcript;
-  File audio;
-  SaveFileContents(this.audio, this.transcript);
-
-  Map toJson() => {'transcript': transcript, 'audio': audio.name};
-
-  static Future<SaveFileContents> fromJson(Map<String, dynamic> map) async {
-    final Directory filesDirectory =
-        await TranscriptFileHandler.appFilesDirectory;
-    print('files at ${filesDirectory.path}');
-    final File audio = File(path.join(filesDirectory.path, map['audio']));
-
-    final List<TranscriptPair> transcript = (map['transcript'] as List<dynamic>)
-        .map((item) => TranscriptPair.fromJson(item))
-        .toList();
-
-    return SaveFileContents(audio, transcript);
-  }
-
-  @override
-  bool operator ==(final Object other) {
-    return other is SaveFileContents &&
-        transcript == other.transcript &&
-        audio == other.audio;
-  }
-
-  @override
-  int get hashCode => Object.hash(transcript, audio);
-
-  @override
-  String toString() => '(${transcript.toString()}, ${audio.path})';
-}
 
 class TranscriptFileHandler {
   static final Future<Directory> appRootDirectory =

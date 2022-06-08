@@ -15,6 +15,8 @@ import 'package:Minutes/widgets/selected_file.dart';
 import 'package:Minutes/widgets/status_area.dart';
 import 'package:Minutes/widgets/text_area.dart';
 
+import '../utils/save_file_contents.dart';
+import '../utils/transcript_pair.dart';
 import '../widgets/text_view_segmented_control.dart';
 //Import the font package
 

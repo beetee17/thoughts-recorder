@@ -1,14 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Minutes/redux_/files.dart';
 import 'package:Minutes/utils/alert_dialog.dart';
 import 'package:Minutes/utils/extensions.dart';
-import 'package:Minutes/utils/spinner.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../redux_/rootStore.dart';
 import 'package:path/path.dart' as path;
 
 class TranscriptPair {

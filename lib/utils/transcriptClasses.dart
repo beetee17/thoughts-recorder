@@ -81,12 +81,42 @@ class TranscriptFileHandler {
   static final Future<Directory> appFilesDirectory = appRootDirectory.then(
       (dir) => Directory(path.join(dir.path, 'files')).create(recursive: true));
 
-  static void save(BuildContext context, Transcript transcript) async {
+  static Future<void> save(BuildContext context, Transcript transcript,
+      {bool force = false}) async {
     // Need to check that filename is not duplicate and non-empty
     try {
       final Directory dir = await appFilesDirectory;
       final String saveFilePath =
           path.join(dir.path, '${transcript.audio.nameWithoutExtension}.txt');
+
+      if (!force && await File(saveFilePath).exists()) {
+        showAlertDialog(context, 'Replace Existing File?',
+            'The file ${transcript.audio.nameWithoutExtension} already exists.',
+            actions: [
+              TextButton(
+                  onPressed: () => save(context, transcript, force: true)
+                      .then((_) => Navigator.of(context).pop()),
+                  child: const Text('Replace')),
+              TextButton(
+                  onPressed: () async {
+                    String newPath =
+                        (await transcript.audio.getNonDuplicate()).path;
+                    File newAudio = await transcript.audio.copy(newPath);
+                    Transcript newTranscript =
+                        Transcript(newAudio, transcript.transcript);
+                    save(context, newTranscript)
+                        .then((_) => Navigator.of(context).pop());
+                  },
+                  child: const Text('Keep Both')),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Stop'),
+              ),
+            ]);
+        return;
+      }
 
       final File saveFile = await File(saveFilePath).create(recursive: true);
 

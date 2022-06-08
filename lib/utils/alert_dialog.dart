@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-Future<void> showAlertDialog(
-    BuildContext context, String title, String content) async {
+Future<void> showAlertDialog(BuildContext context, String title, String content,
+    {List<Widget>? actions}) async {
   return showDialog<void>(
     context: context,
     barrierDismissible: false, // user must tap button!
@@ -9,14 +9,15 @@ Future<void> showAlertDialog(
       return AlertDialog(
         title: Text(title),
         content: Text(content),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('Ok'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
+        actions: actions ??
+            <Widget>[
+              TextButton(
+                child: const Text('Ok'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
       );
     },
   );

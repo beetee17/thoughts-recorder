@@ -21,6 +21,20 @@ extension Filename on File {
   String get name => path.basename(this.path);
 
   String get nameWithoutExtension => path.basenameWithoutExtension(this.path);
+
+  String get pathWithoutExtension => path.withoutExtension(this.path);
+
+  String get extension => path.extension(this.path);
+
+  Future<File> getNonDuplicate() async {
+    int count = 1;
+    File candidate = this;
+    while (await candidate.exists()) {
+      candidate =
+          File('${this.pathWithoutExtension} ($count)${this.extension}');
+    }
+    return candidate;
+  }
 }
 
 extension TextFormatter on String {

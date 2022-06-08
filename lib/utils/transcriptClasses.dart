@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:Minutes/redux_/files.dart';
 import 'package:Minutes/utils/alert_dialog.dart';
 import 'package:Minutes/utils/extensions.dart';
+import 'package:Minutes/utils/spinner.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -84,7 +85,11 @@ class TranscriptFileHandler {
   static Future<void> save(
       BuildContext context, SaveFileContents fileContents, String filename,
       {bool force = false}) async {
-    // Need to check that filename is not duplicate and non-empty
+    if (filename.trim().isEmpty) {
+      showAlertDialog(
+          context, 'Untitled File', 'Please enter a name for your file.');
+      return;
+    }
     try {
       final Directory dir = await appFilesDirectory;
       final String saveFilePath = path.join(dir.path, '$filename.txt');

@@ -32,6 +32,7 @@ extension Filename on File {
     while (await candidate.exists()) {
       candidate =
           File('${this.pathWithoutExtension} ($count)${this.extension}');
+      count++;
     }
     return candidate;
   }

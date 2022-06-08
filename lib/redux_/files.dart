@@ -4,7 +4,7 @@ import 'package:Minutes/redux_/rootStore.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 
 import '../utils/save_file_contents.dart';
-import '../utils/transcriptClasses.dart';
+import '../utils/save_file_handler.dart';
 import 'package:redux/redux.dart';
 
 class FilesState {
@@ -42,7 +42,7 @@ class TranscriptsChangeAction {
 
 ThunkAction<AppState> refreshFiles = (Store<AppState> store) async {
   // Find txt files
-  final List<File> files = await TranscriptFileHandler.appFilesDirectory
+  final List<File> files = await SaveFileHandler.appFilesDirectory
       .then((dir) => dir.list().toList().then((entities) {
             return entities
                 .whereType<File>()
@@ -54,7 +54,7 @@ ThunkAction<AppState> refreshFiles = (Store<AppState> store) async {
   try {
     final List<SaveFileContents?> transcripts =
         await Future.wait(files.map((e) {
-      return TranscriptFileHandler.load(e.path);
+      return SaveFileHandler.load(e.path);
     }));
     await store.dispatch(TranscriptsChangeAction(
         transcripts.whereType<SaveFileContents>().toList()));

@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/utils/spinner.dart';
-import 'package:Minutes/utils/transcriptClasses.dart';
+import 'package:Minutes/utils/save_file_handler.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -91,7 +91,7 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
                           IconButton(
                               onPressed: () => showSpinnerUntil(
                                   ctx,
-                                  () => TranscriptFileHandler.save(
+                                  () => SaveFileHandler.save(
                                       ctx,
                                       SaveFileContents(
                                           viewModel.file!,

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:Minutes/utils/extensions.dart';
-import 'package:Minutes/utils/transcriptClasses.dart';
+import 'package:Minutes/utils/save_file_handler.dart';
 import 'package:Minutes/utils/transcript_pair.dart';
 
 import 'package:path/path.dart' as path;
@@ -14,8 +14,7 @@ class SaveFileContents {
   Map toJson() => {'transcript': transcript, 'audio': audio.name};
 
   static Future<SaveFileContents> fromJson(Map<String, dynamic> map) async {
-    final Directory filesDirectory =
-        await TranscriptFileHandler.appFilesDirectory;
+    final Directory filesDirectory = await SaveFileHandler.appFilesDirectory;
     print('files at ${filesDirectory.path}');
     final File audio = File(path.join(filesDirectory.path, map['audio']));
 

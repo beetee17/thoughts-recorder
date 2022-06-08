@@ -2,7 +2,7 @@ import 'package:Minutes/redux_/files.dart';
 import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/utils/spinner.dart';
 import 'package:Minutes/utils/text_field_dialog.dart';
-import 'package:Minutes/utils/transcriptClasses.dart';
+import 'package:Minutes/utils/save_file_handler.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -45,7 +45,7 @@ class _FilesListState extends State<FilesList> {
                                         Text("Rename File"),
                                         transcript.audio.nameWithoutExtension,
                                         (newName) async {
-                                      await TranscriptFileHandler.rename(
+                                      await SaveFileHandler.rename(
                                           ctx, transcript, newName);
                                       store.dispatch(refreshFiles);
                                     });
@@ -59,7 +59,7 @@ class _FilesListState extends State<FilesList> {
                                   onPressed: (_) {
                                     showSpinnerUntil(
                                         ctx,
-                                        () => TranscriptFileHandler.delete(
+                                        () => SaveFileHandler.delete(
                                             ctx, transcript)).then((value) =>
                                         store.dispatch(refreshFiles));
                                   },

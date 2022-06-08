@@ -14,6 +14,8 @@ import 'package:Minutes/widgets/error_message.dart';
 import 'package:Minutes/widgets/selected_file.dart';
 import 'package:Minutes/widgets/status_area.dart';
 import 'package:Minutes/widgets/text_area.dart';
+
+import '../widgets/text_view_segmented_control.dart';
 //Import the font package
 
 class TranscriptScreen extends StatefulWidget {
@@ -40,13 +42,16 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
             store.state.audio.file,
             store.state.transcript.transcriptText,
             store.state.transcript.transcriptTextList,
-            store.state.status.errorMessage),
+            store.state.status.errorMessage,
+            store.state.ui.showMinutes),
         builder: (ctx, viewModel) {
           // TODO: Move to own widget so that it does not rebuild during transcription process
           final TextEditingController filenameEditingController =
               TextEditingController(
                   text: widget.transcript?.audio.nameWithoutExtension ??
                       viewModel.file?.nameWithoutExtension);
+          PageController pageController =
+              PageController(initialPage: viewModel.groupvalue);
 
           return GestureDetector(
             onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -82,13 +87,15 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
                   actions: viewModel.file != null
                       ? [
                           IconButton(
-                              onPressed: () => TranscriptFileHandler.save(
+                              onPressed: () => showSpinnerUntil(
                                   ctx,
-                                  SaveFileContents(
-                                      viewModel.file!,
-                                      store
-                                          .state.transcript.transcriptTextList),
-                                  filenameEditingController.text),
+                                  () => TranscriptFileHandler.save(
+                                      ctx,
+                                      SaveFileContents(
+                                          viewModel.file!,
+                                          store.state.transcript
+                                              .transcriptTextList),
+                                      filenameEditingController.text)),
                               icon: Icon(CupertinoIcons.doc))
                         ]
                       : [],
@@ -100,7 +107,7 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
               body: Column(
                 children: [
                   viewModel.errorMessage == null
-                      ? TextArea()
+                      ? TextArea(pageController: pageController)
                       : ErrorMessage(errorMessage: viewModel.errorMessage!),
                   Container(
                     padding: EdgeInsets.only(top: 20, bottom: 30),
@@ -116,6 +123,14 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
                     ),
                     child: Column(
                       children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 15.0),
+                          child: TextViewSegmentedControl(
+                              onChange: (groupvalue) =>
+                                  pageController.animateToPage(groupvalue,
+                                      duration: Duration(milliseconds: 300),
+                                      curve: Curves.easeInOut)),
+                        ),
                         StatusArea(),
                         SizedBox(height: 10),
                         SelectedFile(),
@@ -141,8 +156,10 @@ class TranscriptScreenVM {
   String transcriptText;
   List<TranscriptPair> transcriptTextList;
   String? errorMessage;
+  bool showMinutes;
+  int get groupvalue => showMinutes ? 0 : 1;
   TranscriptScreenVM(this.file, this.transcriptText, this.transcriptTextList,
-      this.errorMessage);
+      this.errorMessage, this.showMinutes);
 
   @override
   bool operator ==(other) {
@@ -150,11 +167,13 @@ class TranscriptScreenVM {
         (file == other.file) &&
         (transcriptText == other.transcriptText) &&
         (transcriptTextList == other.transcriptTextList) &&
-        (errorMessage == other.errorMessage);
+        (errorMessage == other.errorMessage) &&
+        (showMinutes == other.showMinutes);
   }
 
   @override
   int get hashCode {
-    return Object.hash(file, transcriptText, transcriptTextList, errorMessage);
+    return Object.hash(
+        file, transcriptText, transcriptTextList, errorMessage, showMinutes);
   }
 }

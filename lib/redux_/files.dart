@@ -51,10 +51,12 @@ ThunkAction<AppState> refreshFiles = (Store<AppState> store) async {
 
   // Decode files to transcripts
   try {
-    final List<SaveFileContents> transcripts = await Future.wait(files.map((e) {
+    final List<SaveFileContents?> transcripts =
+        await Future.wait(files.map((e) {
       return TranscriptFileHandler.load(e.path);
     }));
-    await store.dispatch(TranscriptsChangeAction(transcripts));
+    await store.dispatch(TranscriptsChangeAction(
+        transcripts.whereType<SaveFileContents>().toList()));
   } catch (err) {
     print('Error on loading saved file: $err');
   }

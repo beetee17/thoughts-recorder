@@ -83,8 +83,11 @@ class TranscriptFileHandler {
       (dir) => Directory(path.join(dir.path, 'files')).create(recursive: true));
 
   static Future<void> save(
-      BuildContext context, SaveFileContents fileContents, String filename,
+      BuildContext context, SaveFileContents? fileContents, String filename,
       {bool force = false}) async {
+    if (fileContents == null) {
+      return;
+    }
     if (filename.trim().isEmpty) {
       showAlertDialog(
           context, 'Untitled File', 'Please enter a name for your file.');
@@ -101,8 +104,9 @@ class TranscriptFileHandler {
               TextButton(
                   onPressed: () async {
                     Navigator.of(context).pop();
+                    final tmpContents = fileContents;
                     await delete(context, await load(saveFilePath));
-                    await save(context, fileContents, filename);
+                    await save(context, tmpContents, filename, force: true);
                   },
                   child: const Text('Replace')),
               TextButton(
@@ -149,33 +153,39 @@ class TranscriptFileHandler {
     }
   }
 
-  static Future<SaveFileContents> load(String path) async {
-    String transcriptFile = await File(path).readAsString();
-    print(transcriptFile);
-    return SaveFileContents.fromJson(jsonDecode(transcriptFile));
+  static Future<SaveFileContents?> load(String path) async {
+    try {
+      String transcriptFile = await File(path).readAsString();
+      print(transcriptFile);
+      return SaveFileContents.fromJson(jsonDecode(transcriptFile));
+    } catch (err) {
+      print("Error loading saved file: $err");
+      return null;
+    }
   }
 
   static Future<void> delete(
-      BuildContext context, SaveFileContents transcript) async {
+      BuildContext context, SaveFileContents? transcript) async {
+    if (transcript == null) {
+      return;
+    }
     try {
       final Directory dir = await appFilesDirectory;
       final String saveFilePath =
           path.join(dir.path, '${transcript.audio.nameWithoutExtension}.txt');
 
-      transcript.audio
-          .delete()
-          .then((_) => File(saveFilePath).delete().then((_) {
-                print('DEL');
-                store.dispatch(refreshFiles);
-              }));
+      transcript.audio.delete().then((_) => File(saveFilePath).delete());
     } catch (err) {
       showAlertDialog(context, 'Error deleting file', err.toString());
     }
   }
 
   static Future<void> rename(
-      BuildContext context, SaveFileContents prevContents, String newName,
+      BuildContext context, SaveFileContents? prevContents, String newName,
       {bool force = false}) async {
+    if (prevContents == null) {
+      return;
+    }
     if (newName.trim().isEmpty) {
       showAlertDialog(
           context, 'Untitled File', 'Please enter a name for your file.');

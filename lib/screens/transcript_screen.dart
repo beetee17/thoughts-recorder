@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:Minutes/utils/extensions.dart';
-import 'package:Minutes/utils/spinner.dart';
 import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +13,8 @@ import 'package:Minutes/widgets/error_message.dart';
 import 'package:Minutes/widgets/selected_file.dart';
 import 'package:Minutes/widgets/status_area.dart';
 import 'package:Minutes/widgets/text_area.dart';
+
+import '../widgets/text_view_segmented_control.dart';
 //Import the font package
 
 class TranscriptScreen extends StatefulWidget {
@@ -40,7 +41,8 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
             store.state.audio.file,
             store.state.transcript.transcriptText,
             store.state.transcript.transcriptTextList,
-            store.state.status.errorMessage),
+            store.state.status.errorMessage,
+            store.state.ui.showMinutes),
         builder: (ctx, viewModel) {
           // TODO: Move to own widget so that it does not rebuild during transcription process
           final TextEditingController filenameEditingController =
@@ -116,6 +118,10 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
                     ),
                     child: Column(
                       children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 15.0),
+                          child: TextViewSegmentedControl(),
+                        ),
                         StatusArea(),
                         SizedBox(height: 10),
                         SelectedFile(),
@@ -141,8 +147,10 @@ class TranscriptScreenVM {
   String transcriptText;
   List<TranscriptPair> transcriptTextList;
   String? errorMessage;
+  bool showMinutes;
+  int? get groupvalue => showMinutes ? 0 : 1;
   TranscriptScreenVM(this.file, this.transcriptText, this.transcriptTextList,
-      this.errorMessage);
+      this.errorMessage, this.showMinutes);
 
   @override
   bool operator ==(other) {
@@ -150,11 +158,13 @@ class TranscriptScreenVM {
         (file == other.file) &&
         (transcriptText == other.transcriptText) &&
         (transcriptTextList == other.transcriptTextList) &&
-        (errorMessage == other.errorMessage);
+        (errorMessage == other.errorMessage) &&
+        (showMinutes == other.showMinutes);
   }
 
   @override
   int get hashCode {
-    return Object.hash(file, transcriptText, transcriptTextList, errorMessage);
+    return Object.hash(
+        file, transcriptText, transcriptTextList, errorMessage, showMinutes);
   }
 }

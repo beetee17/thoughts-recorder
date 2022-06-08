@@ -49,19 +49,6 @@ class _TextAreaState extends State<TextArea> {
                 child: SaveTranscriptButton(),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: CupertinoSlidingSegmentedControl(
-                  children: {0: Text('Minutes'), 1: Text('Preview')},
-                  onValueChanged: (newValue) {
-                    store.dispatch(ToggleMinutesViewAction());
-                  },
-                  groupValue: viewModel.groupvalue,
-                ),
-              ),
-            )
           ]),
         );
       },

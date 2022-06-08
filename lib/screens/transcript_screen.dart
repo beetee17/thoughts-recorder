@@ -16,7 +16,7 @@ import 'package:Minutes/widgets/text_area.dart';
 //Import the font package
 
 class TranscriptScreen extends StatefulWidget {
-  final SaveFile? transcript;
+  final SaveFileContents? transcript;
 
   const TranscriptScreen({Key? key, this.transcript}) : super(key: key);
 
@@ -83,10 +83,11 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
                           IconButton(
                               onPressed: () => TranscriptFileHandler.save(
                                   context,
-                                  SaveFile(
+                                  SaveFileContents(
                                       viewModel.file!,
-                                      store.state.transcript
-                                          .transcriptTextList)),
+                                      store
+                                          .state.transcript.transcriptTextList),
+                                  filenameEditingController.text),
                               icon: Icon(CupertinoIcons.doc))
                         ]
                       : [],

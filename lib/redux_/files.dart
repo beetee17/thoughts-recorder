@@ -7,14 +7,14 @@ import '../utils/transcriptClasses.dart';
 import 'package:redux/redux.dart';
 
 class FilesState {
-  final List<SaveFile> transcripts;
+  final List<SaveFileContents> transcripts;
   FilesState({required this.transcripts});
 
   static FilesState empty() {
     return FilesState(transcripts: []);
   }
 
-  FilesState copyWith({List<SaveFile>? transcripts}) {
+  FilesState copyWith({List<SaveFileContents>? transcripts}) {
     return FilesState(transcripts: transcripts ?? this.transcripts);
   }
 
@@ -35,7 +35,7 @@ class FilesState {
 }
 
 class TranscriptsChangeAction {
-  List<SaveFile> transcripts;
+  List<SaveFileContents> transcripts;
   TranscriptsChangeAction(this.transcripts);
 }
 
@@ -50,7 +50,7 @@ ThunkAction<AppState> refreshFiles = (Store<AppState> store) async {
           }));
 
   // Decode files to transcripts
-  final List<SaveFile> transcripts = await Future.wait(files.map((e) {
+  final List<SaveFileContents> transcripts = await Future.wait(files.map((e) {
     return TranscriptFileHandler.load(e.path);
   }));
 

@@ -97,7 +97,7 @@ class _FilesListState extends State<FilesList> {
 }
 
 class FilesListVM {
-  List<SaveFile> transcripts;
+  List<SaveFileContents> transcripts;
   FilesListVM(this.transcripts);
   @override
   bool operator ==(other) {

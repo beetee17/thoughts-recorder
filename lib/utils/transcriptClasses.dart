@@ -40,14 +40,14 @@ class TranscriptPair {
   String toString() => '(${text.toString()}, ${startTime.toString()})';
 }
 
-class SaveFile {
+class SaveFileContents {
   final List<TranscriptPair> transcript;
   File audio;
-  SaveFile(this.audio, this.transcript);
+  SaveFileContents(this.audio, this.transcript);
 
   Map toJson() => {'transcript': transcript, 'audio': audio.name};
 
-  static Future<SaveFile> fromJson(Map<String, dynamic> map) async {
+  static Future<SaveFileContents> fromJson(Map<String, dynamic> map) async {
     final Directory filesDirectory =
         await TranscriptFileHandler.appFilesDirectory;
 
@@ -57,12 +57,12 @@ class SaveFile {
         .map((item) => TranscriptPair.fromJson(item))
         .toList();
 
-    return SaveFile(audio, transcript);
+    return SaveFileContents(audio, transcript);
   }
 
   @override
   bool operator ==(final Object other) {
-    return other is SaveFile &&
+    return other is SaveFileContents &&
         transcript == other.transcript &&
         audio == other.audio;
   }
@@ -81,30 +81,36 @@ class TranscriptFileHandler {
   static final Future<Directory> appFilesDirectory = appRootDirectory.then(
       (dir) => Directory(path.join(dir.path, 'files')).create(recursive: true));
 
-  static Future<void> save(BuildContext context, SaveFile transcript,
+  static Future<void> save(
+      BuildContext context, SaveFileContents fileContents, String filename,
       {bool force = false}) async {
     // Need to check that filename is not duplicate and non-empty
     try {
       final Directory dir = await appFilesDirectory;
-      final String saveFilePath =
-          path.join(dir.path, '${transcript.audio.nameWithoutExtension}.txt');
+      final String saveFilePath = path.join(dir.path, '$filename.txt');
 
       if (!force && await File(saveFilePath).exists()) {
         showAlertDialog(context, 'Replace Existing File?',
-            'The file ${transcript.audio.nameWithoutExtension} already exists.',
+            'The file $filename already exists.',
             actions: [
               TextButton(
-                  onPressed: () => save(context, transcript, force: true)
-                      .then((_) => Navigator.of(context).pop()),
+                  onPressed: () =>
+                      save(context, fileContents, filename, force: true)
+                          .then((_) => Navigator.of(context).pop()),
                   child: const Text('Replace')),
               TextButton(
                   onPressed: () async {
-                    String newPath =
-                        (await transcript.audio.getNonDuplicate()).path;
-                    File newAudio = await transcript.audio.copy(newPath);
-                    SaveFile newTranscript =
-                        SaveFile(newAudio, transcript.transcript);
-                    save(context, newTranscript)
+                    File newSaveFile =
+                        await File(saveFilePath).getNonDuplicate();
+
+                    File newAudio = await fileContents.audio.copy(
+                        newSaveFile.pathWithoutExtension +
+                            fileContents.audio.extension);
+
+                    SaveFileContents newContents =
+                        SaveFileContents(newAudio, fileContents.transcript);
+
+                    save(context, newContents, newSaveFile.nameWithoutExtension)
                         .then((_) => Navigator.of(context).pop());
                   },
                   child: const Text('Keep Both')),
@@ -121,10 +127,11 @@ class TranscriptFileHandler {
       final File saveFile = await File(saveFilePath).create(recursive: true);
 
       // Copy audio file to app documents
-      final String audioFilePath = path.join(dir.path, transcript.audio.name);
-      transcript.audio = await transcript.audio.copy(audioFilePath);
+      final String audioFilePath =
+          path.join(dir.path, filename + fileContents.audio.extension);
+      fileContents.audio = await fileContents.audio.copy(audioFilePath);
 
-      await saveFile.writeAsString(jsonEncode(transcript));
+      await saveFile.writeAsString(jsonEncode(fileContents));
 
       print('saved to $saveFilePath');
     } catch (err) {
@@ -132,13 +139,14 @@ class TranscriptFileHandler {
     }
   }
 
-  static Future<SaveFile> load(String path) async {
+  static Future<SaveFileContents> load(String path) async {
     String transcriptFile = await File(path).readAsString();
     print(transcriptFile);
-    return SaveFile.fromJson(jsonDecode(transcriptFile));
+    return SaveFileContents.fromJson(jsonDecode(transcriptFile));
   }
 
-  static Future<void> delete(BuildContext context, SaveFile transcript) async {
+  static Future<void> delete(
+      BuildContext context, SaveFileContents transcript) async {
     try {
       final Directory dir = await appFilesDirectory;
       final String saveFilePath =

@@ -49,19 +49,6 @@ class AudioPlayerContextMenu extends StatelessWidget {
                   ),
                   onTap: () => shareTranscript(viewModel.file),
                 ),
-                PopupMenuItem(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(CupertinoIcons.doc),
-                      SizedBox(height: 10, width: 10),
-                      Text('Save Note'),
-                    ],
-                  ),
-                  onTap: () => TranscriptFileHandler.save(Transcript(
-                      viewModel.file!,
-                      store.state.transcript.transcriptTextList)),
-                )
               ];
             });
       },

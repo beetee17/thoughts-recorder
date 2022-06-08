@@ -16,9 +16,11 @@ extension StringCasingExtension on String {
       toCapitalized().split('\n').map((str) => str.toCapitalized()).join('\n');
 }
 
-extension Filename on File {
-  String getFileName() {
-    return RegExp(r'[^\/]+$').allMatches(this.path).last.group(0)!;
+extension Filename on File? {
+  String getFileName({String? defaultText}) {
+    return this == null
+        ? defaultText ?? ''
+        : RegExp(r'[^\/]+$').allMatches(this!.path).last.group(0)!;
   }
 }
 

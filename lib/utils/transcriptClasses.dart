@@ -51,7 +51,7 @@ class SaveFileContents {
   static Future<SaveFileContents> fromJson(Map<String, dynamic> map) async {
     final Directory filesDirectory =
         await TranscriptFileHandler.appFilesDirectory;
-
+    print('files at ${filesDirectory.path}');
     final File audio = File(path.join(filesDirectory.path, map['audio']));
 
     final List<TranscriptPair> transcript = (map['transcript'] as List<dynamic>)
@@ -94,14 +94,16 @@ class TranscriptFileHandler {
       final Directory dir = await appFilesDirectory;
       final String saveFilePath = path.join(dir.path, '$filename.txt');
 
-      if (!force && await File(saveFilePath).exists()) {
-        showAlertDialog(context, 'Replace Existing File?',
+      if (!force && File(saveFilePath).existsSync()) {
+        await showAlertDialog(context, 'Replace Existing File?',
             'The file $filename already exists.',
             actions: [
               TextButton(
-                  onPressed: () =>
-                      save(context, fileContents, filename, force: true)
-                          .then((_) => Navigator.of(context).pop()),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    await delete(context, await load(saveFilePath));
+                    await save(context, fileContents, filename);
+                  },
                   child: const Text('Replace')),
               TextButton(
                   onPressed: () async {
@@ -134,9 +136,12 @@ class TranscriptFileHandler {
       // Copy audio file to app documents
       final String audioFilePath =
           path.join(dir.path, filename + fileContents.audio.extension);
-      fileContents.audio = await fileContents.audio.copy(audioFilePath);
 
-      await saveFile.writeAsString(jsonEncode(fileContents));
+      final newContents = SaveFileContents(
+          await fileContents.audio.copy(audioFilePath),
+          fileContents.transcript);
+
+      await saveFile.writeAsString(jsonEncode(newContents));
 
       print('saved to $saveFilePath');
     } catch (err) {
@@ -157,11 +162,53 @@ class TranscriptFileHandler {
       final String saveFilePath =
           path.join(dir.path, '${transcript.audio.nameWithoutExtension}.txt');
 
-      transcript.audio.delete().then((_) => File(saveFilePath)
+      transcript.audio
           .delete()
-          .then((_) => store.dispatch(refreshFiles)));
+          .then((_) => File(saveFilePath).delete().then((_) {
+                print('DEL');
+                store.dispatch(refreshFiles);
+              }));
     } catch (err) {
       showAlertDialog(context, 'Error deleting file', err.toString());
+    }
+  }
+
+  static Future<void> rename(
+      BuildContext context, SaveFileContents prevContents, String newName,
+      {bool force = false}) async {
+    if (newName.trim().isEmpty) {
+      showAlertDialog(
+          context, 'Untitled File', 'Please enter a name for your file.');
+      return;
+    }
+    try {
+      final Directory dir = await appFilesDirectory;
+      final String prevName = prevContents.audio.nameWithoutExtension;
+      final String prevSavePath = path.join(dir.path, '$prevName.txt');
+
+      final String newSavePath = path.join(dir.path, '$newName.txt');
+
+      if (File(newSavePath).existsSync()) {
+        await showAlertDialog(context, 'Unable to Rename File',
+            'The file $newName already exists.');
+        return;
+      }
+
+      final File saveFile = await File(newSavePath).create(recursive: true);
+
+      // Copy audio file to app documents
+      final String audioFilePath =
+          path.join(dir.path, newName + prevContents.audio.extension);
+
+      final newContents = SaveFileContents(
+          await prevContents.audio.copy(audioFilePath),
+          prevContents.transcript);
+
+      await saveFile.writeAsString(jsonEncode(newContents));
+      await delete(context, prevContents);
+      print('renamed to $newName');
+    } catch (err) {
+      showAlertDialog(context, 'Error saving file', err.toString());
     }
   }
 }

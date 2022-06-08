@@ -50,11 +50,14 @@ ThunkAction<AppState> refreshFiles = (Store<AppState> store) async {
           }));
 
   // Decode files to transcripts
-  final List<SaveFileContents> transcripts = await Future.wait(files.map((e) {
-    return TranscriptFileHandler.load(e.path);
-  }));
-
-  await store.dispatch(TranscriptsChangeAction(transcripts));
+  try {
+    final List<SaveFileContents> transcripts = await Future.wait(files.map((e) {
+      return TranscriptFileHandler.load(e.path);
+    }));
+    await store.dispatch(TranscriptsChangeAction(transcripts));
+  } catch (err) {
+    print('Error on loading saved file: $err');
+  }
 };
 
 // Each reducer will handle actions related to the State Tree it cares about!

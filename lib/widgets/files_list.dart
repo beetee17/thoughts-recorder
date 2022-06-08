@@ -1,6 +1,7 @@
 import 'package:Minutes/redux_/files.dart';
 import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/utils/spinner.dart';
+import 'package:Minutes/utils/text_field_dialog.dart';
 import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,17 @@ class _FilesListState extends State<FilesList> {
                               children: [
                                 SlidableAction(
                                   // An action can be bigger than the others.
-                                  onPressed: (_) {},
+                                  onPressed: (_) {
+                                    showTextInputDialog(
+                                        ctx,
+                                        Text("Rename File"),
+                                        transcript.audio.nameWithoutExtension,
+                                        (newName) async {
+                                      await TranscriptFileHandler.rename(
+                                          ctx, transcript, newName);
+                                      store.dispatch(refreshFiles);
+                                    });
+                                  },
                                   backgroundColor: CupertinoColors.activeBlue,
                                   foregroundColor: Colors.white,
                                   icon: Icons.edit,

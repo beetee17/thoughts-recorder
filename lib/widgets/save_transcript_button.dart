@@ -1,11 +1,10 @@
+import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:Minutes/redux_/rootStore.dart';
 import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/widgets/secondary_icon_button.dart';
 import 'package:share_extend/share_extend.dart';
-
-import '../utils/pair.dart';
 
 class SaveTranscriptButton extends StatelessWidget {
   const SaveTranscriptButton({Key? key}) : super(key: key);
@@ -24,7 +23,7 @@ class SaveTranscriptButton extends StatelessWidget {
           return SecondaryIconButton(
               onPress: () => shareTranscript(
                   TextFormatter.formatTextList(viewModel.transcriptTextList)
-                      .map((pair) => pair.first)
+                      .map((pair) => pair.text)
                       .join(' ')),
               margin: EdgeInsets.only(top: 10.0, right: 10.0),
               icon:
@@ -34,7 +33,7 @@ class SaveTranscriptButton extends StatelessWidget {
 }
 
 class SaveTranscriptButtonVM {
-  List<Pair<String, Duration>> transcriptTextList;
+  List<TranscriptPair> transcriptTextList;
 
   SaveTranscriptButtonVM(this.transcriptTextList);
   @override

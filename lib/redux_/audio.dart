@@ -75,6 +75,7 @@ class AudioState {
         .then((res) {
       if (res != null) {
         store.dispatch(AudioFileChangeAction(File(res.files.single.path!)));
+        print(res.files.single.path!);
         store.dispatch(processCurrentAudioFile);
       } else {
         // User canceled the picker

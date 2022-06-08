@@ -28,8 +28,19 @@
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSAllowsArbitraryLoadsForMedia</key>
+		<true/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>App allows users to transcribe video files from camera</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>For speech-to-text.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>App allows users to transcribe video files from gallery</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
@@ -59,9 +70,5 @@
 	<true/>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>App allows users to transcribe video files from gallery</string>
-	<key>NSCameraUsageDescription</key>
-	<string>App allows users to transcribe video files from camera</string>
 </dict>
 </plist>

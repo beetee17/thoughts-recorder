@@ -1,5 +1,6 @@
 import 'package:Minutes/redux_/leopard.dart';
 import 'package:Minutes/redux_/transcriber.dart';
+import 'package:Minutes/utils/extensions.dart';
 
 import 'package:leopard_flutter/leopard_error.dart';
 
@@ -66,9 +67,8 @@ StatusState statusReducer(StatusState prevState, action) {
     return prevState.copyWith(errorMessage: null, shouldOverrideError: true);
   } else if (action is AudioFileChangeAction) {
     final String? path = action.file?.path;
-    final String filename = path == null
-        ? 'No audio file'
-        : RegExp(r'[^\/]+$').allMatches(action.file!.path).last.group(0)!;
+    final String filename =
+        action.file == null ? 'No audio file' : action.file!.getFileName();
     return prevState.copyWith(statusAreaText: '$filename');
   } else if (action is ErrorCallbackAction) {
     return prevState.copyWith(

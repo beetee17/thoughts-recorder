@@ -1,8 +1,6 @@
-import 'package:Minutes/redux_/rootStore.dart';
-import 'package:Minutes/redux_/transcriber.dart';
-import 'package:Minutes/utils/pair.dart';
+import 'dart:io';
 
-import 'global_variables.dart';
+import 'package:Minutes/utils/transcriptClasses.dart';
 
 extension StringCasingExtension on String {
   String toCapitalized() => length > 0
@@ -18,9 +16,15 @@ extension StringCasingExtension on String {
       toCapitalized().split('\n').map((str) => str.toCapitalized()).join('\n');
 }
 
+extension Filename on File {
+  String getFileName() {
+    return RegExp(r'[^\/]+$').allMatches(this.path).last.group(0)!;
+  }
+}
+
 extension TextFormatter on String {
-  static List<Pair<String, Duration>> formatTextList(
-      List<Pair<String, Duration>> transcriptTextList) {
+  static List<TranscriptPair> formatTextList(
+      List<TranscriptPair> transcriptTextList) {
     final tmp = transcriptTextList
         .map((pair) =>
             pair.map((first) => first.formatText(), (second) => second))

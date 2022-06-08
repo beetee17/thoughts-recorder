@@ -2,20 +2,20 @@ import 'package:Minutes/redux_/leopard.dart';
 import 'package:Minutes/redux_/recorder.dart';
 import 'package:Minutes/redux_/transcriber.dart';
 import 'package:Minutes/utils/extensions.dart';
+import 'package:Minutes/utils/transcriptClasses.dart';
 
 import 'package:redux/redux.dart';
 import 'package:Minutes/redux_/rootStore.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 
-import '../utils/pair.dart';
 import 'audio.dart';
 
 class TranscriptState {
-  final List<Pair<String, Duration>> transcriptTextList;
+  final List<TranscriptPair> transcriptTextList;
   final int? highlightedSpanIndex;
 
   String get transcriptText =>
-      transcriptTextList.map((p) => p.first).join(' \n\n');
+      transcriptTextList.map((p) => p.text).join(' \n\n');
   TranscriptState(
       {required this.highlightedSpanIndex, required this.transcriptTextList});
 
@@ -27,7 +27,7 @@ class TranscriptState {
   }
 
   TranscriptState copyWith({
-    List<Pair<String, Duration>>? transcriptTextList,
+    List<TranscriptPair>? transcriptTextList,
     int? highlightedSpanIndex,
   }) {
     return TranscriptState(
@@ -62,26 +62,41 @@ class TranscriptState {
   }
 }
 
+class ClearAllAction {}
+
 class HighlightSpanAtIndex {
   int index;
   HighlightSpanAtIndex(this.index);
 }
 
 class IncomingTranscriptAction {
-  Pair<String, Duration> transcript;
+  TranscriptPair transcript;
   IncomingTranscriptAction(this.transcript);
 }
 
 class UpdateTranscriptTextList {
   int index;
-  Pair<String, Duration> partialTranscript;
+  TranscriptPair partialTranscript;
   UpdateTranscriptTextList(this.index, this.partialTranscript);
 }
 
 class ProcessedRemainingFramesAction {
-  Pair<String, Duration> remainingTranscript;
+  TranscriptPair remainingTranscript;
   ProcessedRemainingFramesAction(this.remainingTranscript);
 }
+
+class SetTranscriptListAction {
+  List<TranscriptPair> transcriptList;
+  SetTranscriptListAction(this.transcriptList);
+}
+
+ThunkAction<AppState> Function(Transcript) loadTranscript =
+    (Transcript transcript) {
+  return (Store<AppState> store) async {
+    await store.dispatch(SetTranscriptListAction(transcript.transcript));
+    await store.dispatch(AudioFileChangeAction(transcript.audio));
+  };
+};
 
 ThunkAction<AppState> processRemainingFrames = (Store<AppState> store) async {
   TranscriberState state = store.state.transcriber;
@@ -96,7 +111,7 @@ ThunkAction<AppState> processRemainingFrames = (Store<AppState> store) async {
       DurationUtils.max(Duration.zero, audio.duration - state.combinedDuration);
   final remainingTranscript =
       await leopard.processCombined(state.combinedFrame, startTime);
-  if (remainingTranscript.first.trim().isNotEmpty) {
+  if (remainingTranscript.text.trim().isNotEmpty) {
     await store.dispatch(ProcessedRemainingFramesAction(remainingTranscript));
   }
   await store.dispatch(AudioFileChangeAction(audio.file));
@@ -122,6 +137,8 @@ TranscriptState transcriptReducer(TranscriptState prevState, action) {
     newList[action.index] = action.partialTranscript
         .map((text) => text.formatText(), (startTime) => startTime);
     return prevState.copyWith(transcriptTextList: newList);
+  } else if (action is SetTranscriptListAction) {
+    return prevState.copyWith(transcriptTextList: action.transcriptList);
   } else if (action is IncomingTranscriptAction) {
     final newTranscriptTextList = prevState.transcriptTextList;
     newTranscriptTextList.add(action.transcript);
@@ -131,7 +148,7 @@ TranscriptState transcriptReducer(TranscriptState prevState, action) {
   } else if (action is AudioPositionChangeAction) {
     final int highlightIndex = prevState.transcriptTextList.lastIndexWhere(
         // We do not want the edge cases due to rounding errors
-        (pair) => pair.second <= action.newPosition);
+        (pair) => pair.startTime <= action.newPosition);
     return prevState.copyWith(highlightedSpanIndex: highlightIndex);
   } else {
     return prevState;

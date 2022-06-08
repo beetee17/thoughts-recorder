@@ -1,9 +1,8 @@
+import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:Minutes/redux_/rootStore.dart';
 import 'package:Minutes/widgets/raw_text_editor.dart';
-
-import '../utils/pair.dart';
 
 class RawTextList extends StatefulWidget {
   const RawTextList({Key? key}) : super(key: key);
@@ -39,7 +38,7 @@ class _RawTextListState extends State<RawTextList> {
 }
 
 class RawTextListVM {
-  List<Pair<String, Duration>> transcriptTextList;
+  List<TranscriptPair> transcriptTextList;
   RawTextListVM(this.transcriptTextList);
   @override
   bool operator ==(other) {

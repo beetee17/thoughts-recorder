@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -30,7 +30,7 @@ class AudioPlayerContextMenu extends StatelessWidget {
               return [
                 PopupMenuItem(
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Icon(CupertinoIcons.trash),
                         SizedBox(height: 10, width: 10),
@@ -40,7 +40,7 @@ class AudioPlayerContextMenu extends StatelessWidget {
                     onTap: viewModel.removeFile),
                 PopupMenuItem(
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Icon(CupertinoIcons.share),
                       SizedBox(height: 10, width: 10),
@@ -48,6 +48,19 @@ class AudioPlayerContextMenu extends StatelessWidget {
                     ],
                   ),
                   onTap: () => shareTranscript(viewModel.file),
+                ),
+                PopupMenuItem(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(CupertinoIcons.doc),
+                      SizedBox(height: 10, width: 10),
+                      Text('Save Note'),
+                    ],
+                  ),
+                  onTap: () => TranscriptFileHandler.save(Transcript(
+                      viewModel.file!,
+                      store.state.transcript.transcriptTextList)),
                 )
               ];
             });

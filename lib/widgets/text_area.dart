@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:Minutes/redux_/ui.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -18,13 +19,12 @@ class TextArea extends StatefulWidget {
 }
 
 class _TextAreaState extends State<TextArea> {
-  bool showRawText = false;
-
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, TextAreaVM>(
-      converter: (store) => TextAreaVM(store.state.audio.file),
       distinct: true,
+      converter: (store) =>
+          TextAreaVM(store.state.audio.file, store.state.ui.showMinutes),
       builder: (_, viewModel) {
         return Expanded(
           child: Stack(children: [
@@ -36,31 +36,32 @@ class _TextAreaState extends State<TextArea> {
                     margin: EdgeInsets.symmetric(horizontal: 8),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: showRawText ? RawTextList() : FormattedTextView(),
+                      child: viewModel.showMinutes
+                          ? RawTextList()
+                          : FormattedTextView(),
                     )),
               ),
             ),
-            Container(
-              alignment: Alignment.bottomRight,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  SaveTranscriptButton(),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  SecondaryIconButton(
-                      onPress: () {
-                        setState(() {
-                          showRawText = !showRawText;
-                        });
-                      },
-                      margin: EdgeInsets.only(bottom: 10.0, right: 10.0),
-                      icon:
-                          Icon(showRawText ? CupertinoIcons.eye : Icons.edit)),
-                ],
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10.0),
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: SaveTranscriptButton(),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: CupertinoSlidingSegmentedControl(
+                  children: {0: Text('Minutes'), 1: Text('Preview')},
+                  onValueChanged: (newValue) {
+                    store.dispatch(ToggleMinutesViewAction());
+                  },
+                  groupValue: viewModel.groupvalue,
+                ),
+              ),
+            )
           ]),
         );
       },
@@ -70,14 +71,19 @@ class _TextAreaState extends State<TextArea> {
 
 class TextAreaVM {
   File? file;
-  TextAreaVM(this.file);
+  bool showMinutes;
+  int? get groupvalue => showMinutes ? 0 : 1;
+
+  TextAreaVM(this.file, this.showMinutes);
   @override
   bool operator ==(other) {
-    return (other is TextAreaVM) && (file == other.file);
+    return (other is TextAreaVM) &&
+        (file == other.file) &&
+        (showMinutes == other.showMinutes);
   }
 
   @override
   int get hashCode {
-    return file.hashCode;
+    return Object.hash(file, showMinutes);
   }
 }

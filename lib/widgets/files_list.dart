@@ -1,12 +1,13 @@
 import 'package:Minutes/redux_/files.dart';
 import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/utils/transcriptClasses.dart';
-import 'package:Minutes/widgets/secondary_icon_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 import '../redux_/rootStore.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+
 import '../redux_/transcript.dart';
 import '../screens/transcript_screen.dart';
 
@@ -22,90 +23,90 @@ class _FilesListState extends State<FilesList> {
   Widget build(BuildContext context) {
     return StoreConnector<AppState, FilesListVM>(
         distinct: true,
-        converter: (store) => FilesListVM(store.state.files.transcripts),
+        converter: (store) => FilesListVM(store.state.files.all),
         builder: (_, viewModel) {
           return RefreshIndicator(
-            onRefresh: () => store.dispatch(refreshFiles),
-            child: ListView(
-                children: viewModel.transcripts.isEmpty
-                    ? [
-                        Text(
-                            'No Transcriptions Found. Click the + Button to start transcribing!')
-                      ]
-                    : viewModel.transcripts
-                        .map(
-                          (transcript) => Card(
-                            elevation: 5,
-                            margin: const EdgeInsets.all(10.0),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: SizedBox(
-                                  height: 100,
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        transcript.audio.nameWithoutExtension,
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          SecondaryIconButton(
-                                              onPress: () {
-                                                store.dispatch(
-                                                    loadTranscript(transcript));
-
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            TranscriptScreen(
-                                                              transcript:
-                                                                  transcript,
-                                                            ))).then((_) =>
-                                                    store.dispatch(
-                                                        refreshFiles));
-                                              },
-                                              icon: Icon(CupertinoIcons
-                                                  .arrow_right_circle_fill),
-                                              margin: EdgeInsets.zero),
-                                          SecondaryIconButton(
-                                              onPress: () {
-                                                TranscriptFileHandler.delete(
-                                                    context, transcript);
-                                              },
-                                              icon: Icon(
-                                                CupertinoIcons
-                                                    .trash_circle_fill,
-                                                color: Colors.redAccent,
-                                              ),
-                                              margin: EdgeInsets.zero),
-                                        ],
-                                      )
-                                    ],
-                                  )),
+              onRefresh: () => store.dispatch(refreshFiles),
+              child: ListView(
+                  children: viewModel.files
+                      .map((transcript) => Slidable(
+                            // The end action pane is the one at the right or the bottom side.
+                            endActionPane: ActionPane(
+                              motion: ScrollMotion(),
+                              children: [
+                                SlidableAction(
+                                  // An action can be bigger than the others.
+                                  onPressed: (context) {},
+                                  backgroundColor: CupertinoColors.activeBlue,
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.edit,
+                                  label: 'Rename',
+                                ),
+                                SlidableAction(
+                                  onPressed: (context) {
+                                    TranscriptFileHandler.delete(
+                                        context, transcript);
+                                  },
+                                  backgroundColor:
+                                      CupertinoColors.destructiveRed,
+                                  foregroundColor: Colors.white,
+                                  icon: CupertinoIcons.trash,
+                                  label: 'Delete',
+                                )
+                              ],
                             ),
-                          ),
-                        )
-                        .toList()),
-          );
+
+                            // The child of the Slidable is what the user sees when the
+                            // component is not dragged.
+                            child: GestureDetector(
+                              onTap: () {
+                                store.dispatch(loadTranscript(transcript));
+
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => TranscriptScreen(
+                                              transcript: transcript,
+                                            ))).then(
+                                    (_) => store.dispatch(refreshFiles));
+                              },
+                              child: Center(
+                                child: Card(
+                                    elevation: 5,
+                                    margin: const EdgeInsets.all(5.0),
+                                    child: Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: SizedBox(
+                                            height: 100,
+                                            width: double.infinity,
+                                            child: Center(
+                                              child: Text(
+                                                transcript
+                                                    .audio.nameWithoutExtension,
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                            )))),
+                              ),
+                            ),
+                          ))
+                      .toList()));
         });
   }
 }
 
 class FilesListVM {
-  List<SaveFileContents> transcripts;
-  FilesListVM(this.transcripts);
+  List<SaveFileContents> files;
+  FilesListVM(this.files);
   @override
   bool operator ==(other) {
-    return (other is FilesListVM) && (transcripts == other.transcripts);
+    return (other is FilesListVM) && (files == other.files);
   }
 
   @override
   int get hashCode {
-    return transcripts.hashCode;
+    return files.hashCode;
   }
 }

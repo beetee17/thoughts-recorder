@@ -7,30 +7,30 @@ import '../utils/transcriptClasses.dart';
 import 'package:redux/redux.dart';
 
 class FilesState {
-  final List<SaveFileContents> transcripts;
-  FilesState({required this.transcripts});
+  final List<SaveFileContents> all;
+  FilesState({required this.all});
 
   static FilesState empty() {
-    return FilesState(transcripts: []);
+    return FilesState(all: []);
   }
 
   FilesState copyWith({List<SaveFileContents>? transcripts}) {
-    return FilesState(transcripts: transcripts ?? this.transcripts);
+    return FilesState(all: transcripts ?? this.all);
   }
 
   @override
   String toString() {
-    return '\ntranscripts: $transcripts';
+    return '\ntranscripts: $all';
   }
 
   @override
   bool operator ==(other) {
-    return (other is FilesState) && (transcripts == other.transcripts);
+    return (other is FilesState) && (all == other.all);
   }
 
   @override
   int get hashCode {
-    return transcripts.hashCode;
+    return all.hashCode;
   }
 }
 

@@ -138,7 +138,7 @@ class MicRecorder {
     final int bitDepth = 16;
     final int sampleRate = 16000;
 
-    final directory = await getApplicationDocumentsDirectory();
+    final directory = await getTemporaryDirectory();
     final wavFile = File(path.join(directory.path, 'recording.wav'));
 
     final bytesBuilder = BytesBuilder();

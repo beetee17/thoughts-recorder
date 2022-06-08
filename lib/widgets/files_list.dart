@@ -23,12 +23,12 @@ class _FilesListState extends State<FilesList> {
   Widget build(BuildContext context) {
     return StoreConnector<AppState, FilesListVM>(
         distinct: true,
-        converter: (store) => FilesListVM(store.state.files.transcripts),
+        converter: (store) => FilesListVM(store.state.files.all),
         builder: (_, viewModel) {
           return RefreshIndicator(
               onRefresh: () => store.dispatch(refreshFiles),
               child: ListView(
-                  children: viewModel.transcripts
+                  children: viewModel.files
                       .map((transcript) => Slidable(
                             // The end action pane is the one at the right or the bottom side.
                             endActionPane: ActionPane(
@@ -98,15 +98,15 @@ class _FilesListState extends State<FilesList> {
 }
 
 class FilesListVM {
-  List<SaveFileContents> transcripts;
-  FilesListVM(this.transcripts);
+  List<SaveFileContents> files;
+  FilesListVM(this.files);
   @override
   bool operator ==(other) {
-    return (other is FilesListVM) && (transcripts == other.transcripts);
+    return (other is FilesListVM) && (files == other.files);
   }
 
   @override
   int get hashCode {
-    return transcripts.hashCode;
+    return files.hashCode;
   }
 }

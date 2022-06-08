@@ -82,15 +82,13 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
                   actions: viewModel.file != null
                       ? [
                           IconButton(
-                              onPressed: () => showSpinnerUntil(
+                              onPressed: () => TranscriptFileHandler.save(
                                   ctx,
-                                  () => TranscriptFileHandler.save(
-                                      ctx,
-                                      SaveFileContents(
-                                          viewModel.file!,
-                                          store.state.transcript
-                                              .transcriptTextList),
-                                      filenameEditingController.text)),
+                                  SaveFileContents(
+                                      viewModel.file!,
+                                      store
+                                          .state.transcript.transcriptTextList),
+                                  filenameEditingController.text),
                               icon: Icon(CupertinoIcons.doc))
                         ]
                       : [],

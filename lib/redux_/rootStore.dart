@@ -1,3 +1,4 @@
+import 'package:Minutes/redux_/files.dart';
 import 'package:Minutes/redux_/leopard.dart';
 import 'package:Minutes/redux_/recorder.dart';
 import 'package:Minutes/redux_/status.dart';
@@ -16,9 +17,10 @@ class AppState {
   final AudioState audio;
   final TranscriberState transcriber;
   final TranscriptState transcript;
+  final FilesState files;
 
   AppState(this.transcriber, this.recorder, this.audio, this.status,
-      this.transcript, this.leopard);
+      this.transcript, this.leopard, this.files);
 
   static AppState empty() {
     return AppState(
@@ -27,12 +29,13 @@ class AppState {
         AudioState.empty(),
         StatusState.empty(),
         TranscriptState.empty(),
-        LeopardState.empty());
+        LeopardState.empty(),
+        FilesState.empty());
   }
 
   @override
   String toString() {
-    return '$transcriber \n$recorder \n$audio \n$status \n$transcript';
+    return '$transcriber \n$recorder \n$audio \n$status \n$transcript \n$files';
   }
 }
 
@@ -61,7 +64,8 @@ AppState appStateReducer(AppState state, action) => AppState(
     audioReducer(state.audio, action),
     statusReducer(state.status, action),
     transcriptReducer(state.transcript, action),
-    leopardReducer(state.leopard, action));
+    leopardReducer(state.leopard, action),
+    filesReducer(state.files, action));
 
 final store = DevToolsStore<AppState>(appStateReducer,
     initialState: AppState.empty(), middleware: [thunkMiddleware]);

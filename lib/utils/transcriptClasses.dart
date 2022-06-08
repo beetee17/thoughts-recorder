@@ -1,8 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:Minutes/redux_/files.dart';
+import 'package:Minutes/utils/alert_dialog.dart';
 import 'package:Minutes/utils/extensions.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../redux_/rootStore.dart';
 
 class TranscriptPair {
   final String text;
@@ -39,13 +44,20 @@ class Transcript {
   File audio;
   Transcript(this.audio, this.transcript);
 
-  Map toJson() => {'transcript': transcript, 'audio': audio.path};
+  Map toJson() => {'transcript': transcript, 'audio': audio.getFileName()};
 
-  Transcript.fromJson(Map<String, dynamic> map)
-      : transcript = (map['transcript'] as List<dynamic>)
-            .map((item) => TranscriptPair.fromJson(item))
-            .toList(),
-        audio = File(map['audio']);
+  static Future<Transcript> fromJson(Map<String, dynamic> map) async {
+    final Directory filesDirectory =
+        await TranscriptFileHandler.appFilesDirectory;
+
+    final File audio = File('${filesDirectory.path}/${map['audio']}');
+
+    final List<TranscriptPair> transcript = (map['transcript'] as List<dynamic>)
+        .map((item) => TranscriptPair.fromJson(item))
+        .toList();
+
+    return Transcript(audio, transcript);
+  }
 
   @override
   bool operator ==(final Object other) {
@@ -72,12 +84,11 @@ class TranscriptFileHandler {
     final Directory dir = await appFilesDirectory;
     final String filename = transcript.audio.getFileName();
 
-    final File saveFile = await File('${dir.absolute.path}/$filename.txt')
-        .create(recursive: true);
+    final File saveFile =
+        await File('${dir.path}/$filename.txt').create(recursive: true);
 
     // Copy audio file to app documents
-    transcript.audio =
-        await transcript.audio.copy('${dir.absolute.path}/$filename');
+    transcript.audio = await transcript.audio.copy('${dir.path}/$filename');
     await saveFile.writeAsString(jsonEncode(transcript));
 
     print('saved to ${saveFile.path}');
@@ -85,7 +96,21 @@ class TranscriptFileHandler {
 
   static Future<Transcript> load(String path) async {
     String transcriptFile = await File(path).readAsString();
-
+    print(transcriptFile);
     return Transcript.fromJson(jsonDecode(transcriptFile));
+  }
+
+  static Future<void> delete(
+      BuildContext context, Transcript transcript) async {
+    try {
+      final Directory dir = await appFilesDirectory;
+      final String filename = transcript.audio.getFileName();
+
+      transcript.audio.delete().then((_) => File('${dir.path}/$filename.txt')
+          .delete()
+          .then((_) => store.dispatch(refreshFiles)));
+    } catch (err) {
+      showAlertDialog(context, 'Error deleting file', err.toString());
+    }
   }
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:Minutes/redux_/files.dart';
 import 'package:Minutes/screens/settings_screen.dart';
 import 'package:Minutes/screens/transcript_screen.dart';
+import 'package:Minutes/utils/spinner.dart';
 import 'package:Minutes/widgets/files_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -25,15 +26,8 @@ class _FilesScreenState extends State<FilesScreen> {
   void initState() {
     super.initState();
 
-    Settings.getAccessKey().then((value) {
-      showDialog(
-        barrierDismissible: false,
-        builder: (ctx) => const Center(child: CircularProgressIndicator()),
-        context: context,
-      );
-      InitLeopardAction()
-          .call(store)
-          .then((value) => Navigator.of(context).pop());
+    Settings.getAccessKey().then((_) {
+      showSpinnerAfter(context, () => InitLeopardAction().call(store));
     });
   }
 

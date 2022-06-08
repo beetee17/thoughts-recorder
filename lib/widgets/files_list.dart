@@ -1,5 +1,6 @@
 import 'package:Minutes/redux_/files.dart';
 import 'package:Minutes/utils/extensions.dart';
+import 'package:Minutes/utils/spinner.dart';
 import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,7 @@ class _FilesListState extends State<FilesList> {
     return StoreConnector<AppState, FilesListVM>(
         distinct: true,
         converter: (store) => FilesListVM(store.state.files.all),
-        builder: (_, viewModel) {
+        builder: (ctx, viewModel) {
           return RefreshIndicator(
               onRefresh: () => store.dispatch(refreshFiles),
               child: ListView(
@@ -36,16 +37,18 @@ class _FilesListState extends State<FilesList> {
                               children: [
                                 SlidableAction(
                                   // An action can be bigger than the others.
-                                  onPressed: (context) {},
+                                  onPressed: (_) {},
                                   backgroundColor: CupertinoColors.activeBlue,
                                   foregroundColor: Colors.white,
                                   icon: Icons.edit,
                                   label: 'Rename',
                                 ),
                                 SlidableAction(
-                                  onPressed: (context) {
-                                    TranscriptFileHandler.delete(
-                                        context, transcript);
+                                  onPressed: (_) {
+                                    showSpinnerUntil(
+                                        ctx,
+                                        () => TranscriptFileHandler.delete(
+                                            ctx, transcript));
                                   },
                                   backgroundColor:
                                       CupertinoColors.destructiveRed,
@@ -63,7 +66,7 @@ class _FilesListState extends State<FilesList> {
                                 store.dispatch(loadTranscript(transcript));
 
                                 Navigator.push(
-                                    context,
+                                    ctx,
                                     MaterialPageRoute(
                                         builder: (context) => TranscriptScreen(
                                               transcript: transcript,

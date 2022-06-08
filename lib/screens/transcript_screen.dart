@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:Minutes/utils/extensions.dart';
+import 'package:Minutes/utils/spinner.dart';
 import 'package:Minutes/utils/transcriptClasses.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
             store.state.transcript.transcriptText,
             store.state.transcript.transcriptTextList,
             store.state.status.errorMessage),
-        builder: (_, viewModel) {
+        builder: (ctx, viewModel) {
           // TODO: Move to own widget so that it does not rebuild during transcription process
           final TextEditingController filenameEditingController =
               TextEditingController(
@@ -81,19 +82,21 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
                   actions: viewModel.file != null
                       ? [
                           IconButton(
-                              onPressed: () => TranscriptFileHandler.save(
-                                  context,
-                                  SaveFileContents(
-                                      viewModel.file!,
-                                      store
-                                          .state.transcript.transcriptTextList),
-                                  filenameEditingController.text),
+                              onPressed: () => showSpinnerUntil(
+                                  ctx,
+                                  () => TranscriptFileHandler.save(
+                                      ctx,
+                                      SaveFileContents(
+                                          viewModel.file!,
+                                          store.state.transcript
+                                              .transcriptTextList),
+                                      filenameEditingController.text)),
                               icon: Icon(CupertinoIcons.doc))
                         ]
                       : [],
                   leading: IconButton(
                     icon: Icon(Icons.arrow_back_ios),
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () => Navigator.of(ctx).pop(),
                   )),
               resizeToAvoidBottomInset: false,
               body: Column(

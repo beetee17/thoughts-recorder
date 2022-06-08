@@ -27,7 +27,7 @@ class _FilesScreenState extends State<FilesScreen> {
     super.initState();
 
     Settings.getAccessKey().then((_) {
-      showSpinnerUntil(context, () => InitLeopardAction().call(store));
+      showSpinnerUntil(context, () async => InitLeopardAction().call(store));
     });
   }
 

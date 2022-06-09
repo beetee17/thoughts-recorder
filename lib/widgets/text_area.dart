@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:Minutes/redux_/ui.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:Minutes/redux_/rootStore.dart';
 import 'package:Minutes/widgets/raw_text_list.dart';
@@ -19,7 +21,19 @@ class TextArea extends StatefulWidget {
   State<TextArea> createState() => _TextAreaState();
 }
 
-class _TextAreaState extends State<TextArea> {
+class _TextAreaState extends State<TextArea>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    duration: const Duration(seconds: 2),
+    vsync: this,
+  );
+  late final Animation<Offset> _offsetAnimation = Tween<Offset>(
+    begin: Offset.zero,
+    end: const Offset(1.5, 0.0),
+  ).animate(CurvedAnimation(
+    parent: _controller,
+    curve: Curves.elasticIn,
+  ));
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, TextAreaVM>(
@@ -51,6 +65,27 @@ class _TextAreaState extends State<TextArea> {
                 child: SaveTranscriptButton(),
               ),
             ),
+            AnimatedOpacity(
+              duration: Duration(milliseconds: 200),
+              opacity: MediaQuery.of(context).viewInsets.bottom < 200 ? 0 : 1,
+              child: Padding(
+                padding: EdgeInsets.only(
+                    bottom: max(
+                        0, MediaQuery.of(context).viewInsets.bottom / 2 - 50),
+                    right: 10),
+                child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: FloatingActionButton(
+                        backgroundColor: Color.fromRGBO(226, 230, 232, 1),
+                        child: Icon(
+                          CupertinoIcons.keyboard_chevron_compact_down,
+                          color: CupertinoColors.systemGrey,
+                          size: 30,
+                        ),
+                        onPressed: () => SystemChannels.textInput
+                            .invokeMethod('TextInput.hide'))),
+              ),
+            )
           ]),
         );
       },

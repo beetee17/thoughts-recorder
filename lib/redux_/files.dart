@@ -15,8 +15,8 @@ class FilesState {
     return FilesState(all: []);
   }
 
-  FilesState copyWith({List<SaveFileContents>? transcripts}) {
-    return FilesState(all: transcripts ?? this.all);
+  FilesState copyWith({List<SaveFileContents>? saveFiles}) {
+    return FilesState(all: saveFiles ?? this.all);
   }
 
   @override
@@ -35,9 +35,9 @@ class FilesState {
   }
 }
 
-class TranscriptsChangeAction {
-  List<SaveFileContents> transcripts;
-  TranscriptsChangeAction(this.transcripts);
+class SaveFilesChangeAction {
+  List<SaveFileContents> saveFiles;
+  SaveFilesChangeAction(this.saveFiles);
 }
 
 ThunkAction<AppState> refreshFiles = (Store<AppState> store) async {
@@ -52,14 +52,13 @@ ThunkAction<AppState> refreshFiles = (Store<AppState> store) async {
 
   // Decode files to transcripts
   try {
-    final List<SaveFileContents?> transcripts =
-        await Future.wait(files.map((e) {
+    final List<SaveFileContents?> contents = await Future.wait(files.map((e) {
       return SaveFileHandler.load(e.path);
     }));
-    final List<SaveFileContents> finalTranscripts =
-        transcripts.whereType<SaveFileContents>().toList();
-    finalTranscripts.sort(((a, b) => b.creationDate.compareTo(a.creationDate)));
-    await store.dispatch(TranscriptsChangeAction(finalTranscripts));
+    final List<SaveFileContents> finalContents =
+        contents.whereType<SaveFileContents>().toList();
+    finalContents.sort(((a, b) => b.creationDate.compareTo(a.creationDate)));
+    await store.dispatch(SaveFilesChangeAction(finalContents));
   } catch (err) {
     print('Error on loading saved file: $err');
   }
@@ -67,8 +66,8 @@ ThunkAction<AppState> refreshFiles = (Store<AppState> store) async {
 
 // Each reducer will handle actions related to the State Tree it cares about!
 FilesState filesReducer(FilesState prevState, action) {
-  if (action is TranscriptsChangeAction) {
-    return prevState.copyWith(transcripts: action.transcripts);
+  if (action is SaveFilesChangeAction) {
+    return prevState.copyWith(saveFiles: action.saveFiles);
   } else {
     return prevState;
   }

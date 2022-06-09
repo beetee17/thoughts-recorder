@@ -100,16 +100,16 @@ class SaveFileHandler {
   }
 
   static Future<void> delete(
-      BuildContext context, SaveFileContents? transcript) async {
-    if (transcript == null) {
+      BuildContext context, SaveFileContents? saveFile) async {
+    if (saveFile == null) {
       return;
     }
     try {
       final Directory dir = await appFilesDirectory;
       final String saveFilePath =
-          path.join(dir.path, '${transcript.audio.nameWithoutExtension}.txt');
+          path.join(dir.path, '${saveFile.audio.nameWithoutExtension}.txt');
 
-      transcript.audio.delete().then((_) => File(saveFilePath).delete());
+      saveFile.audio.delete().then((_) => File(saveFilePath).delete());
     } catch (err) {
       showAlertDialog(context, 'Error deleting file', err.toString());
     }

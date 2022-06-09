@@ -96,7 +96,8 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
                                       SaveFileContents(
                                           viewModel.file!,
                                           store.state.transcript
-                                              .transcriptTextList),
+                                              .transcriptTextList,
+                                          DateTime.now()),
                                       filenameEditingController.text)),
                               icon: Icon(CupertinoIcons.doc))
                         ]

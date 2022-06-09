@@ -56,8 +56,10 @@ ThunkAction<AppState> refreshFiles = (Store<AppState> store) async {
         await Future.wait(files.map((e) {
       return SaveFileHandler.load(e.path);
     }));
-    await store.dispatch(TranscriptsChangeAction(
-        transcripts.whereType<SaveFileContents>().toList()));
+    final List<SaveFileContents> finalTranscripts =
+        transcripts.whereType<SaveFileContents>().toList();
+    finalTranscripts.sort(((a, b) => b.creationDate.compareTo(a.creationDate)));
+    await store.dispatch(TranscriptsChangeAction(finalTranscripts));
   } catch (err) {
     print('Error on loading saved file: $err');
   }

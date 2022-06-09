@@ -12,7 +12,7 @@ class StartRecordingButton extends StatelessWidget {
       distinct: true,
       converter: (store) => StartRecordingButtonVM(
           store.state.recorder.startRecording,
-          store.state.recorder.stopRecording,
+          store.state.recorder.pauseRecording,
           store.state.recorder.isRecording),
       builder: (_, viewModel) {
         return Padding(
@@ -26,11 +26,11 @@ class StartRecordingButton extends StatelessWidget {
             child: WithShadow(
               child: IconButton(
                   onPressed: (viewModel.isRecording)
-                      ? viewModel.stopRecording
+                      ? viewModel.pauseRecording
                       : viewModel.startRecording,
                   iconSize: 50,
                   color: Colors.white,
-                  icon: Icon(viewModel.isRecording ? Icons.stop : Icons.mic)),
+                  icon: Icon(viewModel.isRecording ? Icons.pause : Icons.mic)),
             ),
           ),
         );
@@ -41,20 +41,20 @@ class StartRecordingButton extends StatelessWidget {
 
 class StartRecordingButtonVM {
   void Function() startRecording;
-  void Function() stopRecording;
+  void Function() pauseRecording;
   bool isRecording;
   StartRecordingButtonVM(
-      this.startRecording, this.stopRecording, this.isRecording);
+      this.startRecording, this.pauseRecording, this.isRecording);
   @override
   bool operator ==(other) {
     return (other is StartRecordingButtonVM) &&
         (startRecording == other.startRecording) &&
-        (stopRecording == other.stopRecording) &&
+        (pauseRecording == other.pauseRecording) &&
         (isRecording == other.isRecording);
   }
 
   @override
   int get hashCode {
-    return Object.hash(startRecording, stopRecording, isRecording);
+    return Object.hash(startRecording, pauseRecording, isRecording);
   }
 }

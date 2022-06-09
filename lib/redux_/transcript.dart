@@ -125,6 +125,9 @@ TranscriptState transcriptReducer(TranscriptState prevState, action) {
   } else if (action is StartRecordSuccessAction) {
     return prevState
         .copyWith(transcriptTextList: [], highlightedSpanIndex: null);
+  } else if (action is CancelRecordSuccessAction) {
+    return prevState
+        .copyWith(transcriptTextList: [], highlightedSpanIndex: null);
   } else if (action is ProcessedRemainingFramesAction) {
     final newTranscriptTextList = prevState.transcriptTextList;
     newTranscriptTextList.add(action.remainingTranscript);

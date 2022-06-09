@@ -53,7 +53,7 @@ class RecorderState {
     return Object.hash(finishedRecording, isRecording, micRecorder);
   }
 
-  // Recorder Functions
+  // Recorder Functions. These can be made into Thunk Actions
   Future<void> startRecording() async {
     if (isRecording || micRecorder == null) {
       return;
@@ -73,7 +73,7 @@ class RecorderState {
   }
 
   Future<void> stopRecording() async {
-    if (!isRecording || micRecorder == null) {
+    if (isRecording || micRecorder == null) {
       return;
     }
 
@@ -98,7 +98,23 @@ class RecorderState {
       print("Failed to stop audio capture: ${ex.message}");
     }
   }
+
+  Future<void> cancelRecording() async {
+    if (micRecorder == null) {
+      return;
+    }
+
+    try {
+      await micRecorder!.clearData();
+      await micRecorder!.stopRecord();
+      await store.dispatch(CancelRecordSuccessAction());
+    } catch (err) {
+      print("Failed to cancel recording: $err");
+    }
+  }
 }
+
+class CancelRecordSuccessAction {}
 
 class StartRecordSuccessAction {}
 
@@ -171,6 +187,8 @@ RecorderState recorderReducer(RecorderState prevState, action) {
     return prevState.copyWith(isRecording: false, finishedRecording: true);
   } else if (action is PauseRecordSuccessAction) {
     return prevState.copyWith(isRecording: false, finishedRecording: false);
+  } else if (action is CancelRecordSuccessAction) {
+    return prevState.copyWith(isRecording: false, finishedRecording: true);
   } else if (action is ProcessedRemainingFramesAction) {
     return prevState.copyWith(isRecording: false);
   } else {

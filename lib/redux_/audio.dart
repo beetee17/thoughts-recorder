@@ -142,6 +142,8 @@ AudioState audioReducer(AudioState prevState, action) {
     return prevState.copyWith(file: action.file, shouldOverrideFile: true);
   } else if (action is RecordedCallbackUpdateAction) {
     return prevState.copyWith(duration: action.recordedLength);
+  } else if (action is CancelRecordSuccessAction) {
+    return prevState.copyWith(duration: Duration.zero);
   } else if (action is AudioDurationChangeAction) {
     return prevState.copyWith(duration: action.newDuration);
   } else {

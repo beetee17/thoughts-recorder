@@ -1,4 +1,5 @@
 import 'package:Minutes/redux_/leopard.dart';
+import 'package:Minutes/redux_/recorder.dart';
 import 'package:Minutes/redux_/transcriber.dart';
 import 'package:Minutes/utils/extensions.dart';
 
@@ -70,6 +71,8 @@ StatusState statusReducer(StatusState prevState, action) {
     final String filename =
         action.file == null ? 'No audio file' : action.file!.name;
     return prevState.copyWith(statusAreaText: '$filename');
+  } else if (action is CancelRecordSuccessAction) {
+    return prevState.copyWith(statusAreaText: 'No audio file');
   } else if (action is ErrorCallbackAction) {
     return prevState.copyWith(
         errorMessage: action.errorMessage, shouldOverrideError: true);

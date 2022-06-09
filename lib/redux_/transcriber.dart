@@ -59,6 +59,9 @@ TranscriberState transcriberReducer(TranscriberState prevState, action) {
   } else if (action is IncomingTranscriptAction) {
     return prevState
         .copyWith(combinedFrame: [], combinedDuration: Duration.zero);
+  } else if (action is CancelRecordSuccessAction) {
+    return prevState
+        .copyWith(combinedFrame: [], combinedDuration: Duration.zero);
   } else if (action is RecordedCallbackUpdateAction) {
     return prevState.copyWith(
         combinedFrame: action.combinedFrame,

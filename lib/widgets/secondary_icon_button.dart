@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SecondaryIconButton extends StatelessWidget {
@@ -34,7 +35,7 @@ class SecondaryIconButton extends StatelessWidget {
       child: IconButton(
         onPressed: () => onPress(),
         icon: icon,
-        color: Color.fromRGBO(140, 149, 157, 1),
+        color: CupertinoColors.systemGrey,
       ),
     );
   }

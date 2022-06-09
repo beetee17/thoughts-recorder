@@ -52,8 +52,8 @@ class SaveFileHandler {
                         newSaveFile.pathWithoutExtension +
                             fileContents.audio.extension);
 
-                    SaveFileContents newContents =
-                        SaveFileContents(newAudio, fileContents.transcript);
+                    SaveFileContents newContents = SaveFileContents(newAudio,
+                        fileContents.transcript, fileContents.creationDate);
 
                     save(context, newContents, newSaveFile.nameWithoutExtension)
                         .then((_) => Navigator.of(context).pop());
@@ -77,7 +77,8 @@ class SaveFileHandler {
 
       final newContents = SaveFileContents(
           await fileContents.audio.copy(audioFilePath),
-          fileContents.transcript);
+          fileContents.transcript,
+          fileContents.creationDate);
 
       await saveFile.writeAsString(jsonEncode(newContents));
 
@@ -99,16 +100,16 @@ class SaveFileHandler {
   }
 
   static Future<void> delete(
-      BuildContext context, SaveFileContents? transcript) async {
-    if (transcript == null) {
+      BuildContext context, SaveFileContents? saveFile) async {
+    if (saveFile == null) {
       return;
     }
     try {
       final Directory dir = await appFilesDirectory;
       final String saveFilePath =
-          path.join(dir.path, '${transcript.audio.nameWithoutExtension}.txt');
+          path.join(dir.path, '${saveFile.audio.nameWithoutExtension}.txt');
 
-      transcript.audio.delete().then((_) => File(saveFilePath).delete());
+      saveFile.audio.delete().then((_) => File(saveFilePath).delete());
     } catch (err) {
       showAlertDialog(context, 'Error deleting file', err.toString());
     }
@@ -147,7 +148,8 @@ class SaveFileHandler {
 
       final newContents = SaveFileContents(
           await prevContents.audio.copy(audioFilePath),
-          prevContents.transcript);
+          prevContents.transcript,
+          prevContents.creationDate);
 
       await saveFile.writeAsString(jsonEncode(newContents));
       await delete(context, prevContents);

@@ -21,6 +21,7 @@ dependencies:
   flutter_svg: ^1.1.0
   flutter_voice_processor: ^1.0.7
   google_fonts: ^3.0.1
+  intl: ^0.17.0
   just_audio: ^0.9.24
   leopard_flutter: ^1.0.3
   modal_bottom_sheet: ^2.0.1

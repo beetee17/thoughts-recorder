@@ -95,15 +95,28 @@ class _FilesListState extends State<FilesList> {
                                         child: SizedBox(
                                             height: 100,
                                             width: double.infinity,
-                                            child: Center(
-                                              child: Text(
-                                                transcript
-                                                    .audio.nameWithoutExtension,
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                              ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Text(
+                                                  transcript.audio
+                                                      .nameWithoutExtension,
+                                                  style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                                Text(
+                                                  transcript.parsedCreationDate,
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: CupertinoColors
+                                                          .secondaryLabel),
+                                                )
+                                              ],
                                             )))),
                               ),
                             ),

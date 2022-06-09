@@ -56,7 +56,8 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
               PageController(initialPage: viewModel.groupvalue);
 
           return GestureDetector(
-            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+            onTap: () =>
+                SystemChannels.textInput.invokeMethod('TextInput.hide'),
             child: Scaffold(
               appBar: AppBar(
                   title: ClipRRect(

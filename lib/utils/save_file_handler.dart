@@ -77,6 +77,8 @@ class SaveFileHandler {
       final String audioFilePath =
           path.join(dir.path, filename + fileContents.audio.extension);
 
+      File(audioFilePath).create(recursive: true);
+
       print('Created file at path, copying audio...');
 
       final newContents = SaveFileContents(
@@ -116,8 +118,8 @@ class SaveFileHandler {
       final Directory dir = await appFilesDirectory;
       final String saveFilePath =
           path.join(dir.path, '${saveFile.audio.nameWithoutExtension}.txt');
-
-      saveFile.audio.delete().then((_) => File(saveFilePath).delete());
+      await saveFile.audio.delete();
+      await File(saveFilePath).delete();
     } catch (err) {
       showAlertDialog(context, 'Error deleting file', err.toString());
     }

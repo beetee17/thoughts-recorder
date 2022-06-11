@@ -130,8 +130,8 @@ ThunkAction<AppState> processRemainingFrames = (Store<AppState> store) async {
       DurationUtils.max(Duration.zero, audio.duration - state.combinedDuration);
   final remainingTranscript =
       await leopard.processCombined(remainingFrames, startTime);
-  if (remainingTranscript.text.trim().isNotEmpty) {
-    await store.dispatch(ProcessedRemainingFramesAction(remainingTranscript));
+  if (remainingTranscript?.text.trim().isNotEmpty ?? false) {
+    await store.dispatch(ProcessedRemainingFramesAction(remainingTranscript!));
   }
   await store.dispatch(AudioFileChangeAction(audio.file));
 };

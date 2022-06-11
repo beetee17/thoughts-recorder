@@ -65,16 +65,25 @@ class MicRecorder {
       try {
         _pcmData.addAll(frame);
 
-        CheetahTranscript cheetahTranscript = await _cheetah.process(frame);
-
         final Duration recordedLength = Duration(
             milliseconds: (_pcmData.length / _sampleRate * 1000).toInt());
 
         store.dispatch(StatusTextChangeAction(
             "Recording : ${(recordedLength.inMilliseconds / 1000).toStringAsFixed(1)} / ${maxRecordingLength.inSeconds} seconds"));
 
-        await store.dispatch(getRecordedCallback(
-            recordedLength, frame, cheetahTranscript.isEndpoint));
+        CheetahTranscript cheetahTranscript = await _cheetah.process(frame);
+        if (cheetahTranscript.isEndpoint) {
+          CheetahTranscript? ct = await store.state.cheetah.instance?.flush();
+          print('Cheetah flushed: (${ct?.transcript.trim()})');
+          // Do not know why but it detects endpoint twice in a row
+          if (ct?.transcript.trim().isNotEmpty ?? false) {
+            await store
+                .dispatch(getRecordedCallback(recordedLength, frame, true));
+          }
+        } else {
+          await store
+              .dispatch(getRecordedCallback(recordedLength, frame, false));
+        }
       } catch (error) {
         print('An error occurred during cheetah processing: $error');
       }

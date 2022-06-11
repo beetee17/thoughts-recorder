@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:Minutes/redux_/cheetah.dart';
 import 'package:cheetah_flutter/cheetah.dart';
+import 'package:cheetah_flutter/cheetah_error.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:Minutes/mic_recorder.dart';
 import 'package:Minutes/redux_/leopard.dart';
@@ -116,6 +117,7 @@ ThunkAction<AppState> processCurrentAudioFile = (Store<AppState> store) async {
       cheetah.instance == null) {
     return;
   }
+  print(cheetah.instance!.frameLength);
 
   store.dispatch(StartProcessingAudioFileAction());
 
@@ -125,22 +127,37 @@ ThunkAction<AppState> processCurrentAudioFile = (Store<AppState> store) async {
     return;
   }
 
-  List<List<int>> allFrames = frames.split(12000);
+  List<List<int>> allFrames = frames.split(cheetah.instance!.frameLength);
   List<int> data = [];
 
   for (final frame in allFrames) {
     data.addAll(frame);
-    CheetahTranscript cheetahTranscript =
-        await cheetah.instance!.process(frame);
 
     final Duration transcribedLength = Duration(
         milliseconds:
             (data.length / leopard.instance!.sampleRate * 1000).toInt());
-
-    await store.dispatch(getRecordedCallback(
-        transcribedLength, frame, cheetahTranscript.isEndpoint));
     await store.dispatch(StatusTextChangeAction(
         "Transcribed ${(transcribedLength.inMilliseconds / 1000).toStringAsFixed(1)} seconds..."));
+    try {
+      CheetahTranscript cheetahTranscript =
+          await cheetah.instance!.process(frame);
+      if (cheetahTranscript.isEndpoint) {
+        CheetahTranscript? ct = await store.state.cheetah.instance?.flush();
+        print('Cheetah flushed: (${ct?.transcript.trim()})');
+        // Do not know why but it detects endpoint twice in a row
+        if (ct?.transcript.trim().isNotEmpty ?? false) {
+          await store
+              .dispatch(getRecordedCallback(transcribedLength, frame, true));
+        }
+      } else {
+        await store
+            .dispatch(getRecordedCallback(transcribedLength, frame, false));
+      }
+    } on CheetahInvalidArgumentException {
+      // Last frame length is likely not exactly what is required
+      await store.dispatch(getRecordedCallback(transcribedLength, frame, true));
+      break;
+    }
   }
 
   await store.dispatch(processRemainingFrames);

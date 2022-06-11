@@ -44,11 +44,20 @@ class LeopardState {
     return instance.hashCode;
   }
 
-  Future<TranscriptPair> processCombined(
+  Future<TranscriptPair?> processCombined(
       List<int> combinedFrame, Duration startTime) async {
     // TODO: Handle if leopard is somehow not initialised.
-    final transcript = await instance!.process(combinedFrame);
-    return TranscriptPair(transcript.formatText(), startTime);
+    print('Processing ${combinedFrame.length} frames');
+    try {
+      final transcript = await instance!.process(combinedFrame);
+      if (transcript.trim().isEmpty) {
+        return null;
+      }
+      return TranscriptPair(transcript.formatText(), startTime);
+    } on LeopardInvalidArgumentException {
+      print('Leopard Invalid argument exception');
+      return null;
+    }
   }
 }
 
@@ -76,7 +85,8 @@ class InitLeopardAction implements CallableThunkAction<AppState> {
       print('INITIALISING...');
       final accessKey = await Settings.getAccessKey();
       final leopard = await Leopard.create(accessKey, leopardModelPath);
-      final cheetah = await Cheetah.create(accessKey, cheetahModelPath);
+      final cheetah = await Cheetah.create(accessKey, cheetahModelPath,
+          endpointDuration: 0.5);
       final micRecorder = await MicRecorder.create(
           cheetah, leopard.sampleRate, store.state.status.errorCallback);
       print('dispatching $leopard and $micRecorder');

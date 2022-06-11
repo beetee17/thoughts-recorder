@@ -47,16 +47,13 @@ class StartProcessingAudioFileAction {}
 
 // Each reducer will handle actions related to the State Tree it cares about!
 TranscriberState transcriberReducer(TranscriberState prevState, action) {
-  if (action is! AudioPositionChangeAction) {
-    print(action);
-  }
+  // if (action is! AudioPositionChangeAction) {
+  //   print(action);
+  // }
   if (action is StartRecordSuccessAction) {
     return prevState
         .copyWith(combinedFrame: [], combinedDuration: Duration.zero);
   } else if (action is StartProcessingAudioFileAction) {
-    return prevState
-        .copyWith(combinedFrame: [], combinedDuration: Duration.zero);
-  } else if (action is IncomingTranscriptAction) {
     return prevState
         .copyWith(combinedFrame: [], combinedDuration: Duration.zero);
   } else if (action is CancelRecordSuccessAction) {

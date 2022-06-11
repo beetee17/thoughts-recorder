@@ -1,3 +1,4 @@
+import 'package:Minutes/utils/alert_dialog.dart';
 import 'package:flutter/material.dart';
 
 Future<T?> showSpinnerUntil<T>(
@@ -15,6 +16,7 @@ Future<T?> showSpinnerUntil<T>(
     return value;
   }).onError((error, stackTrace) {
     Navigator.of(context, rootNavigator: true).pop();
+    showAlertDialog(context, 'Error', error.toString());
     return null;
   });
 }

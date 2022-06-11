@@ -10,6 +10,7 @@ environment:
   flutter: ">=2.8.1"
 
 dependencies:
+  cheetah_flutter: ^1.0.2
   cupertino_icons: ^1.0.0
   ffmpeg_kit_flutter: ^4.5.1
   file_picker: ^4.5.1
@@ -46,4 +47,5 @@ flutter:
     - assets/models/android/leopard_params.pv
     - assets/models/ios/leopard_params.pv
     - assets/models/ios/myModel-leopard.pv
+    - assets/models/ios/myModel-cheetah.pv
     - assets/picovoice.svg

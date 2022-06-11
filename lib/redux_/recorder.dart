@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:Minutes/mic_recorder.dart';
 import 'package:Minutes/redux_/leopard.dart';
 import 'package:Minutes/redux_/transcript.dart';
 import 'package:Minutes/redux_/transcriber.dart';
+import 'package:cheetah_flutter/cheetah.dart';
 
 import 'package:leopard_flutter/leopard_error.dart';
 import 'package:redux/redux.dart';
@@ -130,42 +133,55 @@ class RecordedCallbackUpdateAction {
       this.recordedLength, this.combinedFrame, this.combinedDuration);
 }
 
-ThunkAction<AppState> Function(Duration, List<int>) getRecordedCallback =
-    (Duration length, List<int> frame) {
+ThunkAction<AppState> Function(Duration, List<int>, bool) getRecordedCallback =
+    (Duration length, List<int> frame, bool isEndpoint) {
   return (Store<AppState> store) async {
     if (length < maxRecordingLength) {
       TranscriberState state = store.state.transcriber;
       RecorderState recorder = store.state.recorder;
       LeopardState leopard = store.state.leopard;
 
-      String singleFrameTranscript = await leopard.instance!.process(frame);
+      if (isEndpoint) {
+        // Subtract enpointDuration worth of frames from current and put it into next state
+        final double secondsPerFrame =
+            frame.length / recorder.micRecorder!.sampleRate;
+        final numFrames = 0.5 ~/ secondsPerFrame;
 
-      List<int> newCombinedFrame = state.combinedFrame;
-      newCombinedFrame.addAll(frame);
+        final int numFramesToSubtract = frame.length * numFrames;
 
-      Duration newCombinedDuration = state.combinedDuration +
-          Duration(
-              milliseconds:
-                  (frame.length / recorder.micRecorder!.sampleRate * 1000)
-                      .toInt());
+        final Duration durationToSubtract = Duration(
+            milliseconds:
+                (numFramesToSubtract / recorder.micRecorder!.sampleRate * 1000)
+                    .toInt());
 
-      if (singleFrameTranscript == null ||
-          singleFrameTranscript.trim().isEmpty) {
-        print('potential end point, duration: $newCombinedDuration');
+        final framesToProcess = state.combinedFrame.sublist(
+            0, max(0, state.combinedFrame.length - numFramesToSubtract));
 
-        if (newCombinedDuration.inSeconds > 4) {
-          final Duration startTime =
-              DurationUtils.max(Duration.zero, length - newCombinedDuration);
+        final Duration startTime = DurationUtils.max(Duration.zero,
+            length - (state.combinedDuration - durationToSubtract));
 
-          // we want the startTime of the text rather than the end
-          TranscriptPair incomingTranscript =
-              await leopard.processCombined(newCombinedFrame, startTime);
+        // we want the startTime of the text rather than the end
+        TranscriptPair? incomingTranscript =
+            await leopard.processCombined(framesToProcess, startTime);
+
+        final leftOverFrames = state.combinedFrame
+            .sublist(max(0, state.combinedFrame.length - numFramesToSubtract));
+
+        if (incomingTranscript != null) {
           await store.dispatch(IncomingTranscriptAction(incomingTranscript));
-        } else {
-          await store.dispatch(RecordedCallbackUpdateAction(
-              length, newCombinedFrame, newCombinedDuration));
         }
+
+        await store.dispatch(RecordedCallbackUpdateAction(
+            length, leftOverFrames, durationToSubtract));
       } else {
+        var newCombinedFrame = state.combinedFrame;
+        newCombinedFrame.addAll(frame);
+
+        Duration newCombinedDuration = state.combinedDuration +
+            Duration(
+                milliseconds:
+                    (frame.length / recorder.micRecorder!.sampleRate * 1000)
+                        .toInt());
         await store.dispatch(RecordedCallbackUpdateAction(
             length, newCombinedFrame, newCombinedDuration));
       }

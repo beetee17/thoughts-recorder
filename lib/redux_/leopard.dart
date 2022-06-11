@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:Minutes/mic_recorder.dart';
 import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/utils/persistence.dart';
+import 'package:cheetah_flutter/cheetah.dart';
 
 import 'package:leopard_flutter/leopard.dart';
 import 'package:leopard_flutter/leopard_error.dart';
@@ -43,18 +44,28 @@ class LeopardState {
     return instance.hashCode;
   }
 
-  Future<TranscriptPair> processCombined(
+  Future<TranscriptPair?> processCombined(
       List<int> combinedFrame, Duration startTime) async {
     // TODO: Handle if leopard is somehow not initialised.
-    final transcript = await instance!.process(combinedFrame);
-    return TranscriptPair(transcript.formatText(), startTime);
+    print('Processing ${combinedFrame.length} frames');
+    try {
+      final transcript = await instance!.process(combinedFrame);
+      if (transcript.trim().isEmpty) {
+        return null;
+      }
+      return TranscriptPair(transcript.formatText(), startTime);
+    } on LeopardInvalidArgumentException {
+      print('Leopard Invalid argument exception');
+      return null;
+    }
   }
 }
 
 class InitialisationSuccessAction {
+  Cheetah cheetah;
   Leopard leopard;
   MicRecorder micRecorder;
-  InitialisationSuccessAction(this.leopard, this.micRecorder);
+  InitialisationSuccessAction(this.cheetah, this.leopard, this.micRecorder);
 }
 
 // Define your Actions
@@ -67,15 +78,20 @@ class InitLeopardAction implements CallableThunkAction<AppState> {
             ? "ios"
             : throw LeopardRuntimeException(
                 "This demo supports iOS and Android only.");
-    String modelPath = "assets/models/ios/myModel-leopard.pv";
+    String leopardModelPath = "assets/models/ios/myModel-leopard.pv";
+    String cheetahModelPath = "assets/models/ios/myModel-cheetah.pv";
 
     try {
+      print('INITIALISING...');
       final accessKey = await Settings.getAccessKey();
-      final leopard = await Leopard.create(accessKey, modelPath);
+      final leopard = await Leopard.create(accessKey, leopardModelPath);
+      final cheetah = await Cheetah.create(accessKey, cheetahModelPath,
+          endpointDuration: 0.5);
       final micRecorder = await MicRecorder.create(
-          leopard.sampleRate, store.state.status.errorCallback);
+          cheetah, leopard.sampleRate, store.state.status.errorCallback);
       print('dispatching $leopard and $micRecorder');
-      store.dispatch(InitialisationSuccessAction(leopard, micRecorder));
+      store
+          .dispatch(InitialisationSuccessAction(cheetah, leopard, micRecorder));
     } on LeopardInvalidArgumentException catch (ex) {
       print('ERROR');
       store.state.status.errorCallback(LeopardInvalidArgumentException(

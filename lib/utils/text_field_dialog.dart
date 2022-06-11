@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 Future<void> showTextInputDialog(BuildContext context, Text title,
-    String initialText, Function(String) confirm) async {
+    String initialText, Function(String) confirm,
+    {String? hintText}) async {
   final textEditingController = TextEditingController(text: initialText);
   return showDialog(
       context: context,
@@ -9,8 +10,9 @@ Future<void> showTextInputDialog(BuildContext context, Text title,
         return AlertDialog(
           title: title,
           content: TextField(
+            autofocus: true,
             controller: textEditingController,
-            decoration: InputDecoration(hintText: "Text Field in Dialog"),
+            decoration: InputDecoration(hintText: hintText),
           ),
           actions: <Widget>[
             TextButton(

@@ -69,16 +69,22 @@ class SaveFileHandler {
         return;
       }
 
+      print('Saving file to $saveFilePath');
+
       final File saveFile = await File(saveFilePath).create(recursive: true);
 
       // Copy audio file to app documents
       final String audioFilePath =
           path.join(dir.path, filename + fileContents.audio.extension);
 
+      print('Created file at path, copying audio...');
+
       final newContents = SaveFileContents(
           await fileContents.audio.copy(audioFilePath),
           fileContents.transcript,
           fileContents.creationDate);
+
+      print('Got new contents $newContents');
 
       await saveFile.writeAsString(jsonEncode(newContents));
 

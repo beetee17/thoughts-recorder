@@ -75,15 +75,17 @@ class _TextAreaState extends State<TextArea>
                     right: 10),
                 child: Align(
                     alignment: Alignment.bottomRight,
-                    child: FloatingActionButton(
-                        backgroundColor: Color.fromRGBO(226, 230, 232, 1),
-                        child: Icon(
-                          CupertinoIcons.keyboard_chevron_compact_down,
-                          color: CupertinoColors.systemGrey,
-                          size: 30,
-                        ),
-                        onPressed: () => SystemChannels.textInput
-                            .invokeMethod('TextInput.hide'))),
+                    child: MediaQuery.of(context).viewInsets.bottom == 0
+                        ? SizedBox(width: 0, height: 0)
+                        : FloatingActionButton(
+                            backgroundColor: Color.fromRGBO(226, 230, 232, 1),
+                            child: Icon(
+                              CupertinoIcons.keyboard_chevron_compact_down,
+                              color: CupertinoColors.systemGrey,
+                              size: 30,
+                            ),
+                            onPressed: () => SystemChannels.textInput
+                                .invokeMethod('TextInput.hide'))),
               ),
             )
           ]),

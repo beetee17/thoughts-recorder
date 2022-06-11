@@ -51,7 +51,6 @@ class _RawTextEditorState extends State<RawTextEditor> {
           }
 
           return Container(
-            padding: EdgeInsets.symmetric(vertical: 0),
             child: TextField(
                 onChanged: (updatedText) {
                   store.dispatch(UpdateTranscriptTextList(

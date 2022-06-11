@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-Future<T> showSpinnerUntil<T>(
-    BuildContext context, Future<T> Function() asyncFuction,
+Future<T?> showSpinnerUntil<T>(
+    BuildContext context, Future<T?> Function() asyncFuction,
     {Duration? delay}) async {
   showDialog(
     barrierDismissible: false,
@@ -12,5 +12,8 @@ Future<T> showSpinnerUntil<T>(
       .then((value) {
     Navigator.pop(context);
     return value;
+  }).onError((error, stackTrace) {
+    Navigator.pop(context);
+    return null;
   });
 }

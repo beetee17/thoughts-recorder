@@ -90,11 +90,13 @@ class SaveFileHandler {
 
   static Future<SaveFileContents?> load(String path) async {
     try {
-      String transcriptFile = await File(path).readAsString();
-      print(transcriptFile);
-      return SaveFileContents.fromJson(jsonDecode(transcriptFile));
+      final String saveFile = await File(path).readAsString();
+      print('Loaded $path successfully');
+      final Map<String, dynamic> decodedFile = jsonDecode(saveFile);
+      print('Decoded $path as: $decodedFile');
+      return SaveFileContents.fromJson(decodedFile);
     } catch (err) {
-      print("Error loading saved file: $err");
+      print("Error loading saved file $path: $err");
       return null;
     }
   }

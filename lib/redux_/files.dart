@@ -51,17 +51,14 @@ ThunkAction<AppState> refreshFiles = (Store<AppState> store) async {
           }));
 
   // Decode files to transcripts
-  try {
-    final List<SaveFileContents?> contents = await Future.wait(files.map((e) {
-      return SaveFileHandler.load(e.path);
-    }));
-    final List<SaveFileContents> finalContents =
-        contents.whereType<SaveFileContents>().toList();
-    finalContents.sort(((a, b) => b.creationDate.compareTo(a.creationDate)));
-    await store.dispatch(SaveFilesChangeAction(finalContents));
-  } catch (err) {
-    print('Error on loading saved file: $err');
-  }
+
+  final List<SaveFileContents?> contents = await Future.wait(files.map((e) {
+    return SaveFileHandler.load(e.path);
+  }));
+  final List<SaveFileContents> finalContents =
+      contents.whereType<SaveFileContents>().toList();
+  finalContents.sort(((a, b) => b.creationDate.compareTo(a.creationDate)));
+  await store.dispatch(SaveFilesChangeAction(finalContents));
 };
 
 // Each reducer will handle actions related to the State Tree it cares about!

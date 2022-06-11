@@ -130,8 +130,8 @@ class RecordedCallbackUpdateAction {
       this.recordedLength, this.combinedFrame, this.combinedDuration);
 }
 
-ThunkAction<AppState> Function(Duration, List<int>) getRecordedCallback =
-    (Duration length, List<int> frame) {
+ThunkAction<AppState> Function(Duration, List<int>, bool) getRecordedCallback =
+    (Duration length, List<int> frame, bool isEndpoint) {
   return (Store<AppState> store) async {
     if (length < maxRecordingLength) {
       TranscriberState state = store.state.transcriber;
@@ -149,22 +149,16 @@ ThunkAction<AppState> Function(Duration, List<int>) getRecordedCallback =
                   (frame.length / recorder.micRecorder!.sampleRate * 1000)
                       .toInt());
 
-      if (singleFrameTranscript == null ||
-          singleFrameTranscript.trim().isEmpty) {
+      if (isEndpoint) {
         print('potential end point, duration: $newCombinedDuration');
 
-        if (newCombinedDuration.inSeconds > 4) {
-          final Duration startTime =
-              DurationUtils.max(Duration.zero, length - newCombinedDuration);
+        final Duration startTime =
+            DurationUtils.max(Duration.zero, length - newCombinedDuration);
 
-          // we want the startTime of the text rather than the end
-          TranscriptPair incomingTranscript =
-              await leopard.processCombined(newCombinedFrame, startTime);
-          await store.dispatch(IncomingTranscriptAction(incomingTranscript));
-        } else {
-          await store.dispatch(RecordedCallbackUpdateAction(
-              length, newCombinedFrame, newCombinedDuration));
-        }
+        // we want the startTime of the text rather than the end
+        TranscriptPair incomingTranscript =
+            await leopard.processCombined(newCombinedFrame, startTime);
+        await store.dispatch(IncomingTranscriptAction(incomingTranscript));
       } else {
         await store.dispatch(RecordedCallbackUpdateAction(
             length, newCombinedFrame, newCombinedDuration));

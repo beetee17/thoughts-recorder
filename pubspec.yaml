@@ -47,4 +47,5 @@ flutter:
     - assets/models/android/leopard_params.pv
     - assets/models/ios/leopard_params.pv
     - assets/models/ios/myModel-leopard.pv
+    - assets/models/ios/myModel-cheetah.pv
     - assets/picovoice.svg

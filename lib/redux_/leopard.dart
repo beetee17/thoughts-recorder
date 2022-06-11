@@ -69,12 +69,14 @@ class InitLeopardAction implements CallableThunkAction<AppState> {
             ? "ios"
             : throw LeopardRuntimeException(
                 "This demo supports iOS and Android only.");
-    String modelPath = "assets/models/ios/myModel-leopard.pv";
+    String leopardModelPath = "assets/models/ios/myModel-leopard.pv";
+    String cheetahModelPath = "assets/models/ios/myModel-cheetah.pv";
 
     try {
+      print('INITIALISING...');
       final accessKey = await Settings.getAccessKey();
-      final leopard = await Leopard.create(accessKey, modelPath);
-      final cheetah = await Cheetah.create(accessKey, modelPath);
+      final leopard = await Leopard.create(accessKey, leopardModelPath);
+      final cheetah = await Cheetah.create(accessKey, cheetahModelPath);
       final micRecorder = await MicRecorder.create(
           cheetah, leopard.sampleRate, store.state.status.errorCallback);
       print('dispatching $leopard and $micRecorder');

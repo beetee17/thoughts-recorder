@@ -122,16 +122,14 @@ ThunkAction<AppState> Function(SaveFileContents) loadTranscript =
 ThunkAction<AppState> processRemainingFrames = (Store<AppState> store) async {
   TranscriberState state = store.state.transcriber;
   LeopardState leopard = store.state.leopard;
-  RecorderState recorder = store.state.recorder;
   AudioState audio = store.state.audio;
 
   final remainingFrames = state.combinedFrame;
-  remainingFrames.addAll(recorder.micRecorder!.combinedFrame);
 
   final Duration startTime =
       DurationUtils.max(Duration.zero, audio.duration - state.combinedDuration);
   final remainingTranscript =
-      await leopard.processCombined(state.combinedFrame, startTime);
+      await leopard.processCombined(remainingFrames, startTime);
   if (remainingTranscript.text.trim().isNotEmpty) {
     await store.dispatch(ProcessedRemainingFramesAction(remainingTranscript));
   }

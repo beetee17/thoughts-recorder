@@ -138,8 +138,6 @@ ThunkAction<AppState> Function(Duration, List<int>, bool) getRecordedCallback =
       RecorderState recorder = store.state.recorder;
       LeopardState leopard = store.state.leopard;
 
-      String singleFrameTranscript = await leopard.instance!.process(frame);
-
       List<int> newCombinedFrame = state.combinedFrame;
       newCombinedFrame.addAll(frame);
 
@@ -151,14 +149,20 @@ ThunkAction<AppState> Function(Duration, List<int>, bool) getRecordedCallback =
 
       if (isEndpoint) {
         print('potential end point, duration: $newCombinedDuration');
+        if (newCombinedDuration > Duration(seconds: 4)) {
+          await store.dispatch(
+              RecordedCallbackUpdateAction(length, [], Duration.zero));
+          final Duration startTime =
+              DurationUtils.max(Duration.zero, length - newCombinedDuration);
 
-        final Duration startTime =
-            DurationUtils.max(Duration.zero, length - newCombinedDuration);
-
-        // we want the startTime of the text rather than the end
-        TranscriptPair incomingTranscript =
-            await leopard.processCombined(newCombinedFrame, startTime);
-        await store.dispatch(IncomingTranscriptAction(incomingTranscript));
+          // we want the startTime of the text rather than the end
+          TranscriptPair incomingTranscript =
+              await leopard.processCombined(newCombinedFrame, startTime);
+          await store.dispatch(IncomingTranscriptAction(incomingTranscript));
+        } else {
+          await store.dispatch(RecordedCallbackUpdateAction(
+              length, newCombinedFrame, newCombinedDuration));
+        }
       } else {
         await store.dispatch(RecordedCallbackUpdateAction(
             length, newCombinedFrame, newCombinedDuration));

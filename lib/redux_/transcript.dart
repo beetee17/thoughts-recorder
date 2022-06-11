@@ -91,6 +91,26 @@ class SetTranscriptListAction {
   SetTranscriptListAction(this.transcriptList);
 }
 
+class AddTextAfterWordAction {
+  String text;
+  int sentenceIndex;
+  int wordIndex;
+  AddTextAfterWordAction(this.text, this.sentenceIndex, this.wordIndex);
+}
+
+class DeleteWordAction {
+  int sentenceIndex;
+  int wordIndex;
+  DeleteWordAction(this.sentenceIndex, this.wordIndex);
+}
+
+class EditWordAction {
+  String newWord;
+  int sentenceIndex;
+  int wordIndex;
+  EditWordAction(this.newWord, this.sentenceIndex, this.wordIndex);
+}
+
 ThunkAction<AppState> Function(SaveFileContents) loadTranscript =
     (SaveFileContents transcript) {
   return (Store<AppState> store) async {
@@ -154,6 +174,39 @@ TranscriptState transcriptReducer(TranscriptState prevState, action) {
         // We do not want the edge cases due to rounding errors
         (pair) => pair.startTime <= action.newPosition);
     return prevState.copyWith(highlightedSpanIndex: highlightIndex);
+  } else if (action is AddTextAfterWordAction) {
+    final TranscriptPair prevPair =
+        prevState.transcriptTextList[action.sentenceIndex];
+
+    final List<String> words = prevPair.text.split(' ');
+    words.insert(action.wordIndex + 1, action.text);
+
+    final newList = prevState.transcriptTextList;
+    newList[action.sentenceIndex] =
+        TranscriptPair(words.join(' ').formatText(), prevPair.startTime);
+    return prevState.copyWith(transcriptTextList: newList);
+  } else if (action is DeleteWordAction) {
+    final TranscriptPair prevPair =
+        prevState.transcriptTextList[action.sentenceIndex];
+
+    final List<String> words = prevPair.text.split(' ');
+    words.removeAt(action.wordIndex);
+
+    final newList = prevState.transcriptTextList;
+    newList[action.sentenceIndex] =
+        TranscriptPair(words.join(' ').formatText(), prevPair.startTime);
+    return prevState.copyWith(transcriptTextList: newList);
+  } else if (action is EditWordAction) {
+    final TranscriptPair prevPair =
+        prevState.transcriptTextList[action.sentenceIndex];
+
+    final List<String> words = prevPair.text.split(' ');
+    words[action.wordIndex] = action.newWord;
+
+    final newList = prevState.transcriptTextList;
+    newList[action.sentenceIndex] =
+        TranscriptPair(words.join(' ').formatText(), prevPair.startTime);
+    return prevState.copyWith(transcriptTextList: newList);
   } else {
     return prevState;
   }

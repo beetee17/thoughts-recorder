@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:Minutes/redux_/cheetah.dart';
+import 'package:cheetah_flutter/cheetah.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:Minutes/mic_recorder.dart';
 import 'package:Minutes/redux_/leopard.dart';
@@ -107,8 +109,11 @@ ThunkAction<AppState> processCurrentAudioFile = (Store<AppState> store) async {
   final TranscriberState state = store.state.transcriber;
   final AudioState audio = store.state.audio;
   final LeopardState leopard = store.state.leopard;
+  final CheetahState cheetah = store.state.cheetah;
 
-  if (leopard.instance == null || audio.file == null) {
+  if (leopard.instance == null ||
+      audio.file == null ||
+      cheetah.instance == null) {
     return;
   }
 
@@ -125,10 +130,15 @@ ThunkAction<AppState> processCurrentAudioFile = (Store<AppState> store) async {
 
   for (final frame in allFrames) {
     data.addAll(frame);
+    CheetahTranscript cheetahTranscript =
+        await cheetah.instance!.process(frame);
+
     final Duration transcribedLength = Duration(
         milliseconds:
             (data.length / leopard.instance!.sampleRate * 1000).toInt());
-    await store.dispatch(getRecordedCallback(transcribedLength, frame));
+
+    await store.dispatch(getRecordedCallback(
+        transcribedLength, frame, cheetahTranscript.isEndpoint));
     await store.dispatch(StatusTextChangeAction(
         "Transcribed ${(transcribedLength.inMilliseconds / 1000).toStringAsFixed(1)} seconds..."));
   }

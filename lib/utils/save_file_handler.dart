@@ -38,9 +38,7 @@ class SaveFileHandler {
               TextButton(
                   onPressed: () async {
                     Navigator.of(context).pop();
-                    final tmpContents = fileContents;
-                    await delete(context, await load(saveFilePath));
-                    await save(context, tmpContents, filename, force: true);
+                    await save(context, fileContents, filename, force: true);
                   },
                   child: const Text('Replace')),
               TextButton(
@@ -68,29 +66,32 @@ class SaveFileHandler {
             ]);
         return;
       }
-
       print('Saving file to $saveFilePath');
 
+      if (File(saveFilePath).existsSync()) {
+        File(saveFilePath).deleteSync();
+        print('Deleted save file at $saveFilePath');
+      }
+
       final File saveFile = await File(saveFilePath).create(recursive: true);
+      print('Recreated save file at $saveFilePath');
 
       // Copy audio file to app documents
       final String audioFilePath =
           path.join(dir.path, filename + fileContents.audio.extension);
 
-      File(audioFilePath).create(recursive: true);
-
-      print('Created file at path, copying audio...');
+      File newAudio = fileContents.audio.copySync(audioFilePath);
+      print(
+          'Copied current audio to $audioFilePath. Now ${newAudio.readAsBytesSync().length} Bytes');
 
       final newContents = SaveFileContents(
-          await fileContents.audio.copy(audioFilePath),
-          fileContents.transcript,
-          fileContents.creationDate);
+          newAudio, fileContents.transcript, fileContents.creationDate);
 
-      print('Got new contents $newContents');
+      print('Got new contents: $newContents');
 
       await saveFile.writeAsString(jsonEncode(newContents));
 
-      print('saved to $saveFilePath');
+      print('save to $saveFilePath success');
     } catch (err) {
       showAlertDialog(context, 'Error saving file', err.toString());
     }
@@ -100,8 +101,10 @@ class SaveFileHandler {
     try {
       final String saveFile = await File(path).readAsString();
       print('Loaded $path successfully');
+
       final Map<String, dynamic> decodedFile = jsonDecode(saveFile);
       print('Decoded $path as: $decodedFile');
+
       return SaveFileContents.fromJson(decodedFile);
     } catch (err) {
       print("Error loading saved file $path: $err");
@@ -119,7 +122,9 @@ class SaveFileHandler {
       final String saveFilePath =
           path.join(dir.path, '${saveFile.audio.nameWithoutExtension}.txt');
       await saveFile.audio.delete();
+      print('Deleted audio at ${saveFile.audio.path}');
       await File(saveFilePath).delete();
+      print('Deleted saved file at ${saveFilePath}');
     } catch (err) {
       showAlertDialog(context, 'Error deleting file', err.toString());
     }

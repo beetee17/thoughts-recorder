@@ -22,19 +22,12 @@ class _RawTextListState extends State<RawTextList> {
         converter: ((store) =>
             RawTextListVM(store.state.transcript.transcriptTextList)),
         builder: (_, viewModel) {
-          return ListView(
-            children: viewModel.transcriptTextList
-                .asMap()
-                .map((index, partialTranscript) {
-                  return MapEntry(
-                      index,
-                      RawTextEditor(
-                        index: index,
-                        partialTranscript: partialTranscript,
-                      ));
-                })
-                .values
-                .toList(),
+          return ListView.builder(
+            itemCount: viewModel.transcriptTextList.length,
+            itemBuilder: (_, index) => RawTextEditor(
+              index: index,
+              partialTranscript: viewModel.transcriptTextList[index],
+            ),
           );
         });
   }

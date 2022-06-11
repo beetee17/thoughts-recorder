@@ -1,3 +1,4 @@
+import 'package:Minutes/redux_/cheetah.dart';
 import 'package:Minutes/redux_/files.dart';
 import 'package:Minutes/redux_/leopard.dart';
 import 'package:Minutes/redux_/recorder.dart';
@@ -14,6 +15,7 @@ import 'audio.dart';
 class AppState {
   final RecorderState recorder;
   final LeopardState leopard;
+  final CheetahState cheetah;
   final StatusState status;
   final AudioState audio;
   final TranscriberState transcriber;
@@ -22,7 +24,7 @@ class AppState {
   final UIState ui;
 
   AppState(this.transcriber, this.recorder, this.audio, this.status,
-      this.transcript, this.leopard, this.files, this.ui);
+      this.transcript, this.leopard, this.cheetah, this.files, this.ui);
 
   static AppState empty() {
     return AppState(
@@ -32,6 +34,7 @@ class AppState {
         StatusState.empty(),
         TranscriptState.empty(),
         LeopardState.empty(),
+        CheetahState.empty(),
         FilesState.empty(),
         UIState.empty());
   }
@@ -68,6 +71,7 @@ AppState appStateReducer(AppState state, action) => AppState(
     statusReducer(state.status, action),
     transcriptReducer(state.transcript, action),
     leopardReducer(state.leopard, action),
+    cheetahReducer(state.cheetah, action),
     filesReducer(state.files, action),
     uiReducer(state.ui, action));
 

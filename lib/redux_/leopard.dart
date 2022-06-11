@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:Minutes/mic_recorder.dart';
 import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/utils/persistence.dart';
+import 'package:cheetah_flutter/cheetah.dart';
 
 import 'package:leopard_flutter/leopard.dart';
 import 'package:leopard_flutter/leopard_error.dart';
@@ -52,9 +53,10 @@ class LeopardState {
 }
 
 class InitialisationSuccessAction {
+  Cheetah cheetah;
   Leopard leopard;
   MicRecorder micRecorder;
-  InitialisationSuccessAction(this.leopard, this.micRecorder);
+  InitialisationSuccessAction(this.cheetah, this.leopard, this.micRecorder);
 }
 
 // Define your Actions
@@ -72,10 +74,12 @@ class InitLeopardAction implements CallableThunkAction<AppState> {
     try {
       final accessKey = await Settings.getAccessKey();
       final leopard = await Leopard.create(accessKey, modelPath);
+      final cheetah = await Cheetah.create(accessKey, modelPath);
       final micRecorder = await MicRecorder.create(
-          leopard.sampleRate, store.state.status.errorCallback);
+          cheetah, leopard.sampleRate, store.state.status.errorCallback);
       print('dispatching $leopard and $micRecorder');
-      store.dispatch(InitialisationSuccessAction(leopard, micRecorder));
+      store
+          .dispatch(InitialisationSuccessAction(cheetah, leopard, micRecorder));
     } on LeopardInvalidArgumentException catch (ex) {
       print('ERROR');
       store.state.status.errorCallback(LeopardInvalidArgumentException(

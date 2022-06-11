@@ -13,6 +13,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:cheetah_flutter/cheetah.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter/return_code.dart';
 import 'package:flutter/services.dart';
@@ -29,6 +30,8 @@ typedef ProcessErrorCallback = Function(LeopardException error);
 
 class MicRecorder {
   final VoiceProcessor? _voiceProcessor;
+  final Cheetah _cheetah;
+
   int _sampleRate;
   int get sampleRate => _sampleRate;
 
@@ -37,15 +40,13 @@ class MicRecorder {
   RemoveListener? _removeErrorListener;
 
   List<int> _pcmData = [];
-  List<int> combinedFrame = [];
-  int count = 0;
 
-  static Future<MicRecorder> create(
-      int sampleRate, ProcessErrorCallback processErrorCallback) async {
-    return MicRecorder._(sampleRate, processErrorCallback);
+  static Future<MicRecorder> create(Cheetah cheetah, int sampleRate,
+      ProcessErrorCallback processErrorCallback) async {
+    return MicRecorder._(cheetah, sampleRate, processErrorCallback);
   }
 
-  MicRecorder._(this._sampleRate, this._processErrorCallback)
+  MicRecorder._(this._cheetah, this._sampleRate, this._processErrorCallback)
       : _voiceProcessor = VoiceProcessor.getVoiceProcessor(512, _sampleRate) {
     if (_voiceProcessor == null) {
       throw LeopardRuntimeException("flutter_voice_processor not available.");
@@ -61,24 +62,27 @@ class MicRecorder {
         _processErrorCallback(castError);
         return;
       }
+      try {
+        _pcmData.addAll(frame);
 
-      _pcmData.addAll(frame);
-      if (count != 0 && count % 35 == 0) {
+        CheetahTranscript cheetahTranscript = await _cheetah.process(frame);
+
         final Duration recordedLength = Duration(
             milliseconds: (_pcmData.length / _sampleRate * 1000).toInt());
+
         store.dispatch(StatusTextChangeAction(
             "Recording : ${(recordedLength.inMilliseconds / 1000).toStringAsFixed(1)} / ${maxRecordingLength.inSeconds} seconds"));
-        store.dispatch(getRecordedCallback(recordedLength, combinedFrame));
-        combinedFrame = [];
-      } else {
-        combinedFrame.addAll(frame);
-      }
-      count++;
-    });
 
-    _removeErrorListener = _voiceProcessor!.addErrorListener((errorMsg) {
-      LeopardException nativeError = LeopardException(errorMsg as String);
-      _processErrorCallback(nativeError);
+        store.dispatch(getRecordedCallback(
+            recordedLength, frame, cheetahTranscript.isEndpoint));
+      } catch (error) {
+        print('An error occurred during cheetah processing: $error');
+      }
+
+      _removeErrorListener = _voiceProcessor!.addErrorListener((errorMsg) {
+        LeopardException nativeError = LeopardException(errorMsg as String);
+        _processErrorCallback(nativeError);
+      });
     });
   }
 

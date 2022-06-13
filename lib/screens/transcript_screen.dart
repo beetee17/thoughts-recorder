@@ -112,7 +112,7 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
                                               .transcriptTextList,
                                           DateTime.now()),
                                       filenameEditingController.text)),
-                              icon: Icon(CupertinoIcons.doc))
+                              icon: Icon(CupertinoIcons.floppy_disk))
                         ]
                       : [],
                   leading: IconButton(

@@ -1,4 +1,5 @@
 import 'package:Minutes/utils/colors.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:Minutes/redux_/rootStore.dart';
@@ -62,12 +63,12 @@ class _RawTextEditorState extends State<RawTextEditor> {
                 style: shouldHighlightSpan(),
                 decoration: InputDecoration(
                     enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white70)),
+                        borderSide: BorderSide(color: Colors.white30)),
                     prefix: GestureDetector(
                         child: Text(
                             '${widget.partialTranscript.startTime.toAudioDurationString()} ',
                             style: TextStyle(
-                                color: Color.fromARGB(213, 255, 255, 255),
+                                color: Color.fromARGB(153, 108, 108, 121),
                                 fontWeight: FontWeight.normal)),
                         onTap: () {
                           final Duration seekTime = DurationUtils.min(

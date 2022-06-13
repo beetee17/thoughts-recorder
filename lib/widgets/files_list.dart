@@ -89,6 +89,9 @@ class _FilesListState extends State<FilesList> {
                               },
                               child: Center(
                                 child: Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(15))),
                                     color: accentColor,
                                     elevation: 5,
                                     margin: const EdgeInsets.all(5.0),

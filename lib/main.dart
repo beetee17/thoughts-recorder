@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
         home: FilesScreen(),
         // debugShowCheckedModeBanner: false,
         theme: ThemeData(
+            brightness: Brightness.dark,
             sliderTheme: SliderThemeData(
               trackHeight: 5,
               thumbColor: Colors.blue.shade800,

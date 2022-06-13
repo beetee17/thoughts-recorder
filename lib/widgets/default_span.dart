@@ -50,7 +50,7 @@ class _DefaultSpanState extends State<DefaultSpan> {
         items: <PopupMenuEntry<EditResponse>>[EditMenuEntry(widget.text)],
         position: RelativeRect.fromRect(
             _tapPosition & const Size(40, 40), // smaller rect, the touch area
-            Offset(0, 80) &
+            Offset(-80, 75) &
                 overlay.semanticBounds.size // Bigger rect, the entire screen
             ));
     // This is how you handle user selection
@@ -104,7 +104,7 @@ class _DefaultSpanState extends State<DefaultSpan> {
             if (viewModel.highlightedSpanIndex == widget.sentenceIndex) {
               res = TextStyle(color: textColor);
             } else {
-              res = TextStyle(color: unfocusedTextColor);
+              res = TextStyle(color: Colors.white60);
             }
 
             if (_isHighlighted) {
@@ -122,7 +122,7 @@ class _DefaultSpanState extends State<DefaultSpan> {
               onTap: onTapSpan,
             ),
             style: GoogleFonts.rubik(
-                    fontSize: 26, fontWeight: FontWeight.w500, height: 1.4)
+                    fontSize: 24, fontWeight: FontWeight.w500, height: 1.4)
                 .merge(getStyle()),
             duration: Duration(milliseconds: 300),
           );

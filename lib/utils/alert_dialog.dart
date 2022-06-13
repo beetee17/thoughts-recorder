@@ -1,3 +1,4 @@
+import 'package:Minutes/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 Future<void> showAlertDialog(BuildContext context, String title, String content,
@@ -7,6 +8,7 @@ Future<void> showAlertDialog(BuildContext context, String title, String content,
     barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
       return AlertDialog(
+        backgroundColor: accentColor,
         title: Text(title),
         content: Text(content),
         actions: actions ??

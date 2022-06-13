@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-final Color bgColor = Color.fromARGB(255, 4, 14, 51);
-final Color accentColor = Color.fromARGB(255, 37, 46, 79);
-final Color textColor = Colors.white;
-final Color almostWhite = Color.fromARGB(230, 255, 255, 255);
+final Color bgColor = Colors.black;
+final Color accentColor = Color.fromARGB(255, 13, 13, 13);
+final Color textColor = almostWhite;
+final Color almostWhite = Color.fromARGB(210, 255, 255, 255);
 final Color secondaryTextColor = Colors.white;
-final Color unfocusedTextColor = Colors.white38;
+final Color unfocusedTextColor = Colors.white60;

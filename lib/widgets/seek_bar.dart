@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:Minutes/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:Minutes/utils/extensions.dart';
 
@@ -155,6 +156,7 @@ void showSliderDialog({
   showDialog<void>(
     context: context,
     builder: (context) => AlertDialog(
+      backgroundColor: accentColor,
       title: Text(title, textAlign: TextAlign.center),
       content: StreamBuilder<double>(
         stream: stream,

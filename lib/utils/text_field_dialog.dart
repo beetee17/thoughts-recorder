@@ -1,3 +1,4 @@
+import 'package:Minutes/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 Future<void> showTextInputDialog(BuildContext context, Text title,
@@ -8,6 +9,7 @@ Future<void> showTextInputDialog(BuildContext context, Text title,
       context: context,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: accentColor,
           title: title,
           content: TextField(
             autofocus: true,

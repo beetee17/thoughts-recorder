@@ -105,8 +105,6 @@ class JustAudioPlayerWidgetState extends State<JustAudioPlayerWidget>
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Display play/pause button and volume/speed sliders.
-        ControlButtons(player),
         // Display seek bar. Using StreamBuilder, this widget rebuilds
         // each time the position, buffered position or duration changes.
         StreamBuilder<PositionData>(
@@ -121,6 +119,8 @@ class JustAudioPlayerWidgetState extends State<JustAudioPlayerWidget>
             );
           },
         ),
+        // Display play/pause button and volume/speed sliders.
+        ControlButtons(player),
       ],
     );
   }

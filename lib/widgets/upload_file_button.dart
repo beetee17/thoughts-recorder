@@ -17,6 +17,7 @@ class UploadFileButton extends StatelessWidget {
           store.state.audio.pickFile, store.state.audio.removeSelectedFile),
       builder: (_, viewModel) {
         return PopupMenuButton(
+            color: accentColor,
             icon: Icon(
               Icons.file_upload_outlined,
               color: almostWhite,
@@ -30,8 +31,7 @@ class UploadFileButton extends StatelessWidget {
                       children: [
                         Icon(CupertinoIcons.folder_open),
                         SizedBox(height: 10, width: 10),
-                        Text('Choose Files',
-                            style: TextStyle(color: Colors.black)),
+                        Text('Choose Files'),
                       ],
                     ),
                     onTap: () => viewModel.pickFile(fromGallery: false)),
@@ -41,8 +41,7 @@ class UploadFileButton extends StatelessWidget {
                     children: [
                       Icon(CupertinoIcons.photo_on_rectangle),
                       SizedBox(height: 10, width: 10),
-                      Text('Photo Library',
-                          style: TextStyle(color: Colors.black)),
+                      Text('Photo Library'),
                     ],
                   ),
                   onTap: () => viewModel.pickFile(fromGallery: true),

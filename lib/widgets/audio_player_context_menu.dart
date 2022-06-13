@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:Minutes/utils/colors.dart';
 import 'package:Minutes/utils/save_file_handler.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,9 +22,10 @@ class AudioPlayerContextMenu extends StatelessWidget {
           store.state.audio.file, store.state.audio.removeSelectedFile),
       builder: (_, viewModel) {
         return PopupMenuButton(
+            color: accentColor,
             icon: Icon(
               CupertinoIcons.ellipsis,
-              color: Color.fromARGB(180, 0, 0, 0),
+              color: textColor,
               size: 30,
             ),
             itemBuilder: (context) {

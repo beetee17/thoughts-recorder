@@ -84,8 +84,8 @@ class _TextAreaState extends State<TextArea>
                               color: CupertinoColors.systemGrey,
                               size: 30,
                             ),
-                            onPressed: () => SystemChannels.textInput
-                                .invokeMethod('TextInput.hide'))),
+                            onPressed: () => FocusScope.of(context)
+                                .requestFocus(FocusNode()))),
               ),
             )
           ]),

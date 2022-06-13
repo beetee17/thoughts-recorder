@@ -1,3 +1,5 @@
+import 'package:Minutes/utils/colors.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:Minutes/redux_/rootStore.dart';
@@ -44,10 +46,9 @@ class _RawTextEditorState extends State<RawTextEditor> {
         builder: (_, viewModel) {
           TextStyle shouldHighlightSpan() {
             if (viewModel.highlightedSpanIndex == widget.index) {
-              return TextStyle(
-                  color: Colors.black, fontWeight: FontWeight.bold);
+              return TextStyle(color: textColor, fontWeight: FontWeight.bold);
             }
-            return TextStyle(color: Color.fromARGB(205, 0, 0, 0));
+            return TextStyle(color: unfocusedTextColor);
           }
 
           return Container(
@@ -61,11 +62,13 @@ class _RawTextEditorState extends State<RawTextEditor> {
                 maxLines: null,
                 style: shouldHighlightSpan(),
                 decoration: InputDecoration(
+                    enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white30)),
                     prefix: GestureDetector(
                         child: Text(
                             '${widget.partialTranscript.startTime.toAudioDurationString()} ',
                             style: TextStyle(
-                                color: Colors.grey,
+                                color: Color.fromARGB(153, 108, 108, 121),
                                 fontWeight: FontWeight.normal)),
                         onTap: () {
                           final Duration seekTime = DurationUtils.min(

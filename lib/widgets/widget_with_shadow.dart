@@ -16,7 +16,7 @@ class WithShadow extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
+              color: Colors.black38.withOpacity(0.1),
               spreadRadius: 1,
               blurRadius: 5,
               offset: Offset(0, 3), // changes position of shadow

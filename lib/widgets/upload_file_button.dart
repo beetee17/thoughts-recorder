@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:Minutes/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -16,9 +17,10 @@ class UploadFileButton extends StatelessWidget {
           store.state.audio.pickFile, store.state.audio.removeSelectedFile),
       builder: (_, viewModel) {
         return PopupMenuButton(
+            color: accentColor,
             icon: Icon(
               Icons.file_upload_outlined,
-              color: Color.fromARGB(180, 0, 0, 0),
+              color: almostWhite,
               size: 30,
             ),
             itemBuilder: (context) {

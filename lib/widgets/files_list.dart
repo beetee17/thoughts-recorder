@@ -1,4 +1,5 @@
 import 'package:Minutes/redux_/files.dart';
+import 'package:Minutes/utils/colors.dart';
 import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/utils/spinner.dart';
 import 'package:Minutes/utils/text_field_dialog.dart';
@@ -88,6 +89,10 @@ class _FilesListState extends State<FilesList> {
                               },
                               child: Center(
                                 child: Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(15))),
+                                    color: accentColor,
                                     elevation: 5,
                                     margin: const EdgeInsets.all(5.0),
                                     child: Padding(
@@ -113,8 +118,8 @@ class _FilesListState extends State<FilesList> {
                                                   transcript.parsedCreationDate,
                                                   style: TextStyle(
                                                       fontSize: 14,
-                                                      color: CupertinoColors
-                                                          .secondaryLabel),
+                                                      color:
+                                                          unfocusedTextColor),
                                                 )
                                               ],
                                             )))),

@@ -56,17 +56,7 @@ extension Filename on File {
 }
 
 extension TextFormatter on String {
-  static List<TranscriptPair> formatTextList(
-      List<TranscriptPair> transcriptTextList) {
-    final tmp = transcriptTextList
-        .map((pair) =>
-            pair.map((first) => first.formatText(), (second) => second))
-        .toList();
-    return tmp;
-  }
-
   String formatText() {
-    return this;
     String formattedText = this.toUpperCase();
 
     formattedText = formattedText.replaceAll('COMMA', ',');
@@ -104,6 +94,12 @@ extension TextFormatter on String {
         RegExp(r'\s+([.,!":)])'), (Match m) => m.group(1)!);
 
     return formattedText.capitalizeSentences().capitalizeNewLines();
+  }
+
+  String removeSpaceBeforePunctuation() {
+    // Remove whitespace before punctuation marks
+    return this
+        .replaceAllMapped(RegExp(r'\s+([.,!":)])'), (Match m) => m.group(1)!);
   }
 }
 

@@ -156,8 +156,7 @@ TranscriptState transcriptReducer(TranscriptState prevState, action) {
         .copyWith(transcriptTextList: [], highlightedSpanIndex: null);
   } else if (action is UpdateTranscriptTextList) {
     final newList = prevState.transcriptTextList;
-    newList[action.index] = action.partialTranscript
-        .map((text) => text.formatText(), (startTime) => startTime);
+    newList[action.index] = action.partialTranscript;
     return prevState.copyWith(transcriptTextList: newList);
   } else if (action is SetTranscriptListAction) {
     return prevState.copyWith(transcriptTextList: action.transcriptList);
@@ -180,8 +179,8 @@ TranscriptState transcriptReducer(TranscriptState prevState, action) {
     words.insert(action.wordIndex + 1, action.text);
 
     final newList = prevState.transcriptTextList;
-    newList[action.sentenceIndex] =
-        TranscriptPair(words.join(' ').formatText(), prevPair.startTime);
+    newList[action.sentenceIndex] = TranscriptPair(
+        words.join(' ').removeSpaceBeforePunctuation(), prevPair.startTime);
     return prevState.copyWith(transcriptTextList: newList);
   } else if (action is DeleteWordAction) {
     final TranscriptPair prevPair =
@@ -192,7 +191,7 @@ TranscriptState transcriptReducer(TranscriptState prevState, action) {
 
     final newList = prevState.transcriptTextList;
     newList[action.sentenceIndex] =
-        TranscriptPair(words.join(' ').formatText(), prevPair.startTime);
+        TranscriptPair(words.join(' '), prevPair.startTime);
     return prevState.copyWith(transcriptTextList: newList);
   } else if (action is EditWordAction) {
     final TranscriptPair prevPair =
@@ -203,7 +202,7 @@ TranscriptState transcriptReducer(TranscriptState prevState, action) {
 
     final newList = prevState.transcriptTextList;
     newList[action.sentenceIndex] =
-        TranscriptPair(words.join(' ').formatText(), prevPair.startTime);
+        TranscriptPair(words.join(' '), prevPair.startTime);
     return prevState.copyWith(transcriptTextList: newList);
   } else {
     return prevState;

@@ -22,10 +22,9 @@ class SaveTranscriptButton extends StatelessWidget {
             SaveTranscriptButtonVM(store.state.transcript.transcriptTextList),
         builder: (_, viewModel) {
           return SecondaryIconButton(
-              onPress: () => shareTranscript(
-                  TextFormatter.formatTextList(viewModel.transcriptTextList)
-                      .map((pair) => pair.text)
-                      .join(' ')),
+              onPress: () => shareTranscript(viewModel.transcriptTextList
+                  .map((pair) => pair.text)
+                  .join(' ')),
               margin: EdgeInsets.only(top: 10.0, right: 10.0),
               icon:
                   Transform.scale(scaleX: -1, child: Icon(Icons.reply_sharp)));

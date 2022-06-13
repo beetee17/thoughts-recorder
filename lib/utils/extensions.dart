@@ -4,15 +4,32 @@ import 'package:Minutes/utils/transcript_pair.dart';
 import 'package:path/path.dart' as path;
 
 extension StringCasingExtension on String {
+  String toggleCapitalisation() {
+    if (this.isCapitalised()) {
+      return this.toLowerCase();
+    } else {
+      return this.toCapitalized();
+    }
+  }
+
+  bool isCapitalised() {
+    assert(this.length >= 1);
+    final regExp = RegExp('[A-Z]');
+    return regExp.hasMatch(this.substring(0, 1));
+  }
+
   String toCapitalized() => length > 0
       ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}'
       : ''; // TODO: Capitalize first index of letter
+
   String toTitleCase() => replaceAll(RegExp(' +'), ' ')
       .split(' ')
       .map((str) => str.toCapitalized())
       .join(' ');
+
   String capitalizeSentences() =>
       toCapitalized().split('. ').map((str) => str.toCapitalized()).join('. ');
+
   String capitalizeNewLines() =>
       toCapitalized().split('\n').map((str) => str.toCapitalized()).join('\n');
 }
@@ -49,6 +66,7 @@ extension TextFormatter on String {
   }
 
   String formatText() {
+    return this;
     String formattedText = this.toUpperCase();
 
     formattedText = formattedText.replaceAll('COMMA', ',');

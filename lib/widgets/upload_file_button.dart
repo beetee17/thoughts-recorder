@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:Minutes/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -18,7 +19,7 @@ class UploadFileButton extends StatelessWidget {
         return PopupMenuButton(
             icon: Icon(
               Icons.file_upload_outlined,
-              color: Color.fromARGB(180, 0, 0, 0),
+              color: almostWhite,
               size: 30,
             ),
             itemBuilder: (context) {
@@ -29,7 +30,8 @@ class UploadFileButton extends StatelessWidget {
                       children: [
                         Icon(CupertinoIcons.folder_open),
                         SizedBox(height: 10, width: 10),
-                        Text('Choose Files'),
+                        Text('Choose Files',
+                            style: TextStyle(color: Colors.black)),
                       ],
                     ),
                     onTap: () => viewModel.pickFile(fromGallery: false)),
@@ -39,7 +41,8 @@ class UploadFileButton extends StatelessWidget {
                     children: [
                       Icon(CupertinoIcons.photo_on_rectangle),
                       SizedBox(height: 10, width: 10),
-                      Text('Photo Library'),
+                      Text('Photo Library',
+                          style: TextStyle(color: Colors.black)),
                     ],
                   ),
                   onTap: () => viewModel.pickFile(fromGallery: true),

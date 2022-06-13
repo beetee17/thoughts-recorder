@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:Minutes/utils/colors.dart';
 import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/utils/spinner.dart';
 import 'package:Minutes/utils/save_file_handler.dart';
@@ -76,12 +77,14 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
                                 placeholder: 'Untitled',
                                 placeholderStyle: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: CupertinoColors.placeholderText),
+                                    color: unfocusedTextColor),
                                 decoration:
                                     BoxDecoration(color: Colors.transparent),
                                 clearButtonMode: OverlayVisibilityMode.editing,
                                 textAlign: TextAlign.center,
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    color: almostWhite,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
@@ -116,7 +119,7 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
                   Container(
                     padding: EdgeInsets.only(top: 20, bottom: 30),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: accentColor,
                       boxShadow: [
                         BoxShadow(
                             color: Colors.black.withOpacity(0.1),

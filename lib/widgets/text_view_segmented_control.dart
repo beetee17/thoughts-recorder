@@ -1,3 +1,4 @@
+import 'package:Minutes/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
@@ -18,6 +19,8 @@ class TextViewSegmentedControl extends StatelessWidget {
             TextViewSegmentedControlVM(store.state.ui.showMinutes),
         builder: (_, viewModel) {
           return CupertinoSlidingSegmentedControl(
+            thumbColor: accentColor,
+            backgroundColor: bgColor,
             children: {0: Text('Minutes'), 1: Text('Preview')},
             onValueChanged: (newValue) => onChange(newValue as int),
             groupValue: viewModel.groupvalue,

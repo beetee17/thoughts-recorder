@@ -13,7 +13,7 @@ class StatusArea extends StatelessWidget {
         builder: (_, viewModel) {
           return Text(
             viewModel.text,
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
+            style: TextStyle(fontWeight: FontWeight.w700),
           );
         });
   }

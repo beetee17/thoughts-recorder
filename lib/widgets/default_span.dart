@@ -1,4 +1,5 @@
 import 'package:Minutes/redux_/transcript.dart';
+import 'package:Minutes/utils/colors.dart';
 import 'package:Minutes/utils/text_field_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,7 @@ class _DefaultSpanState extends State<DefaultSpan> {
     });
 
     final editResponse = await showMenu(
+        color: accentColor,
         constraints: BoxConstraints.loose(Size(300, 50)),
         context: context,
         items: <PopupMenuEntry<EditResponse>>[EditMenuEntry(widget.text)],
@@ -100,14 +102,14 @@ class _DefaultSpanState extends State<DefaultSpan> {
           TextStyle getStyle() {
             TextStyle res = TextStyle();
             if (viewModel.highlightedSpanIndex == widget.sentenceIndex) {
-              res = TextStyle(color: Colors.black);
+              res = TextStyle(color: textColor);
             } else {
-              res = TextStyle(color: Colors.black38);
+              res = TextStyle(color: unfocusedTextColor);
             }
 
             if (_isHighlighted) {
               res = TextStyle(
-                  color: Colors.black, decoration: TextDecoration.underline);
+                  color: textColor, decoration: TextDecoration.underline);
             }
             return res;
           }
@@ -120,7 +122,7 @@ class _DefaultSpanState extends State<DefaultSpan> {
               onTap: onTapSpan,
             ),
             style: GoogleFonts.rubik(
-                    fontSize: 28, fontWeight: FontWeight.w500, height: 1.4)
+                    fontSize: 26, fontWeight: FontWeight.w500, height: 1.4)
                 .merge(getStyle()),
             duration: Duration(milliseconds: 300),
           );
@@ -152,7 +154,8 @@ class EditMenuEntryState extends State<EditMenuEntry> {
           context, EditResponse(EditCommand.Add, payload)),
       child: Text(
         displayText,
-        style: TextStyle(fontSize: 24, color: Colors.greenAccent.shade400),
+        style:
+            TextStyle(fontSize: 24, color: Color.fromARGB(255, 137, 206, 78)),
       ),
     );
   }

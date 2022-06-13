@@ -34,7 +34,10 @@ class AudioPlayerContextMenu extends StatelessWidget {
                       children: [
                         Icon(CupertinoIcons.trash),
                         SizedBox(height: 10, width: 10),
-                        Text('Delete Audio'),
+                        Text(
+                          'Delete Audio',
+                          style: TextStyle(color: Colors.black),
+                        ),
                       ],
                     ),
                     onTap: viewModel.removeFile),
@@ -44,7 +47,8 @@ class AudioPlayerContextMenu extends StatelessWidget {
                     children: [
                       Icon(CupertinoIcons.share),
                       SizedBox(height: 10, width: 10),
-                      Text('Share Audio'),
+                      Text('Share Audio',
+                          style: TextStyle(color: Colors.black)),
                     ],
                   ),
                   onTap: () => shareTranscript(viewModel.file),

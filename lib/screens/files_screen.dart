@@ -45,7 +45,6 @@ class _FilesScreenState extends State<FilesScreen> {
           leading: IconButton(
             icon: Icon(
               Icons.info_outline_rounded,
-              color: Colors.black,
             ),
             onPressed: () {
               Navigator.push(
@@ -60,7 +59,6 @@ class _FilesScreenState extends State<FilesScreen> {
             IconButton(
               icon: Icon(
                 Icons.settings,
-                color: Colors.black,
               ),
               onPressed: () {
                 Navigator.push(

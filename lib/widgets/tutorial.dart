@@ -7,8 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../screens/settings_screen.dart';
 
 class Tutorial extends StatelessWidget {
-  final TextStyle defaultStyle =
-      TextStyle(fontSize: 15, color: Colors.black, height: 1.75);
+  final TextStyle defaultStyle = TextStyle(fontSize: 15, height: 1.75);
   DEFAULT_SPAN(String content) {
     return TextSpan(text: content, style: defaultStyle);
   }
@@ -61,8 +60,7 @@ class Tutorial extends StatelessWidget {
               text: TextSpan(children: [
                 TextSpan(
                   text: 'Settings',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w800, color: Colors.black),
+                  style: TextStyle(fontWeight: FontWeight.w800),
                 ),
                 WidgetSpan(
                   child: SizedBox(
@@ -70,7 +68,7 @@ class Tutorial extends StatelessWidget {
                     height: 20,
                     child: Icon(
                       Icons.settings,
-                      color: Colors.black,
+                      color: Colors.white,
                       size: 20,
                     ),
                   ),
@@ -119,14 +117,9 @@ class Tutorial extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 20.0, bottom: 20),
-            child: Material(
-              child: Text(
-                'Getting Started',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold),
-              ),
+            child: Text(
+              'Getting Started',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ),
           Padding(

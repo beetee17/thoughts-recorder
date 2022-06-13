@@ -1,6 +1,7 @@
 import 'package:Minutes/redux_/rootStore.dart';
 import 'package:Minutes/screens/files_screen.dart';
 import 'package:Minutes/screens/transcript_screen.dart';
+import 'package:Minutes/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 //Import the font package
@@ -28,14 +29,14 @@ class MyApp extends StatelessWidget {
               valueIndicatorColor: Colors.black87,
               overlayColor: Colors.grey.withOpacity(0.2),
             ),
-            scaffoldBackgroundColor: Colors.white,
+            scaffoldBackgroundColor: bgColor,
             appBarTheme: AppBarTheme(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black //here you can give the text color
+                backgroundColor: bgColor,
+                foregroundColor: textColor //here you can give the text color
                 ),
             textTheme: Theme.of(context).textTheme.apply(
-                  bodyColor: Colors.black,
-                  displayColor: Colors.black,
+                  bodyColor: textColor,
+                  displayColor: textColor,
                 )),
       ),
     );

@@ -2,6 +2,7 @@ import 'dart:ffi';
 
 import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/utils/global_variables.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/pair.dart';
@@ -51,6 +52,7 @@ class PunctuatedTextScreen extends StatelessWidget {
             punctuationResult.first,
             punctuationResult.second);
         punctuatedWords.add(punctuatedWord);
+        print('${punctuatedWord.content} ${punctuatedWord.confidence}');
         wordPos += 1;
       }
     });
@@ -70,20 +72,26 @@ class PunctuatedTextScreen extends StatelessWidget {
             onPressed: () => Navigator.of(context).pop(),
           )),
       resizeToAvoidBottomInset: false,
-      body: RichText(
-          text: TextSpan(
-              children: punctuatedWords
-                  .map((item) => TextSpan(
-                      text: item.content + " ",
-                      style: item.punctuationValue == 0
-                          ? TextStyle(fontSize: 20)
-                          : TextStyle(
-                              fontSize: 20,
-                              color: Color.lerp(
-                                  Colors.orangeAccent.shade100,
-                                  Colors.greenAccent.shade700,
-                                  item.confidence))))
-                  .toList())),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: RichText(
+              text: TextSpan(
+                  children: punctuatedWords
+                      .map((item) => TextSpan(
+                          text: item.content + " ",
+                          style: item.punctuationValue == 0
+                              ? TextStyle(fontSize: 20)
+                              : TextStyle(
+                                  fontSize: 20,
+                                  color: Color.lerp(
+                                      CupertinoColors.destructiveRed,
+                                      CupertinoColors
+                                          .activeGreen.darkHighContrastColor,
+                                      item.confidence))))
+                      .toList())),
+        ),
+      ),
     );
   }
 }

@@ -81,19 +81,19 @@ class _TextAreaState extends State<TextArea>
             Padding(
               padding: const EdgeInsets.only(bottom: 10.0),
               child: Align(
-                alignment: Alignment.bottomLeft,
-                child: IconButton(
-                  icon: Icon(Icons.text_snippet),
-                  onPressed: () =>
-                      _punctuateText(store.state.transcript.transcriptText),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10.0),
-              child: Align(
                 alignment: Alignment.bottomRight,
-                child: SaveTranscriptButton(),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    SecondaryIconButton(
+                      margin: EdgeInsets.only(top: 10.0, right: 10.0),
+                      icon: Icon(Icons.auto_fix_high_sharp),
+                      onPress: () =>
+                          _punctuateText(store.state.transcript.transcriptText),
+                    ),
+                    SaveTranscriptButton(),
+                  ],
+                ),
               ),
             ),
             AnimatedOpacity(

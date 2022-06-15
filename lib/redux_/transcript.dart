@@ -16,7 +16,8 @@ class TranscriptState {
   final int? highlightedSpanIndex;
 
   String get transcriptText =>
-      transcriptTextList.map((p) => p.text).join(' \n\n');
+      transcriptTextList.map((pair) => pair.text).join(' ');
+
   TranscriptState(
       {required this.highlightedSpanIndex, required this.transcriptTextList});
 

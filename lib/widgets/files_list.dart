@@ -94,7 +94,8 @@ class _FilesListState extends State<FilesList> {
                                             Radius.circular(15))),
                                     color: accentColor,
                                     elevation: 5,
-                                    margin: const EdgeInsets.all(5.0),
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 5.0),
                                     child: Padding(
                                         padding: const EdgeInsets.all(10.0),
                                         child: SizedBox(

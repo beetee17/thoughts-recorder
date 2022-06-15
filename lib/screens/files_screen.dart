@@ -46,58 +46,62 @@ class _FilesScreenState extends State<FilesScreen> {
           child: SafeArea(
             child: Stack(
               children: [
-                Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.info_outline_rounded,
-                            color: textColor,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              Icons.info_outline_rounded,
+                              color: textColor,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Scaffold(
+                                          appBar:
+                                              AppBar(title: Text("Tutorial")),
+                                          body: Tutorial())));
+                            },
                           ),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Scaffold(
-                                        appBar: AppBar(title: Text("Tutorial")),
-                                        body: Tutorial())));
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.settings,
-                            color: textColor,
+                          IconButton(
+                            icon: Icon(
+                              Icons.settings,
+                              color: textColor,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SettingsScreen()));
+                            },
                           ),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const SettingsScreen()));
-                          },
-                        ),
-                      ],
-                    ),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Minutes",
-                        style: TextStyle(
-                            color: textColor,
-                            fontSize: 34,
-                            fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.left,
+                        ],
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    CupertinoSearchTextField(),
-                    SizedBox(height: 10),
-                    Expanded(
-                      child: FilesList(),
-                    ),
-                  ],
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Minutes",
+                          style: TextStyle(
+                              color: textColor,
+                              fontSize: 34,
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      CupertinoSearchTextField(),
+                      SizedBox(height: 10),
+                      Expanded(
+                        child: FilesList(),
+                      ),
+                    ],
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(20.0),

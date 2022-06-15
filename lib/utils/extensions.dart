@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:Minutes/utils/pair.dart';
 import 'package:Minutes/utils/transcript_pair.dart';
 import 'package:path/path.dart' as path;
 
@@ -133,5 +134,21 @@ extension Chunking on List<int> {
           this.sublist(i, endIndex > this.length ? this.length : endIndex));
     }
     return chunks;
+  }
+}
+
+extension Math on List<Comparable> {
+  static Pair<int, T> argmax<T extends Comparable>(List<T> list) {
+    T currMax = list.first;
+    int currMaxIndex = 0;
+
+    list.asMap().forEach((index, item) {
+      if (item.compareTo(currMax) > 0) {
+        currMax = item;
+        currMaxIndex = index;
+      }
+    });
+
+    return Pair(currMaxIndex, currMax);
   }
 }

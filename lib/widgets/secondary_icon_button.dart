@@ -36,7 +36,7 @@ class SecondaryIconButton extends StatelessWidget {
       child: IconButton(
         onPressed: () => onPress(),
         icon: icon,
-        color: CupertinoColors.systemGrey,
+        color: CupertinoColors.systemGrey4,
       ),
     );
   }

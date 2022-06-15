@@ -46,7 +46,8 @@ class _RawTextEditorState extends State<RawTextEditor> {
         builder: (_, viewModel) {
           TextStyle shouldHighlightSpan() {
             if (viewModel.highlightedSpanIndex == widget.index) {
-              return TextStyle(color: textColor, fontWeight: FontWeight.bold);
+              return TextStyle(
+                  color: focusedTextColor, fontWeight: FontWeight.bold);
             }
             return TextStyle(color: unfocusedTextColor);
           }

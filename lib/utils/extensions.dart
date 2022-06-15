@@ -4,15 +4,32 @@ import 'package:Minutes/utils/transcript_pair.dart';
 import 'package:path/path.dart' as path;
 
 extension StringCasingExtension on String {
+  String toggleCapitalisation() {
+    if (this.isCapitalised()) {
+      return this.toLowerCase();
+    } else {
+      return this.toCapitalized();
+    }
+  }
+
+  bool isCapitalised() {
+    assert(this.length >= 1);
+    final regExp = RegExp('[A-Z]');
+    return regExp.hasMatch(this.substring(0, 1));
+  }
+
   String toCapitalized() => length > 0
       ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}'
       : ''; // TODO: Capitalize first index of letter
+
   String toTitleCase() => replaceAll(RegExp(' +'), ' ')
       .split(' ')
       .map((str) => str.toCapitalized())
       .join(' ');
+
   String capitalizeSentences() =>
       toCapitalized().split('. ').map((str) => str.toCapitalized()).join('. ');
+
   String capitalizeNewLines() =>
       toCapitalized().split('\n').map((str) => str.toCapitalized()).join('\n');
 }
@@ -39,15 +56,6 @@ extension Filename on File {
 }
 
 extension TextFormatter on String {
-  static List<TranscriptPair> formatTextList(
-      List<TranscriptPair> transcriptTextList) {
-    final tmp = transcriptTextList
-        .map((pair) =>
-            pair.map((first) => first.formatText(), (second) => second))
-        .toList();
-    return tmp;
-  }
-
   String formatText() {
     String formattedText = this.toUpperCase();
 
@@ -86,6 +94,12 @@ extension TextFormatter on String {
         RegExp(r'\s+([.,!":)])'), (Match m) => m.group(1)!);
 
     return formattedText.capitalizeSentences().capitalizeNewLines();
+  }
+
+  String removeSpaceBeforePunctuation() {
+    // Remove whitespace before punctuation marks
+    return this
+        .replaceAllMapped(RegExp(r'\s+([.,!":)])'), (Match m) => m.group(1)!);
   }
 }
 

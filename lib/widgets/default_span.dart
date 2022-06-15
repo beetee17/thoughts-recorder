@@ -45,7 +45,7 @@ class _DefaultSpanState extends State<DefaultSpan> {
 
     final editResponse = await showMenu(
         color: accentColor,
-        constraints: BoxConstraints.loose(Size(300, 50)),
+        constraints: BoxConstraints.loose(Size(350, 50)),
         context: context,
         items: <PopupMenuEntry<EditResponse>>[EditMenuEntry(widget.text)],
         position: RelativeRect.fromRect(
@@ -182,7 +182,14 @@ class EditMenuEntryState extends State<EditMenuEntry> {
                         context, EditResponse(EditCommand.Edit, newWord)));
               },
               icon: Icon(Icons.edit),
-              color: Colors.blueAccent),
+              color: CupertinoColors.activeBlue),
+          IconButton(
+              onPressed: () => Navigator.pop<EditResponse>(
+                  context,
+                  EditResponse(
+                      EditCommand.Edit, widget.word.toggleCapitalisation())),
+              icon: Icon(CupertinoIcons.textformat),
+              color: CupertinoColors.activeBlue),
           AddMenuItem('.', '.'),
           AddMenuItem(',', ','),
           AddMenuItem(r'\n', '\n'),

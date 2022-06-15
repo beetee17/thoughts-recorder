@@ -1,6 +1,7 @@
 import 'package:Minutes/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_text_input/flutter_native_text_input.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:Minutes/redux_/rootStore.dart';
 import 'package:Minutes/utils/extensions.dart';
@@ -53,32 +54,40 @@ class _RawTextEditorState extends State<RawTextEditor> {
           }
 
           return Container(
-            child: TextField(
-                onChanged: (updatedText) {
-                  store.dispatch(UpdateTranscriptTextList(
-                      widget.index,
-                      TranscriptPair(
-                          updatedText, widget.partialTranscript.startTime)));
-                },
-                maxLines: null,
-                style: shouldHighlightSpan(),
-                decoration: InputDecoration(
-                    enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white30)),
-                    prefix: GestureDetector(
-                        child: Text(
-                            '${widget.partialTranscript.startTime.toAudioDurationString()} ',
-                            style: TextStyle(
-                                color: Color.fromARGB(153, 108, 108, 121),
-                                fontWeight: FontWeight.normal)),
-                        onTap: () {
-                          final Duration seekTime = DurationUtils.min(
-                              viewModel.audioDuration,
-                              widget.partialTranscript.startTime);
-                          print('seeking: ${seekTime.inSeconds}s');
-                          JustAudioPlayerWidgetState.player.seek(seekTime);
-                        })),
-                controller: _textEditingController),
+            child: Row(
+              children: [
+                GestureDetector(
+                    child: Text(
+                        '${widget.partialTranscript.startTime.toAudioDurationString()} ',
+                        style: TextStyle(
+                            color: Color.fromARGB(153, 108, 108, 121),
+                            fontWeight: FontWeight.normal)),
+                    onTap: () {
+                      final Duration seekTime = DurationUtils.min(
+                          viewModel.audioDuration,
+                          widget.partialTranscript.startTime);
+                      print('seeking: ${seekTime.inSeconds}s');
+                      JustAudioPlayerWidgetState.player.seek(seekTime);
+                    }),
+                SizedBox(
+                  width: 320,
+                  child: NativeTextInput(
+                      onChanged: (updatedText) {
+                        store.dispatch(UpdateTranscriptTextList(
+                            widget.index,
+                            TranscriptPair(updatedText,
+                                widget.partialTranscript.startTime)));
+                      },
+                      maxLines: 10,
+                      style: shouldHighlightSpan(),
+                      decoration: BoxDecoration(
+                        border:
+                            Border(bottom: BorderSide(color: Colors.white30)),
+                      ),
+                      controller: _textEditingController),
+                ),
+              ],
+            ),
           );
         });
   }

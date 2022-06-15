@@ -47,6 +47,8 @@ PODS:
     - DKImagePickerController/PhotoGallery
     - Flutter
   - Flutter (1.0.0)
+  - flutter_native_text_input (2.2.0):
+    - Flutter
   - flutter_voice_processor (1.0.6):
     - Flutter
   - just_audio (0.0.1):
@@ -74,6 +76,7 @@ DEPENDENCIES:
   - ffmpeg_kit_flutter (from `.symlinks/plugins/ffmpeg_kit_flutter/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - Flutter (from `Flutter`)
+  - flutter_native_text_input (from `.symlinks/plugins/flutter_native_text_input/ios`)
   - flutter_voice_processor (from `.symlinks/plugins/flutter_voice_processor/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/ios`)
   - leopard_flutter (from `.symlinks/plugins/leopard_flutter/ios`)
@@ -103,6 +106,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/file_picker/ios"
   Flutter:
     :path: Flutter
+  flutter_native_text_input:
+    :path: ".symlinks/plugins/flutter_native_text_input/ios"
   flutter_voice_processor:
     :path: ".symlinks/plugins/flutter_voice_processor/ios"
   just_audio:
@@ -128,6 +133,7 @@ SPEC CHECKSUMS:
   ffmpeg_kit_flutter: e2f0bd6b75e361faeee3b34c70650d3ec6ec35d0
   file_picker: 3e6c3790de664ccf9b882732d9db5eaf6b8d4eb1
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  flutter_native_text_input: 246da758e5a2e744774aa839a1a21902e0e84ceb
   flutter_voice_processor: afb59b604d99397a1ccf15c935ac8f2c2327f09f
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   Leopard-iOS: 9637ccbfb10ee5381319e493713d28f227c020ec

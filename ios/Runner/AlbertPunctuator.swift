@@ -31,8 +31,9 @@ class AlbertPunctuator {
     /// - Returns: Confidence scores for the 4 punctuation options for each of the tokens in `text`
     func punctuate(text: String) -> (scores: [[Float]], words:[String], mask: [Bool]) {
         
-        let inputs = tokenize(text: text)
+        let inputs = tokenize(text: text.lowercased())
         let words: [String] = text.split(separator: " ").map(String.init)
+        
         var wordPos = 0
       
         var allScores: [[Float]] = []
@@ -45,6 +46,7 @@ class AlbertPunctuator {
             let (output, time) = Utils.time {
                 return try! model.prediction(input: input).var_1067ShapedArray
             }
+            
             let tokens = input.x_1
             for i in 0..<tokens.count {
                 let token = tokens[i]
@@ -106,7 +108,6 @@ class AlbertPunctuator {
         var inputs: [PunctuatorModelInput] = []
         
         while !remainingTokens.isEmpty {
-            print(remainingTokens, remainingTokens.count)
             
             let currTokens = Array(remainingTokens.prefix(seqLen - 2))
             remainingTokens = Array(remainingTokens.dropFirst(seqLen - 2))

@@ -6,4 +6,5 @@ final Color accentColor = Color.fromARGB(255, 13, 13, 13);
 final Color textColor = almostWhite;
 final Color almostWhite = Color.fromARGB(210, 255, 255, 255);
 final Color secondaryTextColor = Colors.white;
+final Color focusedTextColor = Colors.white;
 final Color unfocusedTextColor = Colors.white60;

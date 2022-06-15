@@ -19,12 +19,10 @@ class SaveTranscriptButton extends StatelessWidget {
     return StoreConnector<AppState, SaveTranscriptButtonVM>(
         distinct: true,
         converter: (store) =>
-            SaveTranscriptButtonVM(store.state.transcript.transcriptTextList),
+            SaveTranscriptButtonVM(store.state.transcript.transcriptText),
         builder: (_, viewModel) {
           return SecondaryIconButton(
-              onPress: () => shareTranscript(viewModel.transcriptTextList
-                  .map((pair) => pair.text)
-                  .join(' ')),
+              onPress: () => shareTranscript(viewModel.transcriptText),
               margin: EdgeInsets.only(top: 10.0, right: 10.0),
               icon:
                   Transform.scale(scaleX: -1, child: Icon(Icons.reply_sharp)));
@@ -33,17 +31,17 @@ class SaveTranscriptButton extends StatelessWidget {
 }
 
 class SaveTranscriptButtonVM {
-  List<TranscriptPair> transcriptTextList;
+  String transcriptText;
 
-  SaveTranscriptButtonVM(this.transcriptTextList);
+  SaveTranscriptButtonVM(this.transcriptText);
   @override
   bool operator ==(other) {
     return (other is SaveTranscriptButtonVM) &&
-        (transcriptTextList == other.transcriptTextList);
+        (transcriptText == other.transcriptText);
   }
 
   @override
   int get hashCode {
-    return transcriptTextList.hashCode;
+    return transcriptText.hashCode;
   }
 }

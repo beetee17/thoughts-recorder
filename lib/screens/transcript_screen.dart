@@ -43,7 +43,6 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
         distinct: true,
         converter: (store) => TranscriptScreenVM(
             store.state.audio.file,
-            store.state.transcript.transcriptText,
             store.state.transcript.transcriptTextList,
             store.state.status.errorMessage,
             store.state.ui.showMinutes),
@@ -156,19 +155,17 @@ class _TranscriptScreenState extends State<TranscriptScreen> {
 
 class TranscriptScreenVM {
   File? file;
-  String transcriptText;
   List<TranscriptPair> transcriptTextList;
   String? errorMessage;
   bool showMinutes;
   int get groupvalue => showMinutes ? 0 : 1;
-  TranscriptScreenVM(this.file, this.transcriptText, this.transcriptTextList,
-      this.errorMessage, this.showMinutes);
+  TranscriptScreenVM(
+      this.file, this.transcriptTextList, this.errorMessage, this.showMinutes);
 
   @override
   bool operator ==(other) {
     return (other is TranscriptScreenVM) &&
         (file == other.file) &&
-        (transcriptText == other.transcriptText) &&
         (transcriptTextList == other.transcriptTextList) &&
         (errorMessage == other.errorMessage) &&
         (showMinutes == other.showMinutes);
@@ -176,7 +173,6 @@ class TranscriptScreenVM {
 
   @override
   int get hashCode {
-    return Object.hash(
-        file, transcriptText, transcriptTextList, errorMessage, showMinutes);
+    return Object.hash(file, transcriptTextList, errorMessage, showMinutes);
   }
 }

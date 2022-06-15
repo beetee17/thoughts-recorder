@@ -102,14 +102,15 @@ class _DefaultSpanState extends State<DefaultSpan> {
           TextStyle getStyle() {
             TextStyle res = TextStyle();
             if (viewModel.highlightedSpanIndex == widget.sentenceIndex) {
-              res = TextStyle(color: textColor);
+              res = TextStyle(color: focusedTextColor);
             } else {
               res = TextStyle(color: Colors.white60);
             }
 
             if (_isHighlighted) {
               res = TextStyle(
-                  color: textColor, decoration: TextDecoration.underline);
+                  color: focusedTextColor,
+                  decoration: TextDecoration.underline);
             }
             return res;
           }

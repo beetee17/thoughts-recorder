@@ -10,6 +10,14 @@
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		5814543D2E06F997209E6477 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A957464AA3A7791A388F46C /* Pods_Runner.framework */; };
+		6C42FE192859B7AD00F806CB /* PunctuatorModel.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = 6C42FE182859B7AD00F806CB /* PunctuatorModel.mlpackage */; };
+		6C42FE1F2859B7E700F806CB /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C42FE1A2859B7E700F806CB /* Math.swift */; };
+		6C42FE212859B7E700F806CB /* BertTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C42FE1C2859B7E700F806CB /* BertTokenizer.swift */; };
+		6C42FE222859B7E700F806CB /* CoreMLHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C42FE1D2859B7E700F806CB /* CoreMLHelpers.swift */; };
+		6C42FE232859B7E700F806CB /* MLMultiArray+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C42FE1E2859B7E700F806CB /* MLMultiArray+Utils.swift */; };
+		6C42FE252859B7EE00F806CB /* vocab.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6C42FE242859B7EE00F806CB /* vocab.txt */; };
+		6C42FE272859B7F600F806CB /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C42FE262859B7F600F806CB /* Utils.swift */; };
+		6C42FE292859B95500F806CB /* AlbertPunctuator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C42FE282859B95500F806CB /* AlbertPunctuator.swift */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
@@ -35,6 +43,14 @@
 		1A957464AA3A7791A388F46C /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		23F5185A93071DC40FC4EB1B /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
+		6C42FE182859B7AD00F806CB /* PunctuatorModel.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = PunctuatorModel.mlpackage; sourceTree = "<group>"; };
+		6C42FE1A2859B7E700F806CB /* Math.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Math.swift; sourceTree = "<group>"; };
+		6C42FE1C2859B7E700F806CB /* BertTokenizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BertTokenizer.swift; sourceTree = "<group>"; };
+		6C42FE1D2859B7E700F806CB /* CoreMLHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreMLHelpers.swift; sourceTree = "<group>"; };
+		6C42FE1E2859B7E700F806CB /* MLMultiArray+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MLMultiArray+Utils.swift"; sourceTree = "<group>"; };
+		6C42FE242859B7EE00F806CB /* vocab.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vocab.txt; sourceTree = "<group>"; };
+		6C42FE262859B7F600F806CB /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		6C42FE282859B95500F806CB /* AlbertPunctuator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbertPunctuator.swift; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
@@ -94,6 +110,13 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				6C42FE1C2859B7E700F806CB /* BertTokenizer.swift */,
+				6C42FE1D2859B7E700F806CB /* CoreMLHelpers.swift */,
+				6C42FE282859B95500F806CB /* AlbertPunctuator.swift */,
+				6C42FE1A2859B7E700F806CB /* Math.swift */,
+				6C42FE1E2859B7E700F806CB /* MLMultiArray+Utils.swift */,
+				6C42FE262859B7F600F806CB /* Utils.swift */,
+				6C42FE242859B7EE00F806CB /* vocab.txt */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
 				97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */,
@@ -102,6 +125,7 @@
 				1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */,
 				74858FAE1ED2DC5600515810 /* AppDelegate.swift */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
+				6C42FE182859B7AD00F806CB /* PunctuatorModel.mlpackage */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -187,6 +211,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6C42FE252859B7EE00F806CB /* vocab.txt in Resources */,
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
@@ -271,8 +296,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6C42FE192859B7AD00F806CB /* PunctuatorModel.mlpackage in Sources */,
+				6C42FE292859B95500F806CB /* AlbertPunctuator.swift in Sources */,
+				6C42FE272859B7F600F806CB /* Utils.swift in Sources */,
+				6C42FE232859B7E700F806CB /* MLMultiArray+Utils.swift in Sources */,
+				6C42FE222859B7E700F806CB /* CoreMLHelpers.swift in Sources */,
+				6C42FE212859B7E700F806CB /* BertTokenizer.swift in Sources */,
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
+				6C42FE1F2859B7E700F806CB /* Math.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -357,7 +389,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = M9BZ2GV933;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -365,6 +397,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -500,7 +533,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = M9BZ2GV933;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -508,6 +541,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -535,7 +569,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = M9BZ2GV933;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -543,6 +577,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

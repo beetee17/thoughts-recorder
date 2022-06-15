@@ -1,7 +1,9 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:Minutes/redux_/ui.dart';
+import 'package:Minutes/screens/punctuated_text_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,10 +25,13 @@ class TextArea extends StatefulWidget {
 
 class _TextAreaState extends State<TextArea>
     with SingleTickerProviderStateMixin {
+  static const platform = MethodChannel('minutes/punctuator');
+
   late final AnimationController _controller = AnimationController(
     duration: const Duration(seconds: 2),
     vsync: this,
   );
+
   late final Animation<Offset> _offsetAnimation = Tween<Offset>(
     begin: Offset.zero,
     end: const Offset(1.5, 0.0),
@@ -34,10 +39,25 @@ class _TextAreaState extends State<TextArea>
     parent: _controller,
     curve: Curves.elasticIn,
   ));
+
+  Future<void> _punctuateText(String text) async {
+    try {
+      final arguments = {'text': text};
+      final Map? punctuatorResult =
+          await platform.invokeMapMethod('punctuateText', arguments);
+      if (punctuatorResult != null) {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (builder) =>
+                PunctuatedTextScreen(punctuatorResult: punctuatorResult)));
+      }
+    } on PlatformException catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, TextAreaVM>(
-      distinct: true,
       converter: (store) =>
           TextAreaVM(store.state.audio.file, store.state.ui.showMinutes),
       builder: (_, viewModel) {
@@ -62,7 +82,18 @@ class _TextAreaState extends State<TextArea>
               padding: const EdgeInsets.only(bottom: 10.0),
               child: Align(
                 alignment: Alignment.bottomRight,
-                child: SaveTranscriptButton(),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    SecondaryIconButton(
+                      margin: EdgeInsets.only(top: 10.0, right: 10.0),
+                      icon: Icon(Icons.auto_fix_high_sharp),
+                      onPress: () =>
+                          _punctuateText(store.state.transcript.transcriptText),
+                    ),
+                    SaveTranscriptButton(),
+                  ],
+                ),
               ),
             ),
             AnimatedOpacity(

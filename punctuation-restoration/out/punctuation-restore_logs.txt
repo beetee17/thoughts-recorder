@@ -1,0 +1,99 @@
+Namespace(alpha_del=0.4, alpha_sub=0.4, augment_rate=0.15, augment_type='all', batch_size=8, cuda=True, data_path='data', decay=0, epoch=10, freeze_bert=False, gradient_clip=-1, language='english', lr=5e-06, lstm_dim=-1, name='punctuation-restore', pretrained_model='distilbert-base-uncased', save_path='out', seed=1, sequence_length=256, sub_style='unk', use_crf=False)
+epoch: 0, Train loss: 0.3311812660670893, Train accuracy: 0.8803444474420211
+epoch: 0, Val loss: 0.21890796544030308, Val accuracy: 0.9090851197897813
+Namespace(alpha_del=0.4, alpha_sub=0.4, augment_rate=0.15, augment_type='all', batch_size=8, cuda=True, data_path='data', decay=0, epoch=10, freeze_bert=False, gradient_clip=-1, language='english', lr=5e-06, lstm_dim=-1, name='punctuation-restore', pretrained_model='distilbert-base-uncased', save_path='out', seed=1, sequence_length=256, sub_style='unk', use_crf=False)
+epoch: 0, Train loss: 0.3311812660670893, Train accuracy: 0.8803444474420211
+epoch: 0, Val loss: 0.21890796544030308, Val accuracy: 0.9090851197897813
+Namespace(alpha_del=0.4, alpha_sub=0.4, augment_rate=0.15, augment_type='all', batch_size=8, cuda=True, data_path='data', decay=0, epoch=10, freeze_bert=False, gradient_clip=-1, language='english', lr=5e-06, lstm_dim=-1, name='punctuation-restore', pretrained_model='albert-base-v2', save_path='out', seed=1, sequence_length=256, sub_style='unk', use_crf=False)
+Namespace(alpha_del=0.4, alpha_sub=0.4, augment_rate=0.15, augment_type='all', batch_size=8, cuda=True, data_path='data', decay=0, epoch=1, freeze_bert=False, gradient_clip=-1, language='english', lr=5e-06, lstm_dim=-1, name='punctuation-restore', pretrained_model='albert-base-v2', save_path='out', seed=1, sequence_length=256, sub_style='unk', use_crf=False)
+epoch: 0, Train loss: 0.28334594087610987, Train accuracy: 0.8939696941357071
+epoch: 0, Val loss: 0.17086890258572318, Val accuracy: 0.9322521194249908
+Precision: [0.97096734 0.6409587  0.71524894        nan 0.67933767]
+Recall: [0.98335368 0.54674625 0.77414067 0.         0.62768786]
+F1 score: [0.97712126 0.59011586 0.74353049        nan 0.65249224]
+Accuracy:0.9322521194249908
+Confusion Matrix[[251298   3380    874      0]
+ [  6214  12275   3962      0]
+ [  1154   3117  14639      0]
+ [   146    379    992      0]]
+64.09586966738028 54.67462473831901 59.011585981443204 71.52489373137246 77.41406663141194 74.35304873403254 nan 0.0 nan 67.93376747942854 62.768785857549325 65.24922420480993
+
+Precision: [0.97727069 0.64945652 0.75774971        nan 0.70815184]
+Recall: [0.98398915 0.57590361 0.81784387 0.         0.6761735 ]
+F1 score: [0.98061841 0.61047254 0.78665077        nan 0.69179331]
+Accuracy:0.9433192023865599
+Confusion Matrix[[10878   150    27     0]
+ [  199   478   153     0]
+ [   50    97   660     0]
+ [    4    11    31     0]]
+64.94565217391305 57.59036144578313 61.04725415070242 75.77497129735936 81.78438661710037 78.66507747318236 nan 0.0 nan 70.81518357187305 67.61734997029116 69.17933130699087
+
+Precision: [0.97565124 0.49021739 0.72716489        nan 0.60351673]
+Recall: [0.9651966  0.56516291 0.75772559 0.         0.64799026]
+F1 score: [0.97039576 0.5250291  0.74213075        nan 0.62496329]
+Accuracy:0.9249265501778259
+Confusion Matrix[[10899   329    64     0]
+ [  202   451   145     0]
+ [   63   133   613     0]
+ [    7     7    21     0]]
+49.02173913043478 56.51629072681704 52.50291036088475 72.71648873072361 75.7725587144623 74.21307506053269 nan 0.0 nan 60.3516732841747 64.79902557856273 62.49632892804699
+
+Namespace(alpha_del=0.4, alpha_sub=0.4, augment_rate=0.15, augment_type='all\xa0', batch_size=8, cuda=True, data_path='data', decay=0, epoch=5, freeze_bert=False, gradient_clip=-1, language='english', lr=5e-06, lstm_dim=-1, name='punctuation-restore', pretrained_model='albert-base-v2', save_path='out', seed=1, sequence_length=256, sub_style='unk', use_crf=False)
+Namespace(alpha_del=0.4, alpha_sub=0.4, augment_rate=0.15, augment_type='all\xa0', batch_size=8, cuda=True, data_path='data', decay=0, epoch=5, freeze_bert=False, gradient_clip=-1, language='english', lr=5e-06, lstm_dim=-1, name='punctuation-restore', pretrained_model='albert-base-v2', save_path='out', seed=1, sequence_length=256, sub_style='unk', use_crf=False)
+Namespace(alpha_del=0.4, alpha_sub=0.4, augment_rate=0.15, augment_type='all\xa0', batch_size=8, cuda=True, data_path='data', decay=0, epoch=5, freeze_bert=False, gradient_clip=-1, language='english', lr=5e-06, lstm_dim=-1, name='punctuation-restore', pretrained_model='albert-base-v2', save_path='out', seed=1, sequence_length=256, sub_style='unk', use_crf=False)
+epoch: 0, Train loss: 0.28334594087610987, Train accuracy: 0.8939696941357071
+epoch: 0, Val loss: 0.17086890258572318, Val accuracy: 0.9322521194249908
+epoch: 1, Train loss: 0.18924885347228626, Train accuracy: 0.9207495029281697
+epoch: 1, Val loss: 0.14570733439741712, Val accuracy: 0.93984518982676
+epoch: 2, Train loss: 0.16725293710699368, Train accuracy: 0.9292562396804958
+epoch: 2, Val loss: 0.13536043532870032, Val accuracy: 0.9432932345943772
+epoch: 3, Train loss: 0.1584819439092073, Train accuracy: 0.932704651746379
+epoch: 3, Val loss: 0.13039392278049933, Val accuracy: 0.9452702476292598
+epoch: 4, Train loss: 0.15284544358608024, Train accuracy: 0.9347198562799054
+epoch: 4, Val loss: 0.12540543282573874, Val accuracy: 0.9467010689273867
+Precision: [0.97932194 0.71326511 0.7834379  0.76788321 0.74845855]
+Recall: [0.98204279 0.6581444  0.83199365 0.69347396 0.73606511]
+F1 score: [0.98068048 0.68459703 0.80698605 0.72878421 0.7422101 ]
+Accuracy:0.9467010689273867
+Confusion Matrix[[250963   3665    837     87]
+ [  4235  14776   3296    144]
+ [   938   2152  15733     87]
+ [   126    123    216   1052]]
+71.32651090944198 65.81444033673333 68.45970301387634 78.34379045911761 83.19936541512428 80.69860484201887 76.78832116788321 69.34739617666446 72.87842050571528 74.84585467653197 73.60651149773777 74.22100980645769
+
+Precision: [0.98474114 0.68606061 0.8147714  0.68       0.7494213 ]
+Recall: [0.9807327  0.68192771 0.86121437 0.73913043 0.7694593 ]
+F1 score: [0.98273283 0.68398792 0.8373494  0.70833333 0.75930812]
+Accuracy:0.9528183388287015
+Confusion Matrix[[10842   183    28     2]
+ [  130   566   125     9]
+ [   36    71   695     5]
+ [    2     5     5    34]]
+68.60606060606061 68.19277108433735 68.3987915407855 81.47713950762017 86.12143742255266 83.73493975903614 68.0 73.91304347826086 70.83333333333334 74.94212962962963 76.94592988710636 75.93081207856935
+
+Precision: [0.98020337 0.55605889 0.7300885  0.55882353 0.64250412]
+Recall: [0.96466525 0.61528822 0.815822   0.54285714 0.71254568]
+F1 score: [0.97237224 0.58417609 0.77057793 0.55072464 0.6757147 ]
+Accuracy:0.9326581104066801
+Confusion Matrix[[10893   312    81     6]
+ [  151   491   154     2]
+ [   64    78   660     7]
+ [    5     2     9    19]]
+55.60588901472253 61.528822055137844 58.41760856632956 73.00884955752213 81.58220024721878 77.05779334500875 55.88235294117647 54.285714285714285 55.07246376811593 64.2504118616145 71.2545676004872 67.57146982385215
+
+Namespace(alpha_del=0.4, alpha_sub=0.4, augment_rate=0.15, augment_type='all\xa0', batch_size=8, cuda=True, data_path='data', decay=0, epoch=5, freeze_bert=False, gradient_clip=-1, language='english', lr=5e-06, lstm_dim=-1, name='punctuation-restore', pretrained_model='albert-base-v2', save_path='out', seed=1, sequence_length=256, sub_style='unk', use_crf=False)
+epoch: 0, Train loss: 0.14855662942061137, Train accuracy: 0.9364920072898439
+epoch: 0, Val loss: 0.12449987173983545, Val accuracy: 0.9471467345776229
+Namespace(alpha_del=0.4, alpha_sub=0.4, augment_rate=0.15, augment_type='all\xa0', batch_size=8, cuda=True, data_path='data', decay=0, epoch=5, freeze_bert=False, gradient_clip=-1, language='english', lr=5e-06, lstm_dim=-1, name='punctuation-restore', pretrained_model='albert-base-v2', save_path='out', seed=1, sequence_length=256, sub_style='unk', use_crf=False)
+Namespace(alpha_del=0.4, alpha_sub=0.4, augment_rate=0.15, augment_type='all\xa0', batch_size=8, cuda=True, data_path='data', decay=0, epoch=10, freeze_bert=False, gradient_clip=-1, language='english', lr=5e-06, lstm_dim=-1, name='punctuation-restore', pretrained_model='albert-base-v2', save_path='out', seed=1, sequence_length=256, sub_style='unk', use_crf=False)
+epoch: 0, Train loss: 0.5900866147002269, Train accuracy: 0.8291344691288869
+epoch: 0, Val loss: 0.4920690885095885, Val accuracy: 0.8563214154072982
+epoch: 1, Train loss: 0.46544542284361246, Train accuracy: 0.8629879152439237
+epoch: 1, Val loss: 0.4878904644286994, Val accuracy: 0.8563214154072982
+epoch: 2, Train loss: 0.4635098232020592, Train accuracy: 0.8630185316123942
+epoch: 2, Val loss: 0.48738783742442277, Val accuracy: 0.8563214154072982
+epoch: 3, Train loss: 0.46336212553854644, Train accuracy: 0.8630539275482096
+epoch: 3, Val loss: 0.48688083652294045, Val accuracy: 0.8563214154072982
+Namespace(alpha_del=0.4, alpha_sub=0.4, augment_rate=0.15, augment_type='all\xa0', batch_size=8, cuda=True, data_path='data', decay=0, epoch=10, freeze_bert=False, gradient_clip=-1, language='english', lr=5e-06, lstm_dim=-1, name='punctuation-restore', pretrained_model='albert-base-v2', save_path='out', seed=1, sequence_length=256, sub_style='unk', use_crf=False)
+epoch: 0, Train loss: 0.5952906861901284, Train accuracy: 0.8264097421467244
+epoch: 0, Val loss: 0.4925634306488615, Val accuracy: 0.8563214154072982

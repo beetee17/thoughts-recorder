@@ -30,7 +30,9 @@ class AlbertPunctuator {
     /// - Parameter text: The text to be punctuated
     /// - Returns: Confidence scores for the 4 punctuation options for each of the tokens in `text`
     func punctuate(text: String) -> (scores: [[Float]], words:[String], mask: [Bool]) {
-        
+        // Convert to lowercase and remove all punctuation
+        let text = text.lowercased().components(separatedBy: .punctuationCharacters).joined()
+        print("Punctuating this piece of text: \n\(text)")
         let inputs = tokenize(text: text.lowercased())
         let words: [String] = text.split(separator: " ").map(String.init)
         

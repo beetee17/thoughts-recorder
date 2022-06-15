@@ -31,7 +31,6 @@ import Flutter
             let myModel = try PunctuatorModel()
             let punctuator = AlbertPunctuator(model: myModel)
             let (softMaxScores, words, mask) = punctuator.punctuate(text: text)
-//            print(softMaxScores, words, mask)
             result(["scores" : softMaxScores, "words" : words, "mask" : mask])
         } catch let error {
             print(error.localizedDescription)

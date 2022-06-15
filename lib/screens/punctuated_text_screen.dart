@@ -42,17 +42,31 @@ class PunctuatedTextScreen extends StatelessWidget {
 
     List<PunctuatedWord> punctuatedWords = [];
     int wordPos = 0;
+
     allScores.asMap().forEach((index, punctuationScores) {
-      if (mask[index]) {
-        final word = words[wordPos];
+      if (index < mask.length && mask[index]) {
+        String word = words[wordPos];
+
         final Pair<int, double> punctuationResult =
             Math.argmax(punctuationScores);
+        if (punctuationResult.first > 1 && wordPos + 1 < words.length) {
+          // Capitalise the next word if the previous punctuation is not a comma
+          words[wordPos + 1] = words[wordPos + 1].toCapitalized();
+        }
+
+        if (wordPos == 0) {
+          // Capitalise the first word
+          word = word.toCapitalized();
+        }
+
         final punctuatedWord = PunctuatedWord(
             word + punctuationMap[punctuationResult.first]!,
             punctuationResult.first,
             punctuationResult.second);
         punctuatedWords.add(punctuatedWord);
+
         print('${punctuatedWord.content} ${punctuatedWord.confidence}');
+
         wordPos += 1;
       }
     });

@@ -108,8 +108,10 @@ class BasicTokenizer {
     ]
     
     func tokenize(text: String) -> [String] {
+        // All whitepsaces and newlines are combined
         let splitTokens = text.folding(options: .diacriticInsensitive, locale: nil)
-            .components(separatedBy: NSCharacterSet.whitespaces)
+            .split(usingRegex: "\\s+")
+        
         let tokens = splitTokens.flatMap({ (token: String) -> [String] in
             if neverSplit.contains(token) {
                 return [token]

@@ -33,8 +33,10 @@ class AlbertPunctuator {
         // Convert to lowercase and remove all punctuation
         let text = text.lowercased().components(separatedBy: .punctuationCharacters).joined()
         print("Punctuating this piece of text: \n\(text)")
-        let inputs = tokenize(text: text.lowercased())
-        let words: [String] = text.split(separator: " ").map(String.init)
+        let inputs = tokenize(text: text)
+        
+        // All whitepsaces and newlines are combined
+        let words: [String] = text.split(usingRegex: "\\s+")
         
         var wordPos = 0
       

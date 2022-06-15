@@ -46,9 +46,6 @@ class _TextAreaState extends State<TextArea>
       final Map? punctuatorResult =
           await platform.invokeMapMethod('punctuateText', arguments);
       if (punctuatorResult != null) {
-        // print(punctuatorResult['scores']);
-        // print(punctuatorResult['words']);
-        // print(punctuatorResult['mask']);
         Navigator.of(context).push(MaterialPageRoute(
             builder: (builder) =>
                 PunctuatedTextScreen(punctuatorResult: punctuatorResult)));
@@ -61,7 +58,6 @@ class _TextAreaState extends State<TextArea>
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, TextAreaVM>(
-      distinct: true,
       converter: (store) =>
           TextAreaVM(store.state.audio.file, store.state.ui.showMinutes),
       builder: (_, viewModel) {

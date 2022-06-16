@@ -1,4 +1,5 @@
 import 'package:Minutes/redux_/transcript.dart';
+import 'package:Minutes/screens/punctuated_text_screen.dart';
 import 'package:Minutes/utils/colors.dart';
 import 'package:Minutes/utils/text_field_dialog.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,7 +15,8 @@ import 'just_audio_player.dart';
 class DefaultSpan extends StatefulWidget {
   final TranscriptPair pair;
   final int wordIndex;
-  const DefaultSpan({Key? key, required this.wordIndex, required this.pair})
+
+  DefaultSpan({Key? key, required this.wordIndex, required this.pair})
       : super(key: key);
 
   @override
@@ -80,6 +82,9 @@ class _DefaultSpanState extends State<DefaultSpan> {
         converter: (store) => DefaultSpanVM(
             store.state.transcript.highlightSpan,
             store.state.transcript.highlightedParent,
+            store.state.transcript.punctuatorResult
+                .getItemAtIf<PunctuatedWord?>(
+                    widget.wordIndex, (e) => e?.punctuationValue != 0),
             store.state.audio.duration),
         builder: (_, viewModel) {
           void onTapSpan() {
@@ -103,16 +108,39 @@ class _DefaultSpanState extends State<DefaultSpan> {
                   color: focusedTextColor,
                   decoration: TextDecoration.underline);
             }
+
+            if (viewModel.punctuatedWord != null) {
+              res = res.merge(TextStyle(
+                  color: viewModel.punctuatedWord!.punctuationValue == 0
+                      ? textColor
+                      : Color.lerp(
+                          CupertinoColors.destructiveRed,
+                          CupertinoColors.activeGreen.darkHighContrastColor,
+                          viewModel.punctuatedWord!.confidence)));
+            }
             return res;
           }
 
           return AnimatedDefaultTextStyle(
-            child: GestureDetector(
-              child: Text('${widget.pair.word} '),
-              onLongPress: _showCustomMenu,
-              onTapDown: _storePosition,
-              onTap: onTapSpan,
-            ),
+            child: viewModel.punctuatedWord == null
+                ? GestureDetector(
+                    child: Text('${widget.pair.word} '),
+                    onLongPress: _showCustomMenu,
+                    onTapDown: _storePosition,
+                    onTap: onTapSpan,
+                  )
+                : GestureDetector(
+                    child: Text('${viewModel.punctuatedWord!.content} '),
+                    onHorizontalDragEnd: (details) {
+                      if (details.primaryVelocity != null) {
+                        details.primaryVelocity! < 0
+                            ? store.dispatch(acceptPunctuatorSuggestion(
+                                viewModel.punctuatedWord, widget.wordIndex))
+                            : store.dispatch(
+                                rejectPunctuatorSuggestion(widget.wordIndex));
+                      }
+                    },
+                  ),
             style: GoogleFonts.rubik(
                     fontSize: 24, fontWeight: FontWeight.w500, height: 1.4)
                 .merge(getStyle()),
@@ -202,19 +230,22 @@ class EditResponse {
 class DefaultSpanVM {
   void Function(String) highlightParent;
   String? highlightedParent;
+  PunctuatedWord? punctuatedWord;
   Duration audioDuration;
-  DefaultSpanVM(
-      this.highlightParent, this.highlightedParent, this.audioDuration);
+  DefaultSpanVM(this.highlightParent, this.highlightedParent,
+      this.punctuatedWord, this.audioDuration);
   @override
   bool operator ==(other) {
     return (other is DefaultSpanVM) &&
         (highlightParent == other.highlightParent) &&
         (highlightedParent == other.highlightedParent) &&
+        (punctuatedWord == other.punctuatedWord) &&
         (audioDuration == other.audioDuration);
   }
 
   @override
   int get hashCode {
-    return Object.hash(highlightParent, highlightedParent, audioDuration);
+    return Object.hash(
+        highlightParent, highlightedParent, punctuatedWord, audioDuration);
   }
 }

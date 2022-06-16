@@ -154,6 +154,18 @@ extension Math on List<Comparable> {
   }
 }
 
+extension Safety on List {
+  T? getItemAtIf<T>(int index, bool Function(T) cond) {
+    if (isEmpty || index < 0 || index >= length) {
+      return null;
+    }
+    if (this[index] == null) {
+      return null;
+    }
+    return cond(this[index]) ? this[index] : null;
+  }
+}
+
 extension Editor on List<TranscriptPair> {
   List<TranscriptPair> edit(String editedContents, String editedParent) {
     // Initialise empty list

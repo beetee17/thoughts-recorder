@@ -7,13 +7,13 @@ import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/widgets/just_audio_player.dart';
 
 import '../redux_/transcript.dart';
+import '../utils/pair.dart';
 import '../utils/transcript_pair.dart';
 
 class RawTextEditor extends StatefulWidget {
-  final int index;
-  final TranscriptPair partialTranscript;
-  const RawTextEditor(
-      {Key? key, required this.partialTranscript, required this.index})
+  final Pair<String, Duration> data;
+  final String minutes;
+  const RawTextEditor({Key? key, required this.minutes, required this.data})
       : super(key: key);
 
   @override
@@ -26,8 +26,7 @@ class _RawTextEditorState extends State<RawTextEditor> {
   @override
   void initState() {
     super.initState();
-    _textEditingController =
-        TextEditingController(text: widget.partialTranscript.text);
+    _textEditingController = TextEditingController(text: widget.minutes);
   }
 
   @override
@@ -41,11 +40,11 @@ class _RawTextEditorState extends State<RawTextEditor> {
     return StoreConnector<AppState, RawTextFieldVM>(
         distinct: true,
         converter: (store) => RawTextFieldVM(
-            store.state.transcript.highlightedSpanIndex,
+            store.state.transcript.highlightedParent,
             store.state.audio.duration),
         builder: (_, viewModel) {
-          TextStyle shouldHighlightSpan() {
-            if (viewModel.highlightedSpanIndex == widget.index) {
+          TextStyle getStyle() {
+            if (viewModel.highlightedParent == widget.data.first) {
               return TextStyle(
                   color: focusedTextColor, fontWeight: FontWeight.bold);
             }
@@ -55,26 +54,25 @@ class _RawTextEditorState extends State<RawTextEditor> {
           return Container(
             child: TextField(
                 onChanged: (updatedText) {
-                  store.dispatch(UpdateTranscriptTextList(
-                      widget.index,
-                      TranscriptPair(
-                          updatedText, widget.partialTranscript.startTime)));
+                  // This is probably quite inefficient to perform everytime text changes
+                  // Time complexity depends on the size of transcriptTextList
+                  store.dispatch(
+                      UpdateTranscriptTextList(widget.data.first, updatedText));
                 },
                 maxLines: null,
-                style: shouldHighlightSpan(),
+                style: getStyle(),
                 decoration: InputDecoration(
                     enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.white30)),
                     prefix: GestureDetector(
                         child: Text(
-                            '${widget.partialTranscript.startTime.toAudioDurationString()} ',
+                            '${widget.data.second.toAudioDurationString()} ',
                             style: TextStyle(
                                 color: Color.fromARGB(153, 108, 108, 121),
                                 fontWeight: FontWeight.normal)),
                         onTap: () {
                           final Duration seekTime = DurationUtils.min(
-                              viewModel.audioDuration,
-                              widget.partialTranscript.startTime);
+                              viewModel.audioDuration, widget.data.second);
                           print('seeking: ${seekTime.inSeconds}s');
                           JustAudioPlayerWidgetState.player.seek(seekTime);
                         })),
@@ -85,20 +83,20 @@ class _RawTextEditorState extends State<RawTextEditor> {
 }
 
 class RawTextFieldVM {
-  int? highlightedSpanIndex;
+  String highlightedParent;
   Duration audioDuration;
 
-  RawTextFieldVM(this.highlightedSpanIndex, this.audioDuration);
+  RawTextFieldVM(this.highlightedParent, this.audioDuration);
 
   @override
   bool operator ==(other) {
     return (other is RawTextFieldVM) &&
-        (highlightedSpanIndex == other.highlightedSpanIndex) &&
+        (highlightedParent == other.highlightedParent) &&
         (audioDuration == other.audioDuration);
   }
 
   @override
   int get hashCode {
-    return Object.hash(highlightedSpanIndex, audioDuration);
+    return Object.hash(highlightedParent, audioDuration);
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:Minutes/utils/pair.dart';
 import 'package:Minutes/utils/transcript_pair.dart';
@@ -150,5 +151,58 @@ extension Math on List<Comparable> {
     });
 
     return Pair(currMaxIndex, currMax);
+  }
+}
+
+extension Editor on List<TranscriptPair> {
+  List<TranscriptPair> edit(String editedContents, String editedParent) {
+    // Initialise empty list
+    List<TranscriptPair> result = [];
+
+    // Find the start and end index of the elements that match the parent
+    int start = indexWhere((element) => element.parent == editedParent);
+    int end = lastIndexWhere((element) => element.parent == editedParent);
+
+    // Split editedContents by space
+    Duration startTime =
+        firstWhere((element) => element.parent == editedParent).startTime;
+    final List<TranscriptPair> editedWords = editedContents
+        .split(' ')
+        .map((word) => TranscriptPair(word, startTime, editedParent))
+        .toList();
+
+    // Copy the sublist of 0..<start
+    result.addAll(sublist(0, max(0, start - 1)));
+
+    // addAll(editedWords)
+    result.addAll(editedWords);
+
+    // Insert the sublist of end+1..<last
+    result.addAll(sublist(end + 1));
+
+    return result;
+  }
+
+  List<Pair<String, Pair<String, Duration>>> getMinutes() {
+    if (isEmpty) {
+      return [];
+    }
+    List<Pair<String, Pair<String, Duration>>> result = [];
+
+    String currentParent = first.parent;
+    String currentMinutes = '';
+    int i = 0;
+    for (TranscriptPair pair in this) {
+      if (pair.parent == currentParent) {
+        currentMinutes += pair.word + ' ';
+      } else {
+        result.add(
+            Pair(currentMinutes.trim(), Pair(currentParent, pair.startTime)));
+        currentParent = pair.parent;
+        currentMinutes = pair.word + ' ';
+      }
+    }
+
+    return result;
   }
 }

@@ -13,15 +13,8 @@ import 'just_audio_player.dart';
 
 class DefaultSpan extends StatefulWidget {
   final TranscriptPair pair;
-  final String text;
-  final int sentenceIndex;
   final int wordIndex;
-  const DefaultSpan(
-      {Key? key,
-      required this.text,
-      required this.wordIndex,
-      required this.sentenceIndex,
-      required this.pair})
+  const DefaultSpan({Key? key, required this.wordIndex, required this.pair})
       : super(key: key);
 
   @override
@@ -47,7 +40,7 @@ class _DefaultSpanState extends State<DefaultSpan> {
         color: accentColor,
         constraints: BoxConstraints.loose(Size(350, 50)),
         context: context,
-        items: <PopupMenuEntry<EditResponse>>[EditMenuEntry(widget.text)],
+        items: <PopupMenuEntry<EditResponse>>[EditMenuEntry(widget.pair.word)],
         position: RelativeRect.fromRect(
             _tapPosition & const Size(40, 40), // smaller rect, the touch area
             Offset(-80, 75) &
@@ -62,16 +55,14 @@ class _DefaultSpanState extends State<DefaultSpan> {
     }
     switch (editResponse.command) {
       case EditCommand.Add:
-        store.dispatch(AddTextAfterWordAction(
-            editResponse.payload, widget.sentenceIndex, widget.wordIndex));
+        store.dispatch(
+            AddTextAfterWordAction(editResponse.payload, widget.wordIndex));
         break;
       case EditCommand.Delete:
-        store
-            .dispatch(DeleteWordAction(widget.sentenceIndex, widget.wordIndex));
+        store.dispatch(DeleteWordAction(widget.wordIndex));
         break;
       case EditCommand.Edit:
-        store.dispatch(EditWordAction(
-            editResponse.payload, widget.sentenceIndex, widget.wordIndex));
+        store.dispatch(EditWordAction(editResponse.payload, widget.wordIndex));
         break;
     }
   }
@@ -88,7 +79,7 @@ class _DefaultSpanState extends State<DefaultSpan> {
         distinct: true,
         converter: (store) => DefaultSpanVM(
             store.state.transcript.highlightSpan,
-            store.state.transcript.highlightedSpanIndex,
+            store.state.transcript.highlightedParent,
             store.state.audio.duration),
         builder: (_, viewModel) {
           void onTapSpan() {
@@ -101,7 +92,7 @@ class _DefaultSpanState extends State<DefaultSpan> {
 
           TextStyle getStyle() {
             TextStyle res = TextStyle();
-            if (viewModel.highlightedSpanIndex == widget.sentenceIndex) {
+            if (viewModel.highlightedParent == widget.pair.parent) {
               res = TextStyle(color: focusedTextColor);
             } else {
               res = TextStyle(color: Colors.white60);
@@ -117,7 +108,7 @@ class _DefaultSpanState extends State<DefaultSpan> {
 
           return AnimatedDefaultTextStyle(
             child: GestureDetector(
-              child: Text('${widget.text} '),
+              child: Text('${widget.pair.word} '),
               onLongPress: _showCustomMenu,
               onTapDown: _storePosition,
               onTap: onTapSpan,
@@ -209,21 +200,21 @@ class EditResponse {
 }
 
 class DefaultSpanVM {
-  void Function(int) highlightSpan;
-  int? highlightedSpanIndex;
+  void Function(String) highlightParent;
+  String? highlightedParent;
   Duration audioDuration;
   DefaultSpanVM(
-      this.highlightSpan, this.highlightedSpanIndex, this.audioDuration);
+      this.highlightParent, this.highlightedParent, this.audioDuration);
   @override
   bool operator ==(other) {
     return (other is DefaultSpanVM) &&
-        (highlightSpan == other.highlightSpan) &&
-        (highlightedSpanIndex == other.highlightedSpanIndex) &&
+        (highlightParent == other.highlightParent) &&
+        (highlightedParent == other.highlightedParent) &&
         (audioDuration == other.audioDuration);
   }
 
   @override
   int get hashCode {
-    return Object.hash(highlightSpan, highlightedSpanIndex, audioDuration);
+    return Object.hash(highlightParent, highlightedParent, audioDuration);
   }
 }

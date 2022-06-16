@@ -24,40 +24,33 @@ class _FormattedTextViewState extends State<FormattedTextView> {
         builder: (_, viewModel) {
           List<InlineSpan> allSpans = viewModel.transcriptTextList
               .asMap()
-              .map((sentenceIndex, pair) {
-                final List<String> words = pair.text.split(' ');
+              .map((wordIndex, pair) {
+                final String word = pair.word;
 
-                List<InlineSpan> sentenceSpans = List.empty(growable: true);
+                List<InlineSpan> wordSpans = List.empty(growable: true);
 
-                words.asMap().forEach((wordIndex, word) {
-                  if (word.contains('\n')) {
-                    Iterable<InlineSpan> spans = word.split('\n').map((text) {
-                      return WidgetSpan(
-                          child: text.isEmpty
-                              ? SizedBox(
-                                  height: 10,
-                                  width:
-                                      double.infinity) // To display a new line
-                              : DefaultSpan(
-                                  pair: pair,
-                                  sentenceIndex: sentenceIndex,
-                                  wordIndex: wordIndex,
-                                  text: word,
-                                ));
-                    });
-                    sentenceSpans.addAll(spans);
-                  } else {
-                    sentenceSpans.add(WidgetSpan(
-                        child: DefaultSpan(
-                      pair: pair,
-                      sentenceIndex: sentenceIndex,
-                      wordIndex: wordIndex,
-                      text: word,
-                    )));
-                  }
-                });
+                if (word.contains('\n')) {
+                  Iterable<InlineSpan> spans = word.split('\n').map((text) {
+                    return WidgetSpan(
+                        child: text.isEmpty
+                            ? SizedBox(
+                                height: 10,
+                                width: double.infinity) // To display a new line
+                            : DefaultSpan(
+                                pair: pair,
+                                wordIndex: wordIndex,
+                              ));
+                  });
+                  wordSpans.addAll(spans);
+                } else {
+                  wordSpans.add(WidgetSpan(
+                      child: DefaultSpan(
+                    pair: pair,
+                    wordIndex: wordIndex,
+                  )));
+                }
 
-                return MapEntry(sentenceIndex, sentenceSpans);
+                return MapEntry(wordIndex, wordSpans);
               })
               .values
               .expand((element) => element) // flattens nested list

@@ -11,6 +11,7 @@ import 'package:leopard_flutter/leopard_error.dart';
 import 'package:redux/redux.dart';
 import 'package:Minutes/redux_/rootStore.dart';
 import 'package:redux_thunk/redux_thunk.dart';
+import 'package:uuid/uuid.dart';
 
 import '../utils/transcript_pair.dart';
 
@@ -44,16 +45,22 @@ class LeopardState {
     return instance.hashCode;
   }
 
-  Future<TranscriptPair?> processCombined(
+  Future<List<TranscriptPair>?> processCombined(
       List<int> combinedFrame, Duration startTime) async {
     // TODO: Handle if leopard is somehow not initialised.
     print('Processing ${combinedFrame.length} frames');
     try {
-      final transcript = await instance!.process(combinedFrame);
-      if (transcript.trim().isEmpty) {
+      final transcript =
+          (await instance!.process(combinedFrame)).formatText().trim();
+      if (transcript.isEmpty) {
         return null;
       }
-      return TranscriptPair(transcript.formatText(), startTime);
+      String parent = Uuid().v4();
+      // We may want to split by combining all whitespaces to be safe.
+      return transcript
+          .split(' ')
+          .map((word) => TranscriptPair(word, startTime, parent))
+          .toList();
     } on LeopardInvalidArgumentException {
       print('Leopard Invalid argument exception');
       return null;

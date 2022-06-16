@@ -1,3 +1,5 @@
+import 'package:Minutes/utils/extensions.dart';
+import 'package:Minutes/utils/pair.dart';
 import 'package:Minutes/widgets/secondary_icon_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,11 +24,13 @@ class _RawTextListState extends State<RawTextList> {
         converter: ((store) =>
             RawTextListVM(store.state.transcript.transcriptTextList)),
         builder: (_, viewModel) {
+          List<Pair<String, Pair<String, Duration>>> minutes =
+              viewModel.transcriptTextList.getMinutes();
           return ListView.builder(
-            itemCount: viewModel.transcriptTextList.length,
+            itemCount: minutes.length,
             itemBuilder: (_, index) => RawTextEditor(
-              index: index,
-              partialTranscript: viewModel.transcriptTextList[index],
+              minutes: minutes[index].first,
+              data: minutes[index].second,
             ),
           );
         });

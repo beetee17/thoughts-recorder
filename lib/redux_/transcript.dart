@@ -13,34 +13,34 @@ import 'audio.dart';
 
 class TranscriptState {
   final List<TranscriptPair> transcriptTextList;
-  final int? highlightedSpanIndex;
+  final String highlightedParent;
 
   String get transcriptText =>
-      transcriptTextList.map((pair) => pair.text).join(' ');
+      transcriptTextList.map((pair) => pair.word).join(' ');
 
   TranscriptState(
-      {required this.highlightedSpanIndex, required this.transcriptTextList});
+      {required this.highlightedParent, required this.transcriptTextList});
 
   static TranscriptState empty() {
     return TranscriptState(
-      highlightedSpanIndex: null,
+      highlightedParent: '',
       transcriptTextList: [],
     );
   }
 
   TranscriptState copyWith({
     List<TranscriptPair>? transcriptTextList,
-    int? highlightedSpanIndex,
+    String? highlightedParent,
   }) {
     return TranscriptState(
       transcriptTextList: transcriptTextList ?? this.transcriptTextList,
-      highlightedSpanIndex: highlightedSpanIndex ?? this.highlightedSpanIndex,
+      highlightedParent: highlightedParent ?? this.highlightedParent,
     );
   }
 
   @override
   String toString() {
-    return '\nhighlightedIndex:$highlightedSpanIndex'
+    return '\nhighlightedIndex:$highlightedParent'
         '\nTranscript: $transcriptTextList';
   }
 
@@ -48,42 +48,43 @@ class TranscriptState {
   bool operator ==(other) {
     return (other is TranscriptState) &&
         (transcriptTextList == other.transcriptTextList) &&
-        (highlightedSpanIndex == other.highlightedSpanIndex);
+        (highlightedParent == other.highlightedParent);
   }
 
   @override
   int get hashCode {
     return Object.hash(
-      highlightedSpanIndex,
+      highlightedParent,
       transcriptTextList,
     );
   }
 
-  void highlightSpan(int index) {
-    store.dispatch(HighlightSpanAtIndex(index));
+  void highlightSpan(String parent) {
+    store.dispatch(HighlightWordsWithParent(parent));
   }
 }
 
 class ClearAllAction {}
 
-class HighlightSpanAtIndex {
-  int index;
-  HighlightSpanAtIndex(this.index);
+class HighlightWordsWithParent {
+  String parent;
+  HighlightWordsWithParent(this.parent);
 }
 
 class IncomingTranscriptAction {
-  TranscriptPair transcript;
+  // A list of words of the transcript
+  List<TranscriptPair> transcript;
   IncomingTranscriptAction(this.transcript);
 }
 
 class UpdateTranscriptTextList {
-  int index;
-  TranscriptPair partialTranscript;
-  UpdateTranscriptTextList(this.index, this.partialTranscript);
+  String editedParent;
+  String editedContents;
+  UpdateTranscriptTextList(this.editedParent, this.editedContents);
 }
 
 class ProcessedRemainingFramesAction {
-  TranscriptPair remainingTranscript;
+  List<TranscriptPair> remainingTranscript;
   ProcessedRemainingFramesAction(this.remainingTranscript);
 }
 
@@ -94,22 +95,19 @@ class SetTranscriptListAction {
 
 class AddTextAfterWordAction {
   String text;
-  int sentenceIndex;
   int wordIndex;
-  AddTextAfterWordAction(this.text, this.sentenceIndex, this.wordIndex);
+  AddTextAfterWordAction(this.text, this.wordIndex);
 }
 
 class DeleteWordAction {
-  int sentenceIndex;
   int wordIndex;
-  DeleteWordAction(this.sentenceIndex, this.wordIndex);
+  DeleteWordAction(this.wordIndex);
 }
 
 class EditWordAction {
   String newWord;
-  int sentenceIndex;
   int wordIndex;
-  EditWordAction(this.newWord, this.sentenceIndex, this.wordIndex);
+  EditWordAction(this.newWord, this.wordIndex);
 }
 
 ThunkAction<AppState> Function(SaveFileContents) loadTranscript =
@@ -129,9 +127,9 @@ ThunkAction<AppState> processRemainingFrames = (Store<AppState> store) async {
 
   final Duration startTime =
       DurationUtils.max(Duration.zero, audio.duration - state.combinedDuration);
-  final remainingTranscript =
+  final List<TranscriptPair>? remainingTranscript =
       await leopard.processCombined(remainingFrames, startTime);
-  if (remainingTranscript?.text.trim().isNotEmpty ?? false) {
+  if (remainingTranscript?.isNotEmpty ?? false) {
     await store.dispatch(ProcessedRemainingFramesAction(remainingTranscript!));
   }
   await store.dispatch(AudioFileChangeAction(audio.file));
@@ -139,71 +137,55 @@ ThunkAction<AppState> processRemainingFrames = (Store<AppState> store) async {
 
 // Each reducer will handle actions related to the State Tree it cares about!
 TranscriptState transcriptReducer(TranscriptState prevState, action) {
-  if (action is HighlightSpanAtIndex) {
-    return prevState.copyWith(highlightedSpanIndex: action.index);
+  if (action is HighlightWordsWithParent) {
+    return prevState.copyWith(highlightedParent: action.parent);
   } else if (action is StartRecordSuccessAction) {
-    return prevState
-        .copyWith(transcriptTextList: [], highlightedSpanIndex: null);
+    return TranscriptState.empty();
   } else if (action is CancelRecordSuccessAction) {
-    return prevState
-        .copyWith(transcriptTextList: [], highlightedSpanIndex: null);
+    return TranscriptState.empty();
   } else if (action is ProcessedRemainingFramesAction) {
     final newTranscriptTextList = prevState.transcriptTextList;
-    newTranscriptTextList.add(action.remainingTranscript);
+    newTranscriptTextList.addAll(action.remainingTranscript);
     return prevState.copyWith(
-        transcriptTextList: newTranscriptTextList, highlightedSpanIndex: 0);
+        transcriptTextList: newTranscriptTextList,
+        highlightedParent: newTranscriptTextList.first.parent);
   } else if (action is StartProcessingAudioFileAction) {
-    return prevState
-        .copyWith(transcriptTextList: [], highlightedSpanIndex: null);
+    return prevState.copyWith(transcriptTextList: [], highlightedParent: null);
   } else if (action is UpdateTranscriptTextList) {
-    final newList = prevState.transcriptTextList;
-    newList[action.index] = action.partialTranscript;
-    return prevState.copyWith(transcriptTextList: newList);
+    return prevState.copyWith(
+        transcriptTextList: prevState.transcriptTextList
+            .edit(action.editedContents, action.editedParent));
   } else if (action is SetTranscriptListAction) {
     return prevState.copyWith(transcriptTextList: action.transcriptList);
   } else if (action is IncomingTranscriptAction) {
     final newTranscriptTextList = prevState.transcriptTextList;
-    newTranscriptTextList.add(action.transcript);
+    newTranscriptTextList.addAll(action.transcript);
     return prevState.copyWith(
         transcriptTextList: newTranscriptTextList,
-        highlightedSpanIndex: newTranscriptTextList.length - 1);
+        highlightedParent: newTranscriptTextList.last.parent);
   } else if (action is AudioPositionChangeAction) {
     final int highlightIndex = prevState.transcriptTextList.lastIndexWhere(
         // We do not want the edge cases due to rounding errors
         (pair) => pair.startTime <= action.newPosition);
-    return prevState.copyWith(highlightedSpanIndex: highlightIndex);
+    return prevState.copyWith(
+        highlightedParent: prevState.transcriptTextList[highlightIndex].parent);
   } else if (action is AddTextAfterWordAction) {
     final TranscriptPair prevPair =
-        prevState.transcriptTextList[action.sentenceIndex];
-
-    final List<String> words = prevPair.text.split(' ');
-    words.insert(action.wordIndex + 1, action.text);
-
+        prevState.transcriptTextList[action.wordIndex];
     final newList = prevState.transcriptTextList;
-    newList[action.sentenceIndex] = TranscriptPair(
-        words.join(' ').removeSpaceBeforePunctuation(), prevPair.startTime);
+
+    newList[action.wordIndex] = prevPair.copyWith((word) => word + action.text);
     return prevState.copyWith(transcriptTextList: newList);
   } else if (action is DeleteWordAction) {
-    final TranscriptPair prevPair =
-        prevState.transcriptTextList[action.sentenceIndex];
-
-    final List<String> words = prevPair.text.split(' ');
-    words.removeAt(action.wordIndex);
-
     final newList = prevState.transcriptTextList;
-    newList[action.sentenceIndex] =
-        TranscriptPair(words.join(' '), prevPair.startTime);
+    newList.removeAt(action.wordIndex);
     return prevState.copyWith(transcriptTextList: newList);
   } else if (action is EditWordAction) {
     final TranscriptPair prevPair =
-        prevState.transcriptTextList[action.sentenceIndex];
-
-    final List<String> words = prevPair.text.split(' ');
-    words[action.wordIndex] = action.newWord;
-
+        prevState.transcriptTextList[action.wordIndex];
     final newList = prevState.transcriptTextList;
-    newList[action.sentenceIndex] =
-        TranscriptPair(words.join(' '), prevPair.startTime);
+
+    newList[action.wordIndex] = prevPair.copyWith((word) => action.newWord);
     return prevState.copyWith(transcriptTextList: newList);
   } else {
     return prevState;

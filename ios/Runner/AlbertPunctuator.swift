@@ -31,12 +31,15 @@ class AlbertPunctuator {
     /// - Returns: Confidence scores for the 4 punctuation options for each of the tokens in `text`
     func punctuate(text: String) -> (scores: [[Float]], words:[String], mask: [Bool]) {
         // Convert to lowercase and remove all punctuation
-        let text = text.lowercased().components(separatedBy: .punctuationCharacters).joined()
+        // All whitepsaces and newlines are combined
+        // Trim the ends
+        let text = text.lowercased().components(separatedBy: .punctuationCharacters).joined().split(usingRegex: "\\s+").joined(separator: " ").trimmingCharacters(in: .whitespacesAndNewlines)
+        
         print("Punctuating this piece of text: \n\(text)")
         let inputs = tokenize(text: text)
         
-        // All whitepsaces and newlines are combined
-        let words: [String] = text.split(usingRegex: "\\s+")
+        
+        let words: [String] = text.components(separatedBy: .whitespacesAndNewlines)
         
         var wordPos = 0
       
@@ -60,9 +63,8 @@ class AlbertPunctuator {
                
                 } else if wordPos < words.count{
                     let wordTokens: [String] = tokenizer.wordpieceTokenizer.tokenize(word: words[wordPos])
-                    for _ in 0..<wordTokens.count-1 {
+                    for _ in 0..<max(0, wordTokens.count-1) {
                         mask.append(false)
-                     
                     }
                     mask.append(true)
                   

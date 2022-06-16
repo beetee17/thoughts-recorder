@@ -86,8 +86,8 @@ class PunctuatedTextScreen extends StatelessWidget {
             onPressed: () => Navigator.of(context).pop(),
           )),
       resizeToAvoidBottomInset: false,
-      body: SingleChildScrollView(
-        child: Padding(
+      body: ListView(children: [
+        Padding(
           padding: const EdgeInsets.all(8.0),
           child: RichText(
               text: TextSpan(
@@ -105,7 +105,7 @@ class PunctuatedTextScreen extends StatelessWidget {
                                       item.confidence))))
                       .toList())),
         ),
-      ),
+      ]),
     );
   }
 }

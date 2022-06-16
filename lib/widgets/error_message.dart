@@ -20,8 +20,7 @@ class ErrorMessage extends StatelessWidget {
               Text(
                 errorMessage,
                 style: GoogleFonts.rubik(
-                        fontSize: 28, fontWeight: FontWeight.w500, height: 1.4)
-                    .merge(TextStyle(color: Colors.black54)),
+                    fontSize: 28, fontWeight: FontWeight.w500, height: 1.4),
               ),
               SecondaryIconButton(
                   onPress: () => showCupertinoModalBottomSheet(
@@ -29,7 +28,10 @@ class ErrorMessage extends StatelessWidget {
                         context: context,
                         builder: (context) => Tutorial(),
                       ),
-                  icon: Icon(Icons.question_mark),
+                  icon: Icon(
+                    Icons.question_mark,
+                    color: Colors.white,
+                  ),
                   margin: EdgeInsets.only(top: 20))
             ],
           )),

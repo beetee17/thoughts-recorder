@@ -161,7 +161,7 @@ ThunkAction<AppState> Function(Duration, List<int>, bool) getRecordedCallback =
             length - (state.combinedDuration - durationToSubtract));
 
         // we want the startTime of the text rather than the end
-        TranscriptPair? incomingTranscript =
+        List<TranscriptPair>? incomingTranscript =
             await leopard.processCombined(framesToProcess, startTime);
 
         final leftOverFrames = state.combinedFrame

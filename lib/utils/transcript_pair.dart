@@ -1,29 +1,36 @@
-class TranscriptPair {
-  final String text;
-  final Duration startTime;
-  TranscriptPair(this.text, this.startTime);
+import 'package:uuid/uuid.dart';
 
-  TranscriptPair map(String Function(String) leftMapper,
-      Duration Function(Duration) rightMapper) {
-    return TranscriptPair(leftMapper(text), rightMapper(startTime));
+class TranscriptPair {
+  final String word;
+  final String
+      parent; // TranscriptPairs with the same startTime should share the same minutesIndex
+  final Duration startTime;
+  TranscriptPair(this.word, this.startTime, this.parent);
+
+  TranscriptPair copyWith(String Function(String) textMapper) {
+    return TranscriptPair(textMapper(word), startTime, parent);
   }
 
-  Map toJson() => {'text': text, 'startTime': startTime.inMilliseconds};
+  Map toJson() =>
+      {'word': word, 'startTime': startTime.inMilliseconds, 'parent': parent};
 
   TranscriptPair.fromJson(Map<String, dynamic> map)
-      : text = map['text'],
-        startTime = Duration(milliseconds: map['startTime']);
+      : word = map['word'],
+        startTime = Duration(milliseconds: map['startTime']),
+        parent = map['parent'];
 
   @override
   bool operator ==(final Object other) {
     return other is TranscriptPair &&
-        text == other.text &&
-        startTime == other.startTime;
+        word == other.word &&
+        startTime == other.startTime &&
+        parent == other.parent;
   }
 
   @override
-  int get hashCode => Object.hash(text, startTime);
+  int get hashCode => Object.hash(word, startTime, parent);
 
   @override
-  String toString() => '(${text.toString()}, ${startTime.toString()})';
+  String toString() =>
+      '$parent: (${word.toString()}, ${startTime.toString()}ms)';
 }

@@ -97,3 +97,5 @@ epoch: 3, Val loss: 0.48688083652294045, Val accuracy: 0.8563214154072982
 Namespace(alpha_del=0.4, alpha_sub=0.4, augment_rate=0.15, augment_type='all\xa0', batch_size=8, cuda=True, data_path='data', decay=0, epoch=10, freeze_bert=False, gradient_clip=-1, language='english', lr=5e-06, lstm_dim=-1, name='punctuation-restore', pretrained_model='albert-base-v2', save_path='out', seed=1, sequence_length=256, sub_style='unk', use_crf=False)
 epoch: 0, Train loss: 0.5952906861901284, Train accuracy: 0.8264097421467244
 epoch: 0, Val loss: 0.4925634306488615, Val accuracy: 0.8563214154072982
+epoch: 0, Train loss: 0.8336214731868573, Train accuracy: 0.7709996576701457
+epoch: 0, Val loss: 0.748296141813073, Val accuracy: 0.7884265263904894

@@ -2,8 +2,11 @@ import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:Minutes/redux_/transcript.dart';
 import 'package:Minutes/redux_/ui.dart';
 import 'package:Minutes/screens/punctuated_text_screen.dart';
+import 'package:Minutes/utils/global_variables.dart';
+import 'package:Minutes/utils/spinner.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,6 +16,8 @@ import 'package:Minutes/widgets/raw_text_list.dart';
 import 'package:Minutes/widgets/save_transcript_button.dart';
 import 'package:Minutes/widgets/secondary_icon_button.dart';
 
+import '../utils/extensions.dart';
+import '../utils/pair.dart';
 import 'formatted_text.dart';
 
 class TextArea extends StatefulWidget {
@@ -25,8 +30,6 @@ class TextArea extends StatefulWidget {
 
 class _TextAreaState extends State<TextArea>
     with SingleTickerProviderStateMixin {
-  static const platform = MethodChannel('minutes/punctuator');
-
   late final AnimationController _controller = AnimationController(
     duration: const Duration(seconds: 2),
     vsync: this,
@@ -40,27 +43,12 @@ class _TextAreaState extends State<TextArea>
     curve: Curves.elasticIn,
   ));
 
-  Future<void> _punctuateText(String text) async {
-    try {
-      final arguments = {'text': text};
-      final Map? punctuatorResult =
-          await platform.invokeMapMethod('punctuateText', arguments);
-      if (punctuatorResult != null) {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (builder) =>
-                PunctuatedTextScreen(punctuatorResult: punctuatorResult)));
-      }
-    } on PlatformException catch (e) {
-      print(e);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, TextAreaVM>(
       converter: (store) =>
           TextAreaVM(store.state.audio.file, store.state.ui.showMinutes),
-      builder: (_, viewModel) {
+      builder: (ctx, viewModel) {
         return Expanded(
           child: Stack(children: [
             Container(
@@ -88,8 +76,7 @@ class _TextAreaState extends State<TextArea>
                     SecondaryIconButton(
                       margin: EdgeInsets.only(top: 10.0, right: 10.0),
                       icon: Icon(Icons.auto_fix_high_sharp),
-                      onPress: () =>
-                          _punctuateText(store.state.transcript.transcriptText),
+                      onPress: () => PunctuateTranscript().call(store),
                     ),
                     SaveTranscriptButton(),
                   ],

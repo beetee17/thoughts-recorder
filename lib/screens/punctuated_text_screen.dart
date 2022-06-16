@@ -1,13 +1,19 @@
 import 'dart:ffi';
 
+import 'package:Minutes/redux_/transcript.dart';
+import 'package:Minutes/utils/colors.dart';
 import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/utils/global_variables.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+import '../redux_/rootStore.dart';
 import '../utils/pair.dart';
 
 class PunctuatedWord {
+  static final EMPTY = PunctuatedWord('BLAHBLAH', -1, double.infinity);
   String content;
   int punctuationValue;
   double confidence;
@@ -92,20 +98,93 @@ class PunctuatedTextScreen extends StatelessWidget {
           child: RichText(
               text: TextSpan(
                   children: punctuatedWords
-                      .map((item) => TextSpan(
-                          text: item.content + " ",
-                          style: item.punctuationValue == 0
-                              ? TextStyle(fontSize: 20)
-                              : TextStyle(
-                                  fontSize: 20,
-                                  color: Color.lerp(
-                                      CupertinoColors.destructiveRed,
-                                      CupertinoColors
-                                          .activeGreen.darkHighContrastColor,
-                                      item.confidence))))
+                      .asMap()
+                      .map((wordIndex, item) {
+                        final span = WidgetSpan(
+                            child: PunctuatedSpan(
+                          word: item,
+                          wordIndex: wordIndex,
+                        ));
+                        return MapEntry(wordIndex, span);
+                      })
+                      .values
                       .toList())),
         ),
       ]),
     );
+  }
+}
+
+class PunctuatedSpan extends StatefulWidget {
+  final PunctuatedWord word;
+  final int wordIndex;
+  const PunctuatedSpan({Key? key, required this.wordIndex, required this.word})
+      : super(key: key);
+
+  @override
+  State<PunctuatedSpan> createState() => _PunctuatedSpanState();
+}
+
+class _PunctuatedSpanState extends State<PunctuatedSpan> {
+  Offset _tapPosition = Offset.zero;
+  bool _isHighlighted = false;
+
+  _acceptChanges() {
+    store.dispatch(EditWordAction(widget.word.content, widget.wordIndex));
+
+    // print('edited word ${widget.wordIndex}');
+    // print(store.state.transcript.transcriptText);
+  }
+
+  _declineChanges() {}
+
+  @override
+  Widget build(BuildContext context) {
+    return StoreConnector<AppState, PunctuatedSpanVM>(
+        distinct: true,
+        converter: (store) => PunctuatedSpanVM(
+            store.state.transcript.highlightSpan,
+            store.state.transcript.highlightedParent,
+            store.state.audio.duration),
+        builder: (_, viewModel) {
+          return AnimatedDefaultTextStyle(
+            child: GestureDetector(
+              child: Text('${widget.word.content} '),
+              onLongPress: _declineChanges,
+              onDoubleTap: _acceptChanges,
+            ),
+            style: GoogleFonts.rubik(
+                fontSize: 24,
+                fontWeight: FontWeight.w500,
+                height: 1.4,
+                color: widget.word.punctuationValue == 0
+                    ? textColor
+                    : Color.lerp(
+                        CupertinoColors.destructiveRed,
+                        CupertinoColors.activeGreen.darkHighContrastColor,
+                        widget.word.confidence)),
+            duration: Duration(milliseconds: 300),
+          );
+        });
+  }
+}
+
+class PunctuatedSpanVM {
+  void Function(String) highlightParent;
+  String? highlightedParent;
+  Duration audioDuration;
+  PunctuatedSpanVM(
+      this.highlightParent, this.highlightedParent, this.audioDuration);
+  @override
+  bool operator ==(other) {
+    return (other is PunctuatedSpanVM) &&
+        (highlightParent == other.highlightParent) &&
+        (highlightedParent == other.highlightedParent) &&
+        (audioDuration == other.audioDuration);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(highlightParent, highlightedParent, audioDuration);
   }
 }

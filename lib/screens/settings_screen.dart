@@ -1,3 +1,4 @@
+import 'package:Minutes/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -61,6 +62,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 trailing: Expanded(
                                   flex: 2,
                                   child: CupertinoTextField(
+                                    style: TextStyle(color: focusedTextColor),
                                     controller: snapshot.data,
                                     decoration: BoxDecoration(),
                                     clearButtonMode:

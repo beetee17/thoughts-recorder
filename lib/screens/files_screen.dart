@@ -109,6 +109,7 @@ class _FilesScreenState extends State<FilesScreen> {
                     alignment: Alignment.bottomRight,
                     child: FloatingActionButton(
                       child: Icon(Icons.add),
+                      foregroundColor: focusedTextColor,
                       backgroundColor: Colors.blue.shade800,
                       onPressed: () {
                         ClearAllAction().call(store).then((value) =>

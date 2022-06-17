@@ -166,6 +166,22 @@ extension Safety on List {
   }
 }
 
+extension Helper on List {
+  // Returns the sublist and the last index where cond returned true
+  Pair<List<T>, int> helpfulTakeWhile<T>(int start, bool Function(T) cond) {
+    assert(start >= 0 && start < length);
+
+    int i = start;
+    List<T> res = [];
+    while (i < length && cond(this[i])) {
+      res.add(this[i]);
+      i++;
+    }
+
+    return Pair(res, i - 1);
+  }
+}
+
 extension Editor on List<TranscriptPair> {
   List<TranscriptPair> edit(String editedContents, String editedParent) {
     // Initialise empty list
@@ -179,12 +195,20 @@ extension Editor on List<TranscriptPair> {
     Duration startTime =
         firstWhere((element) => element.parent == editedParent).startTime;
     final List<TranscriptPair> editedWords = editedContents
+        .replaceAll('\n', ' \n')
+        // fixes complicated bug that caused visual glitch in formatted text when new line was added without space.
+        // This causes the created transcriptPair to contain two words instead of one e.g. ['hello\nthere'] instead of ['hello', '\nthere']
+        // TODO: when sharing transcript we need to account for this if not user would get slightly different formatting (spaces on new lines)
         .split(' ')
-        .map((word) => TranscriptPair(word, startTime, editedParent))
+        .map((word) => TranscriptPair(
+            word: word,
+            startTime: startTime,
+            parent: editedParent,
+            punctuationData: null))
         .toList();
 
     // Copy the sublist of 0..<start
-    result.addAll(sublist(0, max(0, start - 1)));
+    result.addAll(sublist(0, max(0, start)));
 
     // addAll(editedWords)
     result.addAll(editedWords);
@@ -201,20 +225,29 @@ extension Editor on List<TranscriptPair> {
     }
     List<Pair<String, Pair<String, Duration>>> result = [];
 
-    String currentParent = first.parent;
-    String currentMinutes = '';
-    int i = 0;
-    for (TranscriptPair pair in this) {
-      if (pair.parent == currentParent) {
-        currentMinutes += pair.word + ' ';
-      } else {
-        result.add(
-            Pair(currentMinutes.trim(), Pair(currentParent, pair.startTime)));
-        currentParent = pair.parent;
-        currentMinutes = pair.word + ' ';
-      }
+    int start = 0;
+    Pair<List<TranscriptPair>, int> items =
+        helpfulTakeWhile(start, (pair) => pair.parent == first.parent);
+    List<List<TranscriptPair>> res = [items.first];
+
+    while (items.second + 1 < length) {
+      start = items.second + 1;
+      items =
+          helpfulTakeWhile(start, (pair) => pair.parent == this[start].parent);
+      res.add(items.first);
     }
 
-    return result;
+    return res.map((list) {
+      String minutes = "";
+      String parent = list.first.parent;
+      Duration startTime = list.first.startTime;
+
+      list.forEach((pair) {
+        minutes += pair.word + " ";
+      });
+
+      return Pair(
+          minutes.substring(0, minutes.length - 1), Pair(parent, startTime));
+    }).toList();
   }
 }

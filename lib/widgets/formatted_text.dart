@@ -22,22 +22,22 @@ class _FormattedTextViewState extends State<FormattedTextView> {
         converter: (store) =>
             FormattedTextVM(store.state.transcript.transcriptTextList),
         builder: (_, viewModel) {
+          print(viewModel.transcriptTextList.map((e) => e.word).toList());
           List<InlineSpan> allSpans = viewModel.transcriptTextList
               .asMap()
               .map((wordIndex, pair) {
                 final String word = pair.word;
 
                 List<InlineSpan> wordSpans = List.empty(growable: true);
-
                 if (word.contains('\n')) {
                   Iterable<InlineSpan> spans = word.split('\n').map((text) {
+                    print(text);
                     return WidgetSpan(
-                        child: text.isEmpty
+                        child: text.trim().isEmpty
                             ? SizedBox(
                                 height: 10,
                                 width: double.infinity) // To display a new line
                             : DefaultSpan(
-                                pair: pair,
                                 wordIndex: wordIndex,
                               ));
                   });
@@ -45,7 +45,6 @@ class _FormattedTextViewState extends State<FormattedTextView> {
                 } else {
                   wordSpans.add(WidgetSpan(
                       child: DefaultSpan(
-                    pair: pair,
                     wordIndex: wordIndex,
                   )));
                 }

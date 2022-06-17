@@ -33,13 +33,17 @@ class AlbertPunctuator {
         // Convert to lowercase and remove all punctuation
         // All whitepsaces and newlines are combined
         // Trim the ends
-        let text = text.lowercased().components(separatedBy: .punctuationCharacters).joined().split(usingRegex: "\\s+").joined(separator: " ").trimmingCharacters(in: .whitespacesAndNewlines)
+        var charactersToRemove = CharacterSet.punctuationCharacters
+        charactersToRemove.remove(charactersIn: "'") // Only remove apostrophes, if single-quote
+         var formattedText = text.replacingOccurrences(of: " '", with: "").replacingOccurrences(of: "' ", with: "")
         
-        print("Punctuating this piece of text: \n\(text)")
-        let inputs = tokenize(text: text)
+         formattedText = formattedText.lowercased().components(separatedBy: charactersToRemove).joined().split(usingRegex: "\\s+").joined(separator: " ").trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        print("Punctuating this piece of text: \n\(formattedText)")
+        let inputs = tokenize(text: formattedText)
         
         
-        let words: [String] = text.components(separatedBy: .whitespacesAndNewlines)
+        let words: [String] = formattedText.components(separatedBy: .whitespacesAndNewlines)
         
         var wordPos = 0
       

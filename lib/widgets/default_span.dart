@@ -12,11 +12,8 @@ import '../utils/transcript_pair.dart';
 import 'just_audio_player.dart';
 
 class DefaultSpan extends StatefulWidget {
-  final TranscriptPair pair;
   final int wordIndex;
-
-  DefaultSpan({Key? key, required this.wordIndex, required this.pair})
-      : super(key: key);
+  DefaultSpan({Key? key, required this.wordIndex}) : super(key: key);
 
   @override
   State<DefaultSpan> createState() => _DefaultSpanState();
@@ -26,7 +23,7 @@ class _DefaultSpanState extends State<DefaultSpan> {
   Offset _tapPosition = Offset.zero;
   bool _isHighlighted = false;
 
-  void _showCustomMenu() async {
+  void _showCustomMenu(String content) async {
     final RenderObject? overlay =
         Overlay.of(context)?.context.findRenderObject();
     if (overlay == null) {
@@ -41,7 +38,7 @@ class _DefaultSpanState extends State<DefaultSpan> {
         color: accentColor,
         constraints: BoxConstraints.loose(Size(350, 50)),
         context: context,
-        items: <PopupMenuEntry<EditResponse>>[EditMenuEntry(widget.pair.word)],
+        items: <PopupMenuEntry<EditResponse>>[EditMenuEntry(content)],
         position: RelativeRect.fromRect(
             _tapPosition & const Size(40, 40), // smaller rect, the touch area
             Offset(-80, 75) &
@@ -81,22 +78,20 @@ class _DefaultSpanState extends State<DefaultSpan> {
         converter: (store) => DefaultSpanVM(
             store.state.transcript.highlightSpan,
             store.state.transcript.highlightedParent,
-            store.state.transcript.punctuatorResult
-                .getItemAtIf<PunctuatedWord?>(
-                    widget.wordIndex, (e) => e?.punctuationValue != 0),
+            store.state.transcript.transcriptTextList[widget.wordIndex],
             store.state.audio.duration),
         builder: (_, viewModel) {
           void onTapSpan() {
-            print("Text: ${widget.pair} tapped");
+            print("Text: ${viewModel.pair} tapped");
             final Duration seekTime = DurationUtils.min(
-                viewModel.audioDuration, widget.pair.startTime);
+                viewModel.audioDuration, viewModel.pair.startTime);
             print('seeking: ${seekTime.inSeconds}s');
             JustAudioPlayerWidgetState.player.seek(seekTime);
           }
 
           TextStyle getStyle() {
             TextStyle res = TextStyle();
-            if (viewModel.highlightedParent == widget.pair.parent) {
+            if (viewModel.highlightedParent == viewModel.pair.parent) {
               res = TextStyle(color: focusedTextColor);
             } else {
               res = TextStyle(color: Colors.white60);
@@ -107,38 +102,35 @@ class _DefaultSpanState extends State<DefaultSpan> {
                   color: focusedTextColor,
                   decoration: TextDecoration.underline);
             }
-
-            if (viewModel.punctuatedWord != null) {
-              res = res.merge(TextStyle(
-                  color: viewModel.punctuatedWord!.punctuationValue == 0
-                      ? textColor
-                      : Color.lerp(
-                          CupertinoColors.destructiveRed,
-                          CupertinoColors.activeGreen.darkHighContrastColor,
-                          viewModel.punctuatedWord!.confidence)));
+            if (viewModel.pair.punctuationData != null) {
+              res = TextStyle(
+                  color: Color.lerp(
+                      CupertinoColors.destructiveRed,
+                      CupertinoColors.activeGreen.darkHighContrastColor,
+                      viewModel.pair.punctuationData!.second));
             }
             return res;
           }
 
           return AnimatedDefaultTextStyle(
-            child: viewModel.punctuatedWord == null
+            child: viewModel.pair.punctuationData != null
                 ? GestureDetector(
-                    child: Text('${widget.pair.word} '),
-                    onLongPress: _showCustomMenu,
-                    onTapDown: _storePosition,
-                    onTap: onTapSpan,
-                  )
-                : GestureDetector(
-                    child: Text('${viewModel.punctuatedWord!.content} '),
+                    child: Text('${viewModel.pair.punctuated.trim()} '),
                     onHorizontalDragEnd: (details) {
                       if (details.primaryVelocity != null) {
                         details.primaryVelocity! < 0
-                            ? store.dispatch(acceptPunctuatorSuggestion(
-                                viewModel.punctuatedWord, widget.wordIndex))
+                            ? store.dispatch(
+                                acceptPunctuatorSuggestion(widget.wordIndex))
                             : store.dispatch(
                                 rejectPunctuatorSuggestion(widget.wordIndex));
                       }
                     },
+                  )
+                : GestureDetector(
+                    child: Text('${viewModel.pair.word.trim()} '),
+                    onLongPress: () => _showCustomMenu(viewModel.pair.word),
+                    onTapDown: _storePosition,
+                    onTap: onTapSpan,
                   ),
             style: GoogleFonts.rubik(
                     fontSize: 24, fontWeight: FontWeight.w500, height: 1.4)
@@ -229,22 +221,21 @@ class EditResponse {
 class DefaultSpanVM {
   void Function(String) highlightParent;
   String? highlightedParent;
-  PunctuatedWord? punctuatedWord;
+  TranscriptPair pair;
   Duration audioDuration;
-  DefaultSpanVM(this.highlightParent, this.highlightedParent,
-      this.punctuatedWord, this.audioDuration);
+  DefaultSpanVM(this.highlightParent, this.highlightedParent, this.pair,
+      this.audioDuration);
   @override
   bool operator ==(other) {
     return (other is DefaultSpanVM) &&
         (highlightParent == other.highlightParent) &&
         (highlightedParent == other.highlightedParent) &&
-        (punctuatedWord == other.punctuatedWord) &&
+        (pair == other.pair) &&
         (audioDuration == other.audioDuration);
   }
 
   @override
   int get hashCode {
-    return Object.hash(
-        highlightParent, highlightedParent, punctuatedWord, audioDuration);
+    return Object.hash(highlightParent, highlightedParent, pair, audioDuration);
   }
 }

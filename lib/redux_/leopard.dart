@@ -59,7 +59,11 @@ class LeopardState {
       // We may want to split by combining all whitespaces to be safe.
       return transcript
           .split(' ')
-          .map((word) => TranscriptPair(word, startTime, parent))
+          .map((word) => TranscriptPair(
+              word: word,
+              startTime: startTime,
+              parent: parent,
+              punctuationData: null))
           .toList();
     } on LeopardInvalidArgumentException {
       print('Leopard Invalid argument exception');

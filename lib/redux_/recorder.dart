@@ -166,7 +166,6 @@ ThunkAction<AppState> Function(Duration, List<int>, bool) getRecordedCallback =
 
         final leftOverFrames = state.combinedFrame
             .sublist(max(0, state.combinedFrame.length - numFramesToSubtract));
-
         if (incomingTranscript != null) {
           await store.dispatch(IncomingTranscriptAction(incomingTranscript));
         }

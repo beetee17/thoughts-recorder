@@ -1,7 +1,6 @@
 import 'package:Minutes/redux_/leopard.dart';
 import 'package:Minutes/redux_/recorder.dart';
 import 'package:Minutes/redux_/transcriber.dart';
-import 'package:Minutes/screens/punctuated_text_screen.dart';
 import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/utils/global_variables.dart';
 import 'package:flutter/services.dart';
@@ -17,55 +16,47 @@ import 'audio.dart';
 
 class TranscriptState {
   final List<TranscriptPair> transcriptTextList;
-  final List<PunctuatedWord?> punctuatorResult;
   final String highlightedParent;
 
   String get transcriptText =>
       transcriptTextList.map((pair) => pair.word).join(' ');
 
   TranscriptState(
-      {required this.punctuatorResult,
-      required this.highlightedParent,
-      required this.transcriptTextList});
+      {required this.highlightedParent, required this.transcriptTextList});
 
   static TranscriptState empty() {
     return TranscriptState(
       highlightedParent: '',
       transcriptTextList: [],
-      punctuatorResult: [null],
     );
   }
 
   TranscriptState copyWith({
     List<TranscriptPair>? transcriptTextList,
     String? highlightedParent,
-    List<PunctuatedWord?>? punctuatorResult,
   }) {
     return TranscriptState(
       transcriptTextList: transcriptTextList ?? this.transcriptTextList,
       highlightedParent: highlightedParent ?? this.highlightedParent,
-      punctuatorResult: punctuatorResult ?? this.punctuatorResult,
     );
   }
 
   @override
   String toString() {
     return '\nhighlightedIndex:$highlightedParent'
-        '\nTranscript: $transcriptTextList'
-        '\nPunctuated: $punctuatorResult';
+        '\nTranscript: $transcriptTextList';
   }
 
   @override
   bool operator ==(other) {
     return (other is TranscriptState) &&
         (transcriptTextList == other.transcriptTextList) &&
-        (highlightedParent == other.highlightedParent) &&
-        (punctuatorResult == other.punctuatorResult);
+        (highlightedParent == other.highlightedParent);
   }
 
   @override
   int get hashCode {
-    return Object.hash(highlightedParent, transcriptTextList, punctuatorResult);
+    return Object.hash(highlightedParent, transcriptTextList);
   }
 
   void highlightSpan(String parent) {
@@ -119,57 +110,58 @@ class EditWordAction {
   EditWordAction(this.newWord, this.wordIndex);
 }
 
-ThunkAction<AppState> Function(PunctuatedWord?, int)
-    acceptPunctuatorSuggestion = (PunctuatedWord? suggestion, int wordIndex) {
+ThunkAction<AppState> Function(int) acceptPunctuatorSuggestion =
+    (int wordIndex) {
   return (Store<AppState> store) async {
-    if (suggestion == null) {
-      return;
-    }
-    // be careful here with word index
-    await store.dispatch(EditWordAction(suggestion.content, wordIndex));
-    List<PunctuatedWord?> newPunctuatorResult =
-        store.state.transcript.punctuatorResult;
-    newPunctuatorResult[wordIndex] = null;
+    final TranscriptState state = store.state.transcript;
+    final TranscriptPair pair = state.transcriptTextList[wordIndex];
+    final newList = state.transcriptTextList;
 
-    await store.dispatch(UpdatePunctuatorResult(newPunctuatorResult));
+    final String punctuation =
+        punctuationMap[pair.punctuationData?.first] ?? '';
+
+    newList[wordIndex] = pair
+        .mapWord((word) => word + punctuation)
+        .copyWith(punctuationData: null, shouldOverrideData: true);
+
+    await store.dispatch(SetTranscriptListAction(newList));
   };
 };
 
 ThunkAction<AppState> Function(int) rejectPunctuatorSuggestion =
     (int wordIndex) {
   return (Store<AppState> store) async {
-    List<PunctuatedWord?> newPunctuatorResult =
-        store.state.transcript.punctuatorResult;
+    final TranscriptState state = store.state.transcript;
+    final TranscriptPair pair = state.transcriptTextList[wordIndex];
+    final newList = state.transcriptTextList;
 
-    newPunctuatorResult[wordIndex] = null;
+    newList[wordIndex] =
+        pair.copyWith(punctuationData: null, shouldOverrideData: true);
 
-    await store.dispatch(UpdatePunctuatorResult(newPunctuatorResult));
+    await store.dispatch(SetTranscriptListAction(newList));
   };
 };
-
-class UpdatePunctuatorResult {
-  List<PunctuatedWord?> result;
-  UpdatePunctuatorResult(this.result);
-}
 
 class PunctuateTranscript implements CallableThunkAction<AppState> {
   static const platform = MethodChannel('minutes/punctuator');
 
-  Future<void> _punctuate(Store<AppState> store, String text) async {
+  Future<void> _punctuate(Store<AppState> store, String text,
+      List<TranscriptPair> transcriptTextList) async {
     try {
       final arguments = {'text': text};
       final Map? result =
           await platform.invokeMapMethod('punctuateText', arguments);
       if (result != null) {
-        await store
-            .dispatch(UpdatePunctuatorResult(formatPunctuatorResult(result)));
+        await store.dispatch(SetTranscriptListAction(
+            formatPunctuatorResult(result, transcriptTextList)));
       }
     } on PlatformException catch (e) {
       print(e);
     }
   }
 
-  List<PunctuatedWord?> formatPunctuatorResult(Map result) {
+  List<TranscriptPair> formatPunctuatorResult(
+      Map result, List<TranscriptPair> transcriptTextList) {
     final words = (result['words'] as List)
         .map((word) => word as String?)
         .whereType<String>()
@@ -182,50 +174,50 @@ class PunctuateTranscript implements CallableThunkAction<AppState> {
             .toList())
         .toList();
 
-    print(allScores);
-
     final mask = (result['mask'] as List)
         .map((item) => item as bool?)
         .whereType<bool>()
         .toList();
 
-    List<PunctuatedWord?> punctuatedWords = [];
+    List<TranscriptPair> punctuatedWords = [];
     int wordPos = 0;
-
-    allScores.asMap().forEach((index, punctuationScores) {
-      if (index < mask.length && mask[index]) {
-        String word = words[wordPos];
-
-        final Pair<int, double> punctuationResult =
-            Math.argmax(punctuationScores);
-        if (punctuationResult.first > 1 && wordPos + 1 < words.length) {
-          // Capitalise the next word if the previous punctuation is not a comma
-          words[wordPos + 1] = words[wordPos + 1].toCapitalized();
-        }
-
-        if (wordPos == 0) {
-          // Capitalise the first word
-          word = word.toCapitalized();
-        }
-
-        final punctuatedWord = PunctuatedWord(
-            word + punctuationMap[punctuationResult.first]!,
-            punctuationResult.first,
-            punctuationResult.second);
-        punctuatedWords.add(punctuatedWord);
-
-        print('${punctuatedWord.content} ${punctuatedWord.confidence}');
-
-        wordPos += 1;
+    print('${words.length}, ${allScores.length}, ${mask.length}');
+    print('words: $words');
+    int index = 0;
+    for (TranscriptPair pair in transcriptTextList) {
+      while (index < allScores.length && !mask[index]) {
+        index++;
       }
-    });
+      if (index < allScores.length) {
+        String word = words[wordPos].toLowerCase();
+        String originalWord = pair.word.toLowerCase();
+        print('${word} | origin: ${originalWord}');
+        if (originalWord != word) {
+          // Just copy over
+          punctuatedWords.add(pair);
+        } else {
+          final List<double> punctuationScores = allScores[index];
+          final Pair<int, double> punctuationResult =
+              Math.argmax(punctuationScores);
+
+          // Don't add if suggestion is no punctuation
+          punctuatedWords.add(pair.copyWith(
+              punctuationData:
+                  punctuationResult.first > 0 ? punctuationResult : null,
+              shouldOverrideData: true));
+          wordPos += 1;
+          index++;
+        }
+      }
+    }
 
     return punctuatedWords;
   }
 
   @override
   Future<void> call(Store<AppState> store) async {
-    _punctuate(store, store.state.transcript.transcriptText);
+    _punctuate(store, store.state.transcript.transcriptText,
+        store.state.transcript.transcriptTextList);
   }
 }
 
@@ -293,7 +285,7 @@ TranscriptState transcriptReducer(TranscriptState prevState, action) {
         prevState.transcriptTextList[action.wordIndex];
     final newList = prevState.transcriptTextList;
 
-    newList[action.wordIndex] = prevPair.copyWith((word) => word + action.text);
+    newList[action.wordIndex] = prevPair.mapWord((word) => word + action.text);
     return prevState.copyWith(transcriptTextList: newList);
   } else if (action is DeleteWordAction) {
     final newList = prevState.transcriptTextList;
@@ -304,10 +296,8 @@ TranscriptState transcriptReducer(TranscriptState prevState, action) {
         prevState.transcriptTextList[action.wordIndex];
     final newList = prevState.transcriptTextList;
 
-    newList[action.wordIndex] = prevPair.copyWith((word) => action.newWord);
+    newList[action.wordIndex] = prevPair.mapWord((word) => action.newWord);
     return prevState.copyWith(transcriptTextList: newList);
-  } else if (action is UpdatePunctuatorResult) {
-    return prevState.copyWith(punctuatorResult: action.result);
   } else {
     return prevState;
   }

@@ -4,7 +4,6 @@ import 'dart:math';
 
 import 'package:Minutes/redux_/transcript.dart';
 import 'package:Minutes/redux_/ui.dart';
-import 'package:Minutes/screens/punctuated_text_screen.dart';
 import 'package:Minutes/utils/global_variables.dart';
 import 'package:Minutes/utils/spinner.dart';
 import 'package:flutter/cupertino.dart';

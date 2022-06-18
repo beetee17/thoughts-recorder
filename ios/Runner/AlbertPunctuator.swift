@@ -22,7 +22,6 @@ class AlbertPunctuator {
     }
     
     private let tokenizer = BertTokenizer()
-    private let basicTokenizer = BasicTokenizer()
     public let seqLen = 256
     
     
@@ -36,7 +35,7 @@ class AlbertPunctuator {
         // Trim the ends
         var charactersToRemove = CharacterSet.punctuationCharacters
         charactersToRemove.remove(charactersIn: "'") // Only remove apostrophes, if single-quote
-         var formattedText = text.replacingOccurrences(of: " '", with: "").replacingOccurrences(of: "' ", with: "")
+        var formattedText = text.replacingOccurrences(of: " '", with: "").replacingOccurrences(of: "' ", with: "")
         
         
          formattedText = formattedText.lowercased().components(separatedBy: charactersToRemove).joined().split(usingRegex: "\\s+").joined(separator: " ").trimmingCharacters(in: .whitespacesAndNewlines)
@@ -60,7 +59,7 @@ class AlbertPunctuator {
                 return try! model.prediction(input: input).token_scoresShapedArray
             }
             
-            let tokens = input.x_1
+            let tokens = input.tokens
             for i in 0..<tokens.count {
                 let token = tokens[i]
                 if ["[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]"].contains(tokenizer.unTokenize(token: token.intValue)) {

@@ -7,6 +7,15 @@ class Pair<T1, T2> {
     return Pair(leftMapper(first), rightMapper(second));
   }
 
+  Map toJson() => {
+        'first': first,
+        'second': second,
+      };
+
+  Pair.fromJson(Map<String, dynamic> map)
+      : first = map['first'],
+        second = map['second'];
+
   @override
   bool operator ==(final Object other) {
     return other is Pair && first == other.first && second == other.second;

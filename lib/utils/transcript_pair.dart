@@ -56,7 +56,9 @@ class TranscriptPair {
       : word = map['word'],
         startTime = Duration(milliseconds: map['startTime']),
         parent = map['parent'],
-        punctuationData = map['punctuationData'];
+        punctuationData = map['punctuationData'] == null
+            ? null
+            : Pair.fromJson(map['punctuationData']);
 
   @override
   bool operator ==(final Object other) {

@@ -10,7 +10,7 @@
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		5814543D2E06F997209E6477 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A957464AA3A7791A388F46C /* Pods_Runner.framework */; };
-		6C42FE192859B7AD00F806CB /* PunctuatorModel.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = 6C42FE182859B7AD00F806CB /* PunctuatorModel.mlpackage */; };
+		6C0E1734285CE62B000EBA93 /* PunctuatorModel.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = 6C0E1733285CE62B000EBA93 /* PunctuatorModel.mlpackage */; };
 		6C42FE1F2859B7E700F806CB /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C42FE1A2859B7E700F806CB /* Math.swift */; };
 		6C42FE212859B7E700F806CB /* BertTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C42FE1C2859B7E700F806CB /* BertTokenizer.swift */; };
 		6C42FE222859B7E700F806CB /* CoreMLHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C42FE1D2859B7E700F806CB /* CoreMLHelpers.swift */; };
@@ -43,7 +43,7 @@
 		1A957464AA3A7791A388F46C /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		23F5185A93071DC40FC4EB1B /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
-		6C42FE182859B7AD00F806CB /* PunctuatorModel.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = PunctuatorModel.mlpackage; sourceTree = "<group>"; };
+		6C0E1733285CE62B000EBA93 /* PunctuatorModel.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; name = PunctuatorModel.mlpackage; path = "../../punctuation-restoration/PunctuatorModel.mlpackage"; sourceTree = "<group>"; };
 		6C42FE1A2859B7E700F806CB /* Math.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Math.swift; sourceTree = "<group>"; };
 		6C42FE1C2859B7E700F806CB /* BertTokenizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BertTokenizer.swift; sourceTree = "<group>"; };
 		6C42FE1D2859B7E700F806CB /* CoreMLHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreMLHelpers.swift; sourceTree = "<group>"; };
@@ -125,7 +125,7 @@
 				1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */,
 				74858FAE1ED2DC5600515810 /* AppDelegate.swift */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
-				6C42FE182859B7AD00F806CB /* PunctuatorModel.mlpackage */,
+				6C0E1733285CE62B000EBA93 /* PunctuatorModel.mlpackage */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -296,7 +296,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6C42FE192859B7AD00F806CB /* PunctuatorModel.mlpackage in Sources */,
+				6C0E1734285CE62B000EBA93 /* PunctuatorModel.mlpackage in Sources */,
 				6C42FE292859B95500F806CB /* AlbertPunctuator.swift in Sources */,
 				6C42FE272859B7F600F806CB /* Utils.swift in Sources */,
 				6C42FE232859B7E700F806CB /* MLMultiArray+Utils.swift in Sources */,

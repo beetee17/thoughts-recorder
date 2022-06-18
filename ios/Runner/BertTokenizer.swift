@@ -167,6 +167,9 @@ class WordpieceTokenizer {
                 if start > 0 {
                     substr = "##\(substr)"
                 }
+                if word == "s" || word == "t" {
+                    substr = "##\(substr)"
+                }
                 if vocab[substr] != nil {
                     cur_substr = substr
                     break

@@ -22,6 +22,7 @@ class AlbertPunctuator {
     }
     
     private let tokenizer = BertTokenizer()
+    private let basicTokenizer = BasicTokenizer()
     public let seqLen = 256
     
     
@@ -36,6 +37,7 @@ class AlbertPunctuator {
         var charactersToRemove = CharacterSet.punctuationCharacters
         charactersToRemove.remove(charactersIn: "'") // Only remove apostrophes, if single-quote
          var formattedText = text.replacingOccurrences(of: " '", with: "").replacingOccurrences(of: "' ", with: "")
+        
         
          formattedText = formattedText.lowercased().components(separatedBy: charactersToRemove).joined().split(usingRegex: "\\s+").joined(separator: " ").trimmingCharacters(in: .whitespacesAndNewlines)
         
@@ -55,7 +57,7 @@ class AlbertPunctuator {
         
         for input in inputs {
             let (output, time) = Utils.time {
-                return try! model.prediction(input: input).var_1067ShapedArray
+                return try! model.prediction(input: input).token_scoresShapedArray
             }
             
             let tokens = input.x_1
@@ -66,7 +68,7 @@ class AlbertPunctuator {
                     mask.append(false)
                
                 } else if wordPos < words.count{
-                    let wordTokens: [String] = tokenizer.wordpieceTokenizer.tokenize(word: words[wordPos])
+                    let wordTokens: [String] = tokenizer.tokenize(text: words[wordPos])
                     for _ in 0..<max(0, wordTokens.count-1) {
                         mask.append(false)
                     }
@@ -144,7 +146,7 @@ class AlbertPunctuator {
                 attention_mask[i] = (i < seqLen - nPadding) ? 1 : 0
             }
             
-            inputs.append(PunctuatorModelInput(x_1: MLMultiArray.from(currTokensWithPad, dims: 2), attn_masks: attention_mask))
+            inputs.append(PunctuatorModelInput(tokens: MLMultiArray.from(currTokensWithPad, dims: 2), attention_mask: attention_mask))
         
         }
         

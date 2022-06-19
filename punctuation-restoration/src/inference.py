@@ -51,7 +51,7 @@ def inference():
     sequence_len = args.sequence_length
     result = ""
     decode_idx = 0
-    punctuation_map = {0: '', 1: ',', 2: '.', 3: '?'}
+    punctuation_map =  {0:'OO', 1:',O', 2:'.O', 3:'?O', 4:'OU', 5:',U', 6:'.U', 7:'?U'}
     if args.language != 'en':
         punctuation_map[2] = '।'
 
@@ -106,11 +106,20 @@ def inference():
                 y_predict = torch.argmax(y_predict, dim=1).view(-1)
 
         print(y_predict)
+        print('mask:', y_mask)
         for i in range(y_mask.shape[0]):
             if y_mask[i] == 1:
-                print('i', i)
-                print('word', words_original_case[decode_idx])
-                result += words_original_case[decode_idx] + punctuation_map[y_predict[i].item()] + ' '
+                prediction = punctuation_map[y_predict[i].item()]
+                word = words_original_case[decode_idx]
+                print('predict:', prediction)
+                print('word:', word)
+                if prediction[0] != "O":
+                    word += prediction[0] 
+                if prediction[1] == "O":
+                    word = word.lower()
+                if prediction[1] == "U":
+                    word = word.capitalize()
+                result += word + " "
                 decode_idx += 1
     print('Punctuated text')
     print(result)

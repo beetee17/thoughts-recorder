@@ -28,9 +28,16 @@ TOKEN_IDX = {
     },
 }
 
-# 'O' -> No punctuation
-punctuation_dict = {'O': 0, 'COMMA': 1, 'PERIOD': 2, 'QUESTION': 3}
-
+## NEW
+"""
+the first symbol of the label indicates what punctuation mark 
+should follow the word (where O means no punctuation needed).
+The second symbol determines if a word needs to be capitalized or not
+(where U indicates that the word should be upper cased, 
+and O - no capitalization needed.) The complete list of all possible labels is: 
+OO    ,O    .O   ?O   OU  ,U  .U, ?U.
+"""
+punctuation_dict = {'OO': 0, ',O': 1, '.O': 2, '?O': 3, 'OU': 4, ',U': 5, '.U': 6, '?U': 7}
 
 # pretrained model name: (model class, model tokenizer, output dimension, token style)
 MODELS = {

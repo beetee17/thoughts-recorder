@@ -39,15 +39,13 @@ aug_type = 'all' # Suddenly gave KeyError: all/x0
 
 # Datasets
 if args.language == 'english':
-    train_set = Dataset(os.path.join(args.data_path, 'en/train2012'), tokenizer=tokenizer, sequence_len=sequence_len,
+    train_set = Dataset(os.path.join(args.data_path, 'en/ted_talks_train.txt'), tokenizer=tokenizer, sequence_len=sequence_len,
                         token_style=token_style, is_train=True, augment_rate=ar, augment_type=aug_type)
-    val_set = Dataset(os.path.join(args.data_path, 'en/dev2012'), tokenizer=tokenizer, sequence_len=sequence_len,
+    val_set = Dataset(os.path.join(args.data_path, 'en/ted_talks_val.txt'), tokenizer=tokenizer, sequence_len=sequence_len,
                       token_style=token_style, is_train=False)
-    test_set_ref = Dataset(os.path.join(args.data_path, 'en/test2011'), tokenizer=tokenizer, sequence_len=sequence_len,
-                           token_style=token_style, is_train=False)
-    test_set_asr = Dataset(os.path.join(args.data_path, 'en/test2011asr'), tokenizer=tokenizer, sequence_len=sequence_len,
-                           token_style=token_style, is_train=False)
-    test_set = [val_set, test_set_ref, test_set_asr]
+    test_set_also = Dataset(os.path.join(args.data_path, 'en/ted_talks_test.txt'), tokenizer=tokenizer, sequence_len=sequence_len,
+                      token_style=token_style, is_train=False)
+    test_set = [val_set, test_set_also]
 elif args.language == 'bangla':
     train_set = Dataset(os.path.join(args.data_path, 'bn/train'), tokenizer=tokenizer, sequence_len=sequence_len,
                         token_style=token_style, is_train=True, augment_rate=ar, augment_type=aug_type)
@@ -104,6 +102,8 @@ if args.use_crf:
 else:
     deep_punctuation = DeepPunctuation(args.pretrained_model, freeze_bert=args.freeze_bert, lstm_dim=args.lstm_dim)
 deep_punctuation.to(device)
+
+# UNCOMMENT to resume training on existing weights. Make sure this file exists!
 # deep_punctuation.load_state_dict(torch.load(model_save_path))
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(deep_punctuation.parameters(), lr=args.lr, weight_decay=args.decay)
@@ -271,14 +271,6 @@ def convertToMLModel():
         for x, y, att, y_mask in train_loader:
             # This is just to get example_input
             x, y, att, y_mask = x.to(device), y.to(device), att.to(device), y_mask.to(device)
-            # print(x)
-            # print(x.shape)
-            # print(y)
-            # print(y.shape)
-            # print(att)
-            # print(att.shape)
-            # print(y_mask)
-            # print(y_mask.shape)
 
             torch_model = deep_punctuation
             torch_model.load_state_dict(torch.load(model_save_path))
@@ -351,6 +343,6 @@ def test_output():
 
 
 if __name__ == '__main__':
-    train()
-    # convertToMLModel()
+    # train()
+    convertToMLModel()
     # test_output()

@@ -1,5 +1,9 @@
+import 'dart:convert';
+
+import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/utils/global_variables.dart';
 import 'package:Minutes/utils/pair.dart';
+import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class TranscriptPair {
@@ -16,8 +20,54 @@ class TranscriptPair {
       required this.punctuationData});
 
   String get punctuated {
-    final String punctuation = punctuationMap[punctuationData?.first] ?? '';
-    return word + punctuation;
+    if (punctuationData == null || word.isEmpty) {
+      return word;
+    }
+
+    // We want to take care of potential whitespace before/after word
+    // E.g. if punctuation is , and word is ' hi \n', we want ' hi, \n' and not ' hi \n,'
+    String result = '';
+    int? start; // index of first non-whitespace char
+    int? end; // index of last non-whitespace char
+
+    for (int i = 0; i < word.length; i++) {
+      final String char = word[i];
+      if (!invalidCharacters.hasMatch(char)) {
+        result += char;
+        start = start ?? i;
+      } else if (start != null) {
+        end = i;
+        break;
+      }
+    }
+
+    if (result.isEmpty) {
+      return result;
+    }
+
+    final String punctuation = punctuationMap[punctuationData!.first] ?? 'OO';
+
+    if (punctuation[0] != 'O') {
+      // If user already added punctuation we do not want to append to that
+      // E.g. if word is 'hello.' and punctuation is ? then we want 'hello?' and not 'hello.?'
+      if (punctuationCharacters.hasMatch(result[result.length - 1])) {
+        result = result.substring(0, result.length - 1) + punctuation[0];
+      } else {
+        result += punctuation[0];
+      }
+    }
+
+    if (punctuation[1] == 'U') {
+      result = result.toCapitalized();
+    } else if (punctuation[1] == 'O' && result.isCapitalised()) {
+      result = result.toLowerCase();
+    }
+
+    if (end == null) {
+      return word.substring(0, start) + result;
+    }
+    // The only reason start and end can both be null is if word is only whitespaces
+    return word.substring(0, start) + result + word.substring(end);
   }
 
   TranscriptPair mapWord(String Function(String) textMapper) {

@@ -117,11 +117,8 @@ ThunkAction<AppState> Function(int) acceptPunctuatorSuggestion =
     final TranscriptPair pair = state.transcriptTextList[wordIndex];
     final newList = state.transcriptTextList;
 
-    final String punctuation =
-        punctuationMap[pair.punctuationData?.first] ?? '';
-
     newList[wordIndex] = pair
-        .mapWord((word) => word + punctuation)
+        .mapWord((_) => pair.punctuated)
         .copyWith(punctuationData: null, shouldOverrideData: true);
 
     await store.dispatch(SetTranscriptListAction(newList));
@@ -184,14 +181,21 @@ class PunctuateTranscript implements CallableThunkAction<AppState> {
     print('${words.length}, ${allScores.length}, ${mask.length}');
     print('words: $words');
     int index = 0;
+    print(mask);
     for (TranscriptPair pair in transcriptTextList) {
       while (index < allScores.length && !mask[index]) {
         index++;
       }
       if (index < allScores.length) {
-        String word = words[wordPos].toLowerCase();
-        String originalWord = pair.word.toLowerCase();
-        print('${word} | origin: ${originalWord}');
+        String word = words[wordPos].toLowerCase().trim();
+        // We want our words formatted in the same way as how it was returned by AlbertPunctuator so semantic equality can be checked
+        // TODO: Need to take care of case where word is in single quotes e.g. 'hello'
+        String originalWord = pair.word
+            .toLowerCase()
+            .trim()
+            .split(punctuationCharacters)
+            .join('');
+        print('${word} | origin: ${originalWord} | index: $index');
         if (originalWord != word) {
           // Just copy over
           punctuatedWords.add(pair);
@@ -199,11 +203,14 @@ class PunctuateTranscript implements CallableThunkAction<AppState> {
           final List<double> punctuationScores = allScores[index];
           final Pair<int, double> punctuationResult =
               Math.argmax(punctuationScores);
-
-          // Don't add if suggestion is no punctuation
+          // If suggestion is no punctuation, we only add if the origianly word was capitalised
+          // i.e. The suggestion is to remove capitalisation
           punctuatedWords.add(pair.copyWith(
-              punctuationData:
-                  punctuationResult.first > 0 ? punctuationResult : null,
+              punctuationData: (punctuationResult.first > 0 ||
+                      (pair.word.isNotEmpty &&
+                          pair.word.trim().isCapitalised()))
+                  ? punctuationResult
+                  : null,
               shouldOverrideData: true));
           wordPos += 1;
           index++;

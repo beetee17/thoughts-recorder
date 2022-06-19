@@ -211,8 +211,6 @@ def train():
             y_mask = y_mask.view(-1)
             if args.use_crf:
                 loss = deep_punctuation.log_likelihood(x, att, y)
-                # y_predict = deep_punctuation(x, att, y)
-                # y_predict = y_predict.view(-1)
                 y = y.view(-1)
             else:
                 y_predict = deep_punctuation(x, att)
@@ -290,7 +288,6 @@ def convertToMLModel():
                         ct.TensorType(name='attention_mask', shape=(1, 256), dtype=types.int32)],
                 minimum_deployment_target = ct.target.iOS15,
                 compute_precision = ct.precision.FLOAT32 # Trade-off between precision and use of neural engine & model size
-                # inputs=[ct.TensorType(shape=x.shape, dtype=types.int64), ct.TensorType(shape=att.shape, dtype=types.int64)]
             )
 
             # Set model metadata
@@ -329,15 +326,7 @@ def test_output():
         x, y, att, y_mask = x.to(device), y.to(device), att.to(device), y_mask.to(device)
         coreml_output = model.predict({'x_1': x.numpy().astype(np.float64), 'attn_masks': att.numpy().astype(np.float64)})['var_1067']
         actual_output = deep_punctuation(x, att)
-        # print("THIS IS THE RAW OUTPUT")
-        # print(actual_output)
-        # print(coreml_output)
 
-        # print("FLATTEN THE FIRST LAYER")
-        # print(actual_output.view(-1, actual_output.shape[2]))
-        # print(coreml_output.reshape(-1, coreml_output.shape[2]))
-
-        # print("FIND MAX CONFIDENCE OUT OF ALL OPTIONS")
         print(torch.argmax(actual_output.view(-1, actual_output.shape[2]), dim=1).view(-1))
         print(np.argmax(coreml_output.reshape(-1, coreml_output.shape[2]), axis=1).reshape(-1))
 

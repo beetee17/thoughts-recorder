@@ -3,10 +3,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Model files
-*.pt 
-*.mlpackage
-
 # Test outputs
 data/*.txt
 

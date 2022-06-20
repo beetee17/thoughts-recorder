@@ -47,15 +47,6 @@ class BertTokenizer {
     }
     
     private func convertTokensToIds(tokens: [String]) throws -> [Int] {
-        if tokens.count > maxLen {
-            throw TokenizerError.tooLong(
-                """
-                Token indices sequence length is longer than the specified maximum
-                sequence length for this BERT model (\(tokens.count) > \(maxLen). Running this
-                sequence through BERT will result in indexing errors".format(len(ids), self.max_len)
-                """
-            )
-        }
         return tokens.map { vocab[$0]! }
     }
     
@@ -110,7 +101,7 @@ class BasicTokenizer {
     func tokenize(text: String) -> [String] {
         // All whitepsaces and newlines are combined
         let splitTokens = text.folding(options: .diacriticInsensitive, locale: nil)
-            .split(usingRegex: "\\s+")
+            .components(separatedBy: .whitespacesAndNewlines)
         
         let tokens = splitTokens.flatMap({ (token: String) -> [String] in
             if neverSplit.contains(token) {
@@ -164,12 +155,14 @@ class WordpieceTokenizer {
             var cur_substr: String? = nil
             while start < end {
                 var substr = Utils.substr(word, start..<end)!
+                print("orig: \(substr)")
                 if start > 0 {
                     substr = "##\(substr)"
                 }
-                if word == "s" || word == "t" {
+                if word == "s" || word == "t" || word == "d" || word == "ve" || word == "re" {
                     substr = "##\(substr)"
                 }
+                print("end: \(substr)")
                 if vocab[substr] != nil {
                     cur_substr = substr
                     break

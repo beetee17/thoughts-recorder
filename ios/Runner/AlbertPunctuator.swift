@@ -35,7 +35,7 @@ class AlbertPunctuator {
         // Trim the ends
         var charactersToRemove = CharacterSet.punctuationCharacters
         charactersToRemove.remove(charactersIn: "'") // Only remove apostrophes, if single-quote
-        var formattedText = text.replacingOccurrences(of: " '", with: "").replacingOccurrences(of: "' ", with: "")
+        var formattedText = text.replacingOccurrences(of: "’", with: "'") .replacingOccurrences(of: " '", with: "").replacingOccurrences(of: "' ", with: "")
         
         
          formattedText = formattedText.lowercased().components(separatedBy: charactersToRemove).joined().split(usingRegex: "\\s+").joined(separator: " ").trimmingCharacters(in: .whitespacesAndNewlines)
@@ -144,11 +144,10 @@ class AlbertPunctuator {
                 // 1 if not padding else 0
                 attention_mask[i] = (i < seqLen - nPadding) ? 1 : 0
             }
-            
+            print(currTokensWithPad)
             inputs.append(PunctuatorModelInput(tokens: MLMultiArray.from(currTokensWithPad, dims: 2), attention_mask: attention_mask))
         
         }
-        
         return inputs
     }
     

@@ -195,6 +195,8 @@ extension Editor on List<TranscriptPair> {
     Duration startTime =
         firstWhere((element) => element.parent == editedParent).startTime;
     final List<TranscriptPair> editedWords = editedContents
+        // Fix split() not working due to non-breaking white space
+        .replaceAll('\u{00A0}', ' ')
         .replaceAll('\n', ' \n')
         // fixes complicated bug that caused visual glitch in formatted text when new line was added without space.
         // This causes the created transcriptPair to contain two words instead of one e.g. ['hello\nthere'] instead of ['hello', '\nthere']
@@ -215,7 +217,7 @@ extension Editor on List<TranscriptPair> {
 
     // Insert the sublist of end+1..<last
     result.addAll(sublist(end + 1));
-
+    print('Edited words: $result');
     return result;
   }
 
@@ -223,7 +225,6 @@ extension Editor on List<TranscriptPair> {
     if (isEmpty) {
       return [];
     }
-    List<Pair<String, Pair<String, Duration>>> result = [];
 
     int start = 0;
     Pair<List<TranscriptPair>, int> items =

@@ -193,10 +193,12 @@ class PunctuateTranscript implements CallableThunkAction<AppState> {
         String originalWord = pair.word
             .toLowerCase()
             .trim()
+            .replaceAll('’', "'")
             .split(punctuationCharacters)
             .join('');
         print('${word} | origin: ${originalWord} | index: $index');
         if (originalWord != word) {
+          print('DIFF');
           // Just copy over
           punctuatedWords.add(pair);
         } else {

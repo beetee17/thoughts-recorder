@@ -7,6 +7,10 @@ import Flutter
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+      // For Rust
+      let dummy = dummy_method_to_enforce_bundling()
+      print(dummy)
+      
       let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
       let punctuatorChannel = FlutterMethodChannel(name: "minutes/punctuator",
                                                 binaryMessenger: controller.binaryMessenger)

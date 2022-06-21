@@ -12,9 +12,9 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'dart:ffi' as ffi;
 
 abstract class Rust {
-  Future<String> greet({dynamic hint});
+  Future<String> tokenize({dynamic hint});
 
-  FlutterRustBridgeTaskConstMeta get kGreetConstMeta;
+  FlutterRustBridgeTaskConstMeta get kTokenizeConstMeta;
 }
 
 class RustImpl extends FlutterRustBridgeBase<RustWire> implements Rust {
@@ -22,17 +22,18 @@ class RustImpl extends FlutterRustBridgeBase<RustWire> implements Rust {
 
   RustImpl.raw(RustWire inner) : super(inner);
 
-  Future<String> greet({dynamic hint}) => executeNormal(FlutterRustBridgeTask(
-        callFfi: (port_) => inner.wire_greet(port_),
+  Future<String> tokenize({dynamic hint}) =>
+      executeNormal(FlutterRustBridgeTask(
+        callFfi: (port_) => inner.wire_tokenize(port_),
         parseSuccessData: _wire2api_String,
-        constMeta: kGreetConstMeta,
+        constMeta: kTokenizeConstMeta,
         argValues: [],
         hint: hint,
       ));
 
-  FlutterRustBridgeTaskConstMeta get kGreetConstMeta =>
+  FlutterRustBridgeTaskConstMeta get kTokenizeConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
-        debugName: "greet",
+        debugName: "tokenize",
         argNames: [],
       );
 
@@ -76,17 +77,19 @@ class RustWire implements FlutterRustBridgeWireBase {
           lookup)
       : _lookup = lookup;
 
-  void wire_greet(
+  void wire_tokenize(
     int port_,
   ) {
-    return _wire_greet(
+    return _wire_tokenize(
       port_,
     );
   }
 
-  late final _wire_greetPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>('wire_greet');
-  late final _wire_greet = _wire_greetPtr.asFunction<void Function(int)>();
+  late final _wire_tokenizePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+          'wire_tokenize');
+  late final _wire_tokenize =
+      _wire_tokenizePtr.asFunction<void Function(int)>();
 
   void free_WireSyncReturnStruct(
     WireSyncReturnStruct val,
@@ -118,5 +121,5 @@ class RustWire implements FlutterRustBridgeWireBase {
 }
 
 typedef DartPostCObjectFnType = ffi.Pointer<
-    ffi.NativeFunction<ffi.Bool Function(DartPort, ffi.Pointer<ffi.Void>)>>;
+    ffi.NativeFunction<ffi.Uint8 Function(DartPort, ffi.Pointer<ffi.Void>)>>;
 typedef DartPort = ffi.Int64;

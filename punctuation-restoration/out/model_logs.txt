@@ -1,0 +1,76 @@
+START
+START
+START
+epoch: 0, Train loss: 2.144876003265381, Train accuracy: 0.044238683127572016
+epoch: 0, Val loss: 2.0800178050994873, Val accuracy: 0.10693069306930693
+epoch: 1, Train loss: 2.0920140743255615, Train accuracy: 0.07583417593528817
+epoch: 1, Val loss: 2.0431935787200928, Val accuracy: 0.21782178217821782
+epoch: 2, Train loss: 2.0548911094665527, Train accuracy: 0.11257606490872211
+epoch: 2, Val loss: 2.0087881088256836, Val accuracy: 0.37425742574257426
+epoch: 3, Train loss: 1.9959930181503296, Train accuracy: 0.3360488798370672
+epoch: 3, Val loss: 1.9730679988861084, Val accuracy: 0.5336633663366337
+epoch: 4, Train loss: 1.943168044090271, Train accuracy: 0.5355691056910569
+START
+epoch: 0, Train loss: 0.35032679916256737, Train accuracy: 0.8689321815150739
+START
+epoch: 0, Train loss: 2.017678419748942, Train accuracy: 0.2726165092902833
+epoch: 0, Val loss: 1.8993756572405498, Val accuracy: 0.7070366699702676
+epoch: 1, Train loss: 1.77993239959081, Train accuracy: 0.7410013255837667
+epoch: 1, Val loss: 1.6887197494506836, Val accuracy: 0.7653121902874133
+epoch: 2, Train loss: 1.5279648105303447, Train accuracy: 0.748490739793308
+epoch: 2, Val loss: 1.4564585288365681, Val accuracy: 0.7654112983151635
+epoch: 3, Train loss: 1.3058703144391377, Train accuracy: 0.7471744221566032
+epoch: 3, Val loss: 1.2227150201797485, Val accuracy: 0.7654112983151635
+epoch: 4, Train loss: 1.112438867489497, Train accuracy: 0.7482036231150693
+epoch: 4, Val loss: 1.0632350146770477, Val accuracy: 0.7654112983151635
+Precision: [0.76548716        nan        nan        nan        nan        nan
+        nan 0.         0.        ]
+Recall: [0.99987053 0.         0.         0.         0.         0.
+ 0.         0.         0.        ]
+F1 score: [0.86711952        nan        nan        nan        nan        nan
+        nan        nan        nan]
+Accuracy:0.7654112983151635
+Confusion Matrix[[7723    0    0    0    0    0    0    1]
+ [ 596    0    0    0    0    0    0    0]
+ [ 494    0    0    0    0    0    0    0]
+ [  36    0    0    0    0    0    0    0]
+ [1073    0    0    0    0    0    0    0]
+ [  98    0    0    0    0    0    0    0]
+ [  66    0    0    0    0    0    0    0]
+ [   3    0    0    0    0    0    0    0]]
+nan 0.0 nan nan 0.0 nan nan 0.0 nan nan 0.0 nan
+
+Precision: [0.80402458        nan        nan        nan        nan        nan
+        nan        nan        nan]
+Recall: [1. 0. 0. 0. 0. 0. 0. 0. 0.]
+F1 score: [0.89136766        nan        nan        nan        nan        nan
+        nan        nan        nan]
+Accuracy:0.804024583663759
+Confusion Matrix[[8111    0    0    0    0    0    0    0]
+ [ 599    0    0    0    0    0    0    0]
+ [ 548    0    0    0    0    0    0    0]
+ [  47    0    0    0    0    0    0    0]
+ [ 701    0    0    0    0    0    0    0]
+ [  66    0    0    0    0    0    0    0]
+ [  15    0    0    0    0    0    0    0]
+ [   1    0    0    0    0    0    0    0]]
+nan 0.0 nan nan 0.0 nan nan 0.0 nan nan 0.0 nan
+
+START
+epoch: 0, Train loss: 1.5074552659477507, Train accuracy: 0.6659473105582475
+epoch: 0, Val loss: 0.9496277528149741, Val accuracy: 0.7873032237598636
+epoch: 1, Train loss: 0.8945367442710059, Train accuracy: 0.7598369842078452
+epoch: 1, Val loss: 0.7869392527001244, Val accuracy: 0.7873032237598636
+epoch: 2, Train loss: 0.8246469731841769, Train accuracy: 0.7602965739194198
+epoch: 2, Val loss: 0.7665132922785622, Val accuracy: 0.7873032237598636
+epoch: 3, Train loss: 0.8095086834260395, Train accuracy: 0.7596243940196358
+epoch: 3, Val loss: 0.7646801365273339, Val accuracy: 0.7873032237598636
+epoch: 4, Train loss: 0.8008609946284976, Train accuracy: 0.7604196316024885
+epoch: 4, Val loss: 0.7513979396649769, Val accuracy: 0.7873032237598636
+START
+epoch: 0, Train loss: 0.35032679916256737, Train accuracy: 0.8689321815150739
+epoch: 0, Val loss: 0.19172342418681218, Val accuracy: 0.9254576114122525
+epoch: 1, Train loss: 0.2410021045131466, Train accuracy: 0.9011034023664243
+epoch: 1, Val loss: 0.16570285896334466, Val accuracy: 0.9333085300799733
+epoch: 2, Train loss: 0.22231187198296767, Train accuracy: 0.9077745281810052
+epoch: 2, Val loss: 0.15609911374181887, Val accuracy: 0.9364106591981315

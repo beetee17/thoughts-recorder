@@ -1,133 +1,33 @@
-import re
 import torch
-
-import argparse
-from model import DeepPunctuation, DeepPunctuationCRF
 from config import *
+import os
+import torch.multiprocessing
+import re
+from model import Punctuator
 
-parser = argparse.ArgumentParser(description='Punctuation restoration inference on text file')
-parser.add_argument('--cuda', default=True, type=lambda x: (str(x).lower() == 'true'), help='use cuda if available')
-parser.add_argument('--pretrained-model', default='xlm-roberta-large', type=str, help='pretrained language model')
-parser.add_argument('--lstm-dim', default=-1, type=int,
-                    help='hidden dimension in LSTM layer, if -1 is set equal to hidden dimension in language model')
-parser.add_argument('--use-crf', default=False, type=lambda x: (str(x).lower() == 'true'),
-                    help='whether to use CRF layer or not')
-parser.add_argument('--language', default='en', type=str, help='language English (en) oe Bangla (bn)')
-parser.add_argument('--in-file', default='data/test_en.txt', type=str, help='path to inference file')
-parser.add_argument('--weight-path', default='xlm-roberta-large.pt', type=str, help='model weight path')
-parser.add_argument('--sequence-length', default=256, type=int,
-                    help='sequence length to use when preparing dataset (default 256)')
-parser.add_argument('--out-file', default='data/test_en_out.txt', type=str, help='output file location')
+save_path = 'out'
+model_save_path = os.path.join(save_path, 'weights.pt')
 
-args = parser.parse_args()
+if __name__ == "__main__":
 
-# tokenizer
-tokenizer = MODELS[args.pretrained_model][1].from_pretrained(args.pretrained_model)
-token_style = MODELS[args.pretrained_model][3]
+    def inference(text):
+        ascii = torch.tensor([ord(c) for c in text])
+        torch_model = Punctuator()
+        torch_model.load_state_dict(torch.load(model_save_path))
+        # Set the model in evaluation mode.
+        torch_model.eval()
 
-# logs
-model_save_path = args.weight_path
+        text = re.sub(r"[,:\-–.!;?]", '', text)
+        words_original_case = text.split()
 
-# Model
-device = torch.device('cuda' if (args.cuda and torch.cuda.is_available()) else 'cpu')
-if args.use_crf:
-    deep_punctuation = DeepPunctuationCRF(args.pretrained_model, freeze_bert=False, lstm_dim=args.lstm_dim)
-else:
-    deep_punctuation = DeepPunctuation(args.pretrained_model, freeze_bert=False, lstm_dim=args.lstm_dim)
-deep_punctuation.to(device)
-
-
-def inference():
-    deep_punctuation.load_state_dict(torch.load(model_save_path))
-    deep_punctuation.eval()
-
-    with open(args.in_file, 'r', encoding='utf-8') as f:
-        text = f.read()
-    text = re.sub(r"[,:\-–.!;?]", '', text)
-    words_original_case = text.split()
-    words = text.lower().split()
-
-    word_pos = 0
-    sequence_len = args.sequence_length
-    result = ""
-    decode_idx = 0
-    punctuation_map =  {0:'OO', 1:',O', 2:'.O', 3:'?O', 4:'OU', 5:',U', 6:'.U', 7:'?U'}
-    if args.language != 'en':
-        punctuation_map[2] = '।'
-
-    while word_pos < len(words):
-        x = [TOKEN_IDX[token_style]['START_SEQ']]
-        y_mask = [0]
-
-        while len(x) < sequence_len and word_pos < len(words):
-            tokens = tokenizer.tokenize(words[word_pos])
-            if len(tokens) + len(x) >= sequence_len:
-                break
-            else:
-                for i in range(len(tokens) - 1):
-                    x.append(tokenizer.convert_tokens_to_ids(tokens[i]))
-                    y_mask.append(0)
-                x.append(tokenizer.convert_tokens_to_ids(tokens[-1]))
-                y_mask.append(1)
-                word_pos += 1
-        x.append(TOKEN_IDX[token_style]['END_SEQ'])
-        y_mask.append(0)
-        if len(x) < sequence_len:
-            x = x + [TOKEN_IDX[token_style]['PAD'] for _ in range(sequence_len - len(x))]
-            y_mask = y_mask + [0 for _ in range(sequence_len - len(y_mask))]
-        attn_mask = [1 if token != TOKEN_IDX[token_style]['PAD'] else 0 for token in x]
-
-        x = torch.tensor(x).reshape(1,-1)
-        y_mask = torch.tensor(y_mask)
-        attn_mask = torch.tensor(attn_mask).reshape(1,-1)
-        x, attn_mask, y_mask = x.to(device), attn_mask.to(device), y_mask.to(device)
 
         with torch.no_grad():
-            if args.use_crf:
-                y = torch.zeros(x.shape[0])
-                y_predict = deep_punctuation(x, attn_mask, y)
-                y_predict = y_predict.view(-1)
-            else:
-                # Outputs a MultiArray of (1, 256, 4) -> 4 punctuation marks, 256 tokens
-                print(x)
-                print(attn_mask)
-                
-                y_predict = deep_punctuation(x, attn_mask)
-                print(y_predict.shape)
-                print(y_predict)
+            y_predict, y_mask, word_pos, punctuated_text = torch_model(ascii=ascii)
 
-                # Get the inner array -> now shape is (256, 4)
-                y_predict = y_predict.view(-1, y_predict.shape[2])
-                print(y_predict.shape)
-                print(y_predict)
-                
-                # For each row of 4 items, get the one with the highest value 
-                # This is the suggested punctuation -> 0 is no punctuation
-                y_predict = torch.argmax(y_predict, dim=1).view(-1)
-
-        print(y_predict)
+        print('scores', y_predict)
         print('mask:', y_mask)
-        for i in range(y_mask.shape[0]):
-            if y_mask[i] == 1:
-                prediction = punctuation_map[y_predict[i].item()]
-                word = words_original_case[decode_idx]
-                print('predict:', prediction)
-                print('word:', word)
-                if prediction[0] != "O":
-                    word += prediction[0] 
-                if prediction[1] == "O":
-                    word = word.lower()
-                if prediction[1] == "U":
-                    word = word.capitalize()
-                result += word + " "
-                decode_idx += 1
-    print('Punctuated text')
-    print(result)
-    with open(args.out_file, 'w', encoding='utf-8') as f:
-        f.write(result)
+        print('stop at', word_pos, words_original_case[min(word_pos, len(words_original_case) -1)])
+        print('Punctuated text')
+        print(''.join([chr(c.item()) for c in punctuated_text if c != -1]).replace('▁', ' '))
 
-
-if __name__ == '__main__':
-    # print(tokenizer.get_vocab())
-    # print('\n'.join(sorted(tokenizer.get_vocab(), key=tokenizer.get_vocab().get)))
-    inference()
+    inference("Superficially, the meritocratic rhetoric is empowering as it inspires one to strive to be their best self, and instills a sense of personal responsibility and freedom. However, the converse scenario is not as inspiring and is often ignored. The losers feel that their failures are no one's fault but their own, and the winners look down at those less well off, leading to feelings of humiliation and resentment. In a meritocratic society, income may be associated with success, which in turn implies hard work and talent of the successful individual. Low income workers like janitors or nurses who contribute in vital ways to the society may feel they do not get the recognition and acknowledgement for their efforts, stripping them of their esteem and dignity.  Such a mentality makes it difficult for those who are successful to empathise with the rest of society, and creates a division that threatens democracy. ")

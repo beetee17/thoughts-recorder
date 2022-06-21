@@ -1,0 +1,11 @@
+/Users/brandonthio/thoughts-recorder/rust/target/debug/deps/digest-bfa6a2f4fc78144b.rmeta: /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/lib.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/core_api.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/core_api/ct_variable.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/core_api/rt_variable.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/core_api/wrapper.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/core_api/xof_reader.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/digest.rs
+
+/Users/brandonthio/thoughts-recorder/rust/target/debug/deps/digest-bfa6a2f4fc78144b.d: /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/lib.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/core_api.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/core_api/ct_variable.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/core_api/rt_variable.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/core_api/wrapper.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/core_api/xof_reader.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/digest.rs
+
+/Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/lib.rs:
+/Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/core_api.rs:
+/Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/core_api/ct_variable.rs:
+/Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/core_api/rt_variable.rs:
+/Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/core_api/wrapper.rs:
+/Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/core_api/xof_reader.rs:
+/Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.3/src/digest.rs:

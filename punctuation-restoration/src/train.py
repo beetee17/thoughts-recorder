@@ -1,13 +1,8 @@
 import os
 import torch
-import torchvision
 import torch.nn as nn
 import numpy as np
-from torch.utils import data
 import torch.multiprocessing
-import coremltools as ct
-from coremltools.converters.mil.mil import types
-
 from tqdm import tqdm
 
 from argparser import parse_arguments
@@ -39,6 +34,16 @@ aug_type = 'all' # Suddenly gave KeyError: all/x0
 
 # Datasets
 if args.language == 'english':
+    train_set = Dataset(os.path.join(args.data_path, 'en/train2012'), tokenizer=tokenizer, sequence_len=sequence_len,
+                        token_style=token_style, is_train=True, augment_rate=ar, augment_type=aug_type)
+    val_set = Dataset(os.path.join(args.data_path, 'en/dev2012'), tokenizer=tokenizer, sequence_len=sequence_len,
+                      token_style=token_style, is_train=False)
+    test_set_ref = Dataset(os.path.join(args.data_path, 'en/test2011'), tokenizer=tokenizer, sequence_len=sequence_len,
+                           token_style=token_style, is_train=False)
+    test_set_asr = Dataset(os.path.join(args.data_path, 'en/test2011asr'), tokenizer=tokenizer, sequence_len=sequence_len,
+                           token_style=token_style, is_train=False)
+    test_set = [val_set, test_set_ref, test_set_asr]
+elif args.language == 'ted-talks':
     train_set = Dataset(os.path.join(args.data_path, 'en/ted_talks_train.txt'), tokenizer=tokenizer, sequence_len=sequence_len,
                         token_style=token_style, is_train=True, augment_rate=ar, augment_type=aug_type)
     val_set = Dataset(os.path.join(args.data_path, 'en/ted_talks_val.txt'), tokenizer=tokenizer, sequence_len=sequence_len,
@@ -46,35 +51,6 @@ if args.language == 'english':
     test_set_also = Dataset(os.path.join(args.data_path, 'en/ted_talks_test.txt'), tokenizer=tokenizer, sequence_len=sequence_len,
                       token_style=token_style, is_train=False)
     test_set = [val_set, test_set_also]
-elif args.language == 'bangla':
-    train_set = Dataset(os.path.join(args.data_path, 'bn/train'), tokenizer=tokenizer, sequence_len=sequence_len,
-                        token_style=token_style, is_train=True, augment_rate=ar, augment_type=aug_type)
-    val_set = Dataset(os.path.join(args.data_path, 'bn/dev'), tokenizer=tokenizer, sequence_len=sequence_len,
-                      token_style=token_style, is_train=False)
-    test_set_news = Dataset(os.path.join(args.data_path, 'bn/test_news'), tokenizer=tokenizer, sequence_len=sequence_len,
-                            token_style=token_style, is_train=False)
-    test_set_ref = Dataset(os.path.join(args.data_path, 'bn/test_ref'), tokenizer=tokenizer, sequence_len=sequence_len,
-                           token_style=token_style, is_train=False)
-    test_set_asr = Dataset(os.path.join(args.data_path, 'bn/test_asr'), tokenizer=tokenizer, sequence_len=sequence_len,
-                           token_style=token_style, is_train=False)
-    test_set = [val_set, test_set_news, test_set_ref, test_set_asr]
-elif args.language == 'english-bangla':
-    train_set = Dataset([os.path.join(args.data_path, 'en/train2012'), os.path.join(args.data_path, 'bn/train_bn')],
-                        tokenizer=tokenizer, sequence_len=sequence_len, token_style=token_style, is_train=True,
-                        augment_rate=ar, augment_type=aug_type)
-    val_set = Dataset([os.path.join(args.data_path, 'en/dev2012'), os.path.join(args.data_path, 'bn/dev_bn')],
-                      tokenizer=tokenizer, sequence_len=sequence_len, token_style=token_style, is_train=False)
-    test_set_ref = Dataset(os.path.join(args.data_path, 'en/test2011'), tokenizer=tokenizer, sequence_len=sequence_len,
-                           token_style=token_style, is_train=False)
-    test_set_asr = Dataset(os.path.join(args.data_path, 'en/test2011asr'), tokenizer=tokenizer, sequence_len=sequence_len,
-                           token_style=token_style, is_train=False)
-    test_set_news = Dataset(os.path.join(args.data_path, 'bn/test_news'), tokenizer=tokenizer, sequence_len=sequence_len,
-                            token_style=token_style, is_train=False)
-    test_bn_ref = Dataset(os.path.join(args.data_path, 'bn/test_ref'), tokenizer=tokenizer, sequence_len=sequence_len,
-                          token_style=token_style, is_train=False)
-    test_bn_asr = Dataset(os.path.join(args.data_path, 'bn/test_asr'), tokenizer=tokenizer, sequence_len=sequence_len,
-                          token_style=token_style, is_train=False)
-    test_set = [val_set, test_set_ref, test_set_asr, test_set_news, test_bn_ref, test_bn_asr]
 else:
     raise ValueError('Incorrect language argument for Dataset')
 
@@ -88,7 +64,6 @@ train_loader = torch.utils.data.DataLoader(train_set, **data_loader_params)
 val_loader = torch.utils.data.DataLoader(val_set, **data_loader_params)
 test_loaders = [torch.utils.data.DataLoader(x, **data_loader_params) for x in test_set]
 
-
 # logs
 os.makedirs(args.save_path, exist_ok=True)
 model_save_path = os.path.join(args.save_path, 'weights.pt')
@@ -96,18 +71,15 @@ log_path = os.path.join(args.save_path, args.name + '_logs.txt')
 
 
 # Model
-device = torch.device('mps' if (args.cuda and torch.backends.mps.is_available()) else 'cpu') # Need to be false when converting to coreml
+device = torch.device('cuda' if (args.cuda and torch.cuda.is_available()) else 'cpu')
 if args.use_crf:
     deep_punctuation = DeepPunctuationCRF(args.pretrained_model, freeze_bert=args.freeze_bert, lstm_dim=args.lstm_dim)
 else:
     deep_punctuation = DeepPunctuation(args.pretrained_model, freeze_bert=args.freeze_bert, lstm_dim=args.lstm_dim)
 deep_punctuation.to(device)
-
-# UNCOMMENT to resume training on existing weights. Make sure this file exists!
-# deep_punctuation.load_state_dict(torch.load(model_save_path))
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(deep_punctuation.parameters(), lr=args.lr, weight_decay=args.decay)
-
+deep_punctuation.load_state_dict(torch.load(model_save_path))
 
 def validate(data_loader):
     """
@@ -206,11 +178,12 @@ def train():
         total = 0
         deep_punctuation.train()
         for x, y, att, y_mask in tqdm(train_loader, desc='train'):
-            # All are torch.Size([8, 256])
             x, y, att, y_mask = x.to(device), y.to(device), att.to(device), y_mask.to(device)
             y_mask = y_mask.view(-1)
             if args.use_crf:
                 loss = deep_punctuation.log_likelihood(x, att, y)
+                # y_predict = deep_punctuation(x, att, y)
+                # y_predict = y_predict.view(-1)
                 y = y.view(-1)
             else:
                 y_predict = deep_punctuation(x, att)
@@ -264,74 +237,6 @@ def train():
         with open(log_path, 'a') as f:
             f.write(log_text[:-1] + '\n\n')
 
-def convertToMLModel():
-    with torch.no_grad():
-        for x, y, att, y_mask in train_loader:
-            # This is just to get example_input
-            x, y, att, y_mask = x.to(device), y.to(device), att.to(device), y_mask.to(device)
-
-            torch_model = deep_punctuation
-            torch_model.load_state_dict(torch.load(model_save_path))
-            # Set the model in evaluation mode.
-            torch_model.eval()
-
-            # Trace the model with random data.
-            example_input = (x, att)
-            traced_model = torch.jit.trace(torch_model, example_input)
-            
-            # Convert to Core ML program using the Unified Conversion API.
-            # From https://developer.apple.com/videos/play/wwdc2021/10038/
-            model = ct.convert(
-                traced_model,
-                convert_to="mlprogram", 
-                inputs=[ct.TensorType(name='tokens', shape=(1, 256), dtype=types.int32), 
-                        ct.TensorType(name='attention_mask', shape=(1, 256), dtype=types.int32)],
-                minimum_deployment_target = ct.target.iOS15,
-                compute_precision = ct.precision.FLOAT32 # Trade-off between precision and use of neural engine & model size
-            )
-
-            # Set model metadata
-            model.author = 'Brandon Thio'
-            model.short_description = 'Restores punctuation in unpunctuated text'
-
-            # Set feature descriptions manually
-            model.input_description['tokens'] = 'The text in tokenised form, according to vocab.txt'
-            model.input_description['attention_mask'] = 'The attention mask'
-
-            # Set the output descriptions
-            spec = model.get_spec()
-            output_names = [out.name for out in spec.description.output]
-
-            ct.utils.rename_feature(spec, str(output_names[0]), 'token_scores')
-            model = ct.models.MLModel(spec, weights_dir=model.weights_dir)
-
-            model.output_description['token_scores'] = "A 2D array where each outer array corresponds to each token of the input. The array's values correspond to relative confidence of the punctuation options for that token."
-            
-
-            # Save the converted model.
-            model.save("model.mlpackage")
-            break
-
-def test_output():
-    # Here we want to test that our mlmodel produces similar output to the original model. 
-    # Some values may not correspond due to the conversion process and/or reduction in 
-    # precision of the values e.g. int64 to int32
-
-    # Load the model
-    model = ct.models.MLModel('model.mlpackage')
-
-    # Make predictions
-    for x, y, att, y_mask in train_loader:
-        # This is just to get example_input
-        x, y, att, y_mask = x.to(device), y.to(device), att.to(device), y_mask.to(device)
-        coreml_output = model.predict({'x_1': x.numpy().astype(np.float64), 'attn_masks': att.numpy().astype(np.float64)})['var_1067']
-        actual_output = deep_punctuation(x, att)
-
-        print(torch.argmax(actual_output.view(-1, actual_output.shape[2]), dim=1).view(-1))
-        print(np.argmax(coreml_output.reshape(-1, coreml_output.shape[2]), axis=1).reshape(-1))
-
 
 if __name__ == '__main__':
-    # train()
-    convertToMLModel()
-    # test_output()
+    train()

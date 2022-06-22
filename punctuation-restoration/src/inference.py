@@ -129,7 +129,4 @@ def inference():
 
 
 if __name__ == '__main__':
-    # print(tokenizer.get_vocab())
-    # print('\n'.join(sorted(tokenizer.get_vocab(), key=tokenizer.get_vocab().get)))
     inference()
-    pass

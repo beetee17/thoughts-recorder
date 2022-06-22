@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 flutter_rust_bridge = "1"
 rust_tokenizers = "6.2.5"
+walkdir = "2"
 
 [lib]
 crate-type = ["lib", "staticlib", "cdylib"]

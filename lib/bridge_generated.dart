@@ -12,7 +12,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'dart:ffi' as ffi;
 
 abstract class Rust {
-  Future<String> tokenize({dynamic hint});
+  Future<Int64List> tokenize(
+      {required String text, required String modelPath, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kTokenizeConstMeta;
 }
@@ -22,38 +23,49 @@ class RustImpl extends FlutterRustBridgeBase<RustWire> implements Rust {
 
   RustImpl.raw(RustWire inner) : super(inner);
 
-  Future<String> tokenize({dynamic hint}) =>
+  Future<Int64List> tokenize(
+          {required String text, required String modelPath, dynamic hint}) =>
       executeNormal(FlutterRustBridgeTask(
-        callFfi: (port_) => inner.wire_tokenize(port_),
-        parseSuccessData: _wire2api_String,
+        callFfi: (port_) => inner.wire_tokenize(
+            port_, _api2wire_String(text), _api2wire_String(modelPath)),
+        parseSuccessData: _wire2api_int_64_list,
         constMeta: kTokenizeConstMeta,
-        argValues: [],
+        argValues: [text, modelPath],
         hint: hint,
       ));
 
   FlutterRustBridgeTaskConstMeta get kTokenizeConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
         debugName: "tokenize",
-        argNames: [],
+        argNames: ["text", "modelPath"],
       );
 
   // Section: api2wire
+  ffi.Pointer<wire_uint_8_list> _api2wire_String(String raw) {
+    return _api2wire_uint_8_list(utf8.encoder.convert(raw));
+  }
+
+  int _api2wire_u8(int raw) {
+    return raw;
+  }
+
+  ffi.Pointer<wire_uint_8_list> _api2wire_uint_8_list(Uint8List raw) {
+    final ans = inner.new_uint_8_list(raw.length);
+    ans.ref.ptr.asTypedList(raw.length).setAll(0, raw);
+    return ans;
+  }
 
   // Section: api_fill_to_wire
 
 }
 
 // Section: wire2api
-String _wire2api_String(dynamic raw) {
-  return raw as String;
-}
-
-int _wire2api_u8(dynamic raw) {
+int _wire2api_i64(dynamic raw) {
   return raw as int;
 }
 
-Uint8List _wire2api_uint_8_list(dynamic raw) {
-  return raw as Uint8List;
+Int64List _wire2api_int_64_list(dynamic raw) {
+  return raw as Int64List;
 }
 
 // ignore_for_file: camel_case_types, non_constant_identifier_names, avoid_positional_boolean_parameters, annotate_overrides, constant_identifier_names
@@ -79,17 +91,38 @@ class RustWire implements FlutterRustBridgeWireBase {
 
   void wire_tokenize(
     int port_,
+    ffi.Pointer<wire_uint_8_list> text,
+    ffi.Pointer<wire_uint_8_list> model_path,
   ) {
     return _wire_tokenize(
       port_,
+      text,
+      model_path,
     );
   }
 
-  late final _wire_tokenizePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'wire_tokenize');
-  late final _wire_tokenize =
-      _wire_tokenizePtr.asFunction<void Function(int)>();
+  late final _wire_tokenizePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>)>>('wire_tokenize');
+  late final _wire_tokenize = _wire_tokenizePtr.asFunction<
+      void Function(
+          int, ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
+
+  ffi.Pointer<wire_uint_8_list> new_uint_8_list(
+    int len,
+  ) {
+    return _new_uint_8_list(
+      len,
+    );
+  }
+
+  late final _new_uint_8_listPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<wire_uint_8_list> Function(
+              ffi.Int32)>>('new_uint_8_list');
+  late final _new_uint_8_list = _new_uint_8_listPtr
+      .asFunction<ffi.Pointer<wire_uint_8_list> Function(int)>();
 
   void free_WireSyncReturnStruct(
     WireSyncReturnStruct val,
@@ -118,6 +151,13 @@ class RustWire implements FlutterRustBridgeWireBase {
           'store_dart_post_cobject');
   late final _store_dart_post_cobject = _store_dart_post_cobjectPtr
       .asFunction<void Function(DartPostCObjectFnType)>();
+}
+
+class wire_uint_8_list extends ffi.Struct {
+  external ffi.Pointer<ffi.Uint8> ptr;
+
+  @ffi.Int32()
+  external int len;
 }
 
 typedef DartPostCObjectFnType = ffi.Pointer<

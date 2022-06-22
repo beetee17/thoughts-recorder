@@ -1,11 +1,8 @@
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:Minutes/redux_/transcript.dart';
+import 'package:Minutes/ffi.dart';
 import 'package:Minutes/redux_/ui.dart';
-import 'package:Minutes/utils/global_variables.dart';
-import 'package:Minutes/utils/spinner.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,10 +11,12 @@ import 'package:Minutes/redux_/rootStore.dart';
 import 'package:Minutes/widgets/raw_text_list.dart';
 import 'package:Minutes/widgets/save_transcript_button.dart';
 import 'package:Minutes/widgets/secondary_icon_button.dart';
+import 'package:leopard_flutter/leopard.dart';
+import 'package:path_provider/path_provider.dart';
 
-import '../utils/extensions.dart';
-import '../utils/pair.dart';
+import '../redux_/transcript.dart';
 import 'formatted_text.dart';
+import 'package:path/path.dart' as path;
 
 class TextArea extends StatefulWidget {
   final PageController pageController;

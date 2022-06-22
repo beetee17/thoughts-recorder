@@ -7,14 +7,14 @@ from config import *
 
 parser = argparse.ArgumentParser(description='Punctuation restoration inference on text file')
 parser.add_argument('--cuda', default=True, type=lambda x: (str(x).lower() == 'true'), help='use cuda if available')
-parser.add_argument('--pretrained-model', default='xlm-roberta-large', type=str, help='pretrained language model')
+parser.add_argument('--pretrained-model', default='albert-base-v2', type=str, help='pretrained language model')
 parser.add_argument('--lstm-dim', default=-1, type=int,
                     help='hidden dimension in LSTM layer, if -1 is set equal to hidden dimension in language model')
 parser.add_argument('--use-crf', default=False, type=lambda x: (str(x).lower() == 'true'),
                     help='whether to use CRF layer or not')
 parser.add_argument('--language', default='en', type=str, help='language English (en) oe Bangla (bn)')
 parser.add_argument('--in-file', default='data/test_en.txt', type=str, help='path to inference file')
-parser.add_argument('--weight-path', default='xlm-roberta-large.pt', type=str, help='model weight path')
+parser.add_argument('--weight-path', default='weights.pt', type=str, help='model weight path')
 parser.add_argument('--sequence-length', default=256, type=int,
                     help='sequence length to use when preparing dataset (default 256)')
 parser.add_argument('--out-file', default='data/test_en_out.txt', type=str, help='output file location')
@@ -23,6 +23,7 @@ args = parser.parse_args()
 
 # tokenizer
 tokenizer = MODELS[args.pretrained_model][1].from_pretrained(args.pretrained_model)
+tokenizer.save_vocabulary(".")
 token_style = MODELS[args.pretrained_model][3]
 
 # logs
@@ -35,7 +36,6 @@ if args.use_crf:
 else:
     deep_punctuation = DeepPunctuation(args.pretrained_model, freeze_bert=False, lstm_dim=args.lstm_dim)
 deep_punctuation.to(device)
-
 
 def inference():
     deep_punctuation.load_state_dict(torch.load(model_save_path))
@@ -61,6 +61,7 @@ def inference():
 
         while len(x) < sequence_len and word_pos < len(words):
             tokens = tokenizer.tokenize(words[word_pos])
+            print(tokens)
             if len(tokens) + len(x) >= sequence_len:
                 break
             else:
@@ -76,7 +77,7 @@ def inference():
             x = x + [TOKEN_IDX[token_style]['PAD'] for _ in range(sequence_len - len(x))]
             y_mask = y_mask + [0 for _ in range(sequence_len - len(y_mask))]
         attn_mask = [1 if token != TOKEN_IDX[token_style]['PAD'] else 0 for token in x]
-
+        print(x)
         x = torch.tensor(x).reshape(1,-1)
         y_mask = torch.tensor(y_mask)
         attn_mask = torch.tensor(attn_mask).reshape(1,-1)
@@ -131,3 +132,4 @@ if __name__ == '__main__':
     # print(tokenizer.get_vocab())
     # print('\n'.join(sorted(tokenizer.get_vocab(), key=tokenizer.get_vocab().get)))
     inference()
+    pass

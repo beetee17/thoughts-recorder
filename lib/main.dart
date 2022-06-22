@@ -1,7 +1,5 @@
-import 'package:Minutes/ffi.dart';
 import 'package:Minutes/redux_/rootStore.dart';
 import 'package:Minutes/screens/files_screen.dart';
-import 'package:Minutes/screens/transcript_screen.dart';
 import 'package:Minutes/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -16,6 +14,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // .then((value) => print(value));
     return StoreProvider(
       store: store,
       child: MaterialApp(

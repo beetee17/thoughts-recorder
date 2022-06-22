@@ -1,8 +1,24 @@
-// As a reminder, you need to run these commands every time your Rust code changes and before you run flutter run:
+// cd rust
+// cargo clean
+// cargo build
+// cd ..
+// cargo install flutter_rust_bridge_codegen just
+// dart pub global activate ffigen 5.0.1
+
+/*
+// Using ffigen 6.0 results in 
+ void store_dart_post_cobject(
+           ^
+    Failed to package /Users/brandonthio/thoughts-recorder.
+    Command PhaseScriptExecution failed with a nonzero exit code
+*/
+
+// As a reminder, you need to run the commands below every time your Rust code changes and before you run flutter run:
+
 // flutter_rust_bridge_codegen \
 //     -r rust/src/api.rs \
 //     -d lib/bridge_generated.dart \
-//     -c ios/Runner/bridge_generated.h \
+//     -c ios/Runner/bridge_generated.h
 // flutter pub run build_runner build
 
 use rust_tokenizers::tokenizer::{AlbertTokenizer, Tokenizer, TruncationStrategy};

@@ -3,8 +3,6 @@
 //     -r rust/src/api.rs \
 //     -d lib/bridge_generated.dart \
 //     -c ios/Runner/bridge_generated.h \
-
-// # if using Dart codegen
 // flutter pub run build_runner build
 
 use rust_tokenizers::tokenizer::{AlbertTokenizer, Tokenizer, TruncationStrategy};
@@ -29,7 +27,7 @@ pub fn tokenize(text: String, model_path: String) -> Vec<i64> {
     let tokens: Vec<i64> =  tokenizer.convert_tokens_to_ids(&word_pieces);
 
     println!("Word Pieces: {:?}", word_pieces);
-    println!("Tokens: {:?}", tokens);
+    println!("Rust returning tokens...");
 
     return tokens
 

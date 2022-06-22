@@ -18,11 +18,37 @@
 		6C42FE252859B7EE00F806CB /* vocab.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6C42FE242859B7EE00F806CB /* vocab.txt */; };
 		6C42FE272859B7F600F806CB /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C42FE262859B7F600F806CB /* Utils.swift */; };
 		6C42FE292859B95500F806CB /* AlbertPunctuator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C42FE282859B95500F806CB /* AlbertPunctuator.swift */; };
+		6C4DF4132861803C0077F6B6 /* librust_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C4DF40E286180060077F6B6 /* librust_static.a */; };
+		6C4DF4152861817A0077F6B6 /* bridge_generated.h in Resources */ = {isa = PBXBuildFile; fileRef = 6C4DF4142861815B0077F6B6 /* bridge_generated.h */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6C4DF40D286180060077F6B6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6C4DF408286180060077F6B6 /* rust.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CA60DCA205FE3C0BDCB816E1;
+			remoteInfo = "rust-staticlib";
+		};
+		6C4DF40F286180060077F6B6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6C4DF408286180060077F6B6 /* rust.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CA6064EADDD9F106A24E505E;
+			remoteInfo = "rust-cdylib";
+		};
+		6C4DF411286180250077F6B6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6C4DF408286180060077F6B6 /* rust.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CA60DCA205FE403E2754574C;
+			remoteInfo = "rust-staticlib";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		9705A1C41CF9048500538489 /* Embed Frameworks */ = {
@@ -51,6 +77,8 @@
 		6C42FE242859B7EE00F806CB /* vocab.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vocab.txt; sourceTree = "<group>"; };
 		6C42FE262859B7F600F806CB /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		6C42FE282859B95500F806CB /* AlbertPunctuator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbertPunctuator.swift; sourceTree = "<group>"; };
+		6C4DF408286180060077F6B6 /* rust.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = rust.xcodeproj; path = ../rust/rust.xcodeproj; sourceTree = "<group>"; };
+		6C4DF4142861815B0077F6B6 /* bridge_generated.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bridge_generated.h; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
@@ -70,6 +98,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6C4DF4132861803C0077F6B6 /* librust_static.a in Frameworks */,
 				5814543D2E06F997209E6477 /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -77,6 +106,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6C4DF409286180060077F6B6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6C4DF40E286180060077F6B6 /* librust_static.a */,
+				6C4DF410286180060077F6B6 /* rust.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		9740EEB11CF90186004384FC /* Flutter */ = {
 			isa = PBXGroup;
 			children = (
@@ -91,6 +129,7 @@
 		97C146E51CF9000F007C117D = {
 			isa = PBXGroup;
 			children = (
+				6C4DF408286180060077F6B6 /* rust.xcodeproj */,
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
 				97C146EF1CF9000F007C117D /* Products */,
@@ -110,6 +149,7 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				6C4DF4142861815B0077F6B6 /* bridge_generated.h */,
 				6C42FE1C2859B7E700F806CB /* BertTokenizer.swift */,
 				6C42FE1D2859B7E700F806CB /* CoreMLHelpers.swift */,
 				6C42FE282859B95500F806CB /* AlbertPunctuator.swift */,
@@ -167,6 +207,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				6C4DF412286180250077F6B6 /* PBXTargetDependency */,
 			);
 			name = Runner;
 			productName = Runner;
@@ -199,6 +240,12 @@
 			mainGroup = 97C146E51CF9000F007C117D;
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 6C4DF409286180060077F6B6 /* Products */;
+					ProjectRef = 6C4DF408286180060077F6B6 /* rust.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				97C146ED1CF9000F007C117D /* Runner */,
@@ -206,11 +253,29 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXReferenceProxy section */
+		6C4DF40E286180060077F6B6 /* librust_static.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = librust_static.a;
+			remoteRef = 6C4DF40D286180060077F6B6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6C4DF410286180060077F6B6 /* rust.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = rust.dylib;
+			remoteRef = 6C4DF40F286180060077F6B6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
 /* Begin PBXResourcesBuildPhase section */
 		97C146EC1CF9000F007C117D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6C4DF4152861817A0077F6B6 /* bridge_generated.h in Resources */,
 				6C42FE252859B7EE00F806CB /* vocab.txt in Resources */,
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
@@ -310,6 +375,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		6C4DF412286180250077F6B6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "rust-staticlib";
+			targetProxy = 6C4DF411286180250077F6B6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		97C146FA1CF9000F007C117D /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
@@ -389,7 +462,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = M9BZ2GV933;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -533,7 +606,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = M9BZ2GV933;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -569,7 +642,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = M9BZ2GV933;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (

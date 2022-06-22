@@ -9,5 +9,5 @@ final Map<int, String> punctuationMap = {
   6: '.U',
   7: '?U'
 };
-final punctuationCharacters = RegExp(r'[.,"\/#!\$%\^&\*;:{}=\-_`~()]');
+final punctuationCharacters = RegExp(r"[,:\-–.!;?]");
 final invalidCharacters = RegExp(r'\s+');

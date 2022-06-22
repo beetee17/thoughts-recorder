@@ -1,0 +1,14 @@
+/Users/brandonthio/thoughts-recorder/rust/target/debug/deps/zip-95b50f9f4e07ab86.rmeta: /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/lib.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/compression.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/cp437.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/crc32.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/read.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/result.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/spec.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/types.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/write.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/zipcrypto.rs
+
+/Users/brandonthio/thoughts-recorder/rust/target/debug/deps/zip-95b50f9f4e07ab86.d: /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/lib.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/compression.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/cp437.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/crc32.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/read.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/result.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/spec.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/types.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/write.rs /Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/zipcrypto.rs
+
+/Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/lib.rs:
+/Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/compression.rs:
+/Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/cp437.rs:
+/Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/crc32.rs:
+/Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/read.rs:
+/Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/result.rs:
+/Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/spec.rs:
+/Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/types.rs:
+/Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/write.rs:
+/Users/brandonthio/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.13/src/zipcrypto.rs:

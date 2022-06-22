@@ -81,6 +81,9 @@ class _DefaultSpanState extends State<DefaultSpan> {
             store.state.transcript.transcriptTextList[widget.wordIndex],
             store.state.audio.duration),
         builder: (_, viewModel) {
+          final String punctuated = viewModel.pair.punctuated.trim();
+          final String original = viewModel.pair.word.trim();
+
           void onTapSpan() {
             print("Text: ${viewModel.pair} tapped");
             final Duration seekTime = DurationUtils.min(
@@ -102,7 +105,8 @@ class _DefaultSpanState extends State<DefaultSpan> {
                   color: focusedTextColor,
                   decoration: TextDecoration.underline);
             }
-            if (viewModel.pair.punctuationData != null) {
+            if (viewModel.pair.punctuationData != null &&
+                punctuated != original) {
               res = TextStyle(
                   color: Color.lerp(
                       CupertinoColors.destructiveRed,
@@ -113,9 +117,9 @@ class _DefaultSpanState extends State<DefaultSpan> {
           }
 
           return AnimatedDefaultTextStyle(
-            child: viewModel.pair.punctuationData != null
+            child: punctuated != original
                 ? GestureDetector(
-                    child: Text('${viewModel.pair.punctuated.trim()} '),
+                    child: Text('$punctuated '),
                     onHorizontalDragEnd: (details) {
                       if (details.primaryVelocity != null) {
                         details.primaryVelocity! < 0
@@ -127,7 +131,7 @@ class _DefaultSpanState extends State<DefaultSpan> {
                     },
                   )
                 : GestureDetector(
-                    child: Text('${viewModel.pair.word.trim()} '),
+                    child: Text('$original '),
                     onLongPress: () => _showCustomMenu(viewModel.pair.word),
                     onTapDown: _storePosition,
                     onTap: onTapSpan,

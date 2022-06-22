@@ -7,6 +7,10 @@ import Flutter
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+      // For Rust
+      let dummy = dummy_method_to_enforce_bundling()
+      print(dummy)
+      
       let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
       let punctuatorChannel = FlutterMethodChannel(name: "minutes/punctuator",
                                                 binaryMessenger: controller.binaryMessenger)
@@ -15,10 +19,10 @@ import Flutter
         // This method is invoked on the UI thread.
           switch call.method {
           case "punctuateText":
-              guard let args = call.arguments as? [String: String] else { return }
-              let text = args["text"]!
+              guard let args = call.arguments as? [String: [Int]] else { return }
+              let tokens = args["tokens"]!
               
-              self?.punctuateText(text: text, result: result)
+              self?.punctuateText(tokens: tokens, result: result)
           default:
               result(FlutterMethodNotImplemented)
           }
@@ -26,11 +30,11 @@ import Flutter
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
-    private func punctuateText(text: String, result: FlutterResult) {
+    private func punctuateText(tokens: [Int], result: FlutterResult) {
         do {
             let myModel = try PunctuatorModel()
             let punctuator = AlbertPunctuator(model: myModel)
-            let (softMaxScores, words, mask) = punctuator.punctuate(text: text)
+            let (softMaxScores, words, mask) = punctuator.punctuate(tokens: tokens)
             result(["scores" : softMaxScores, "words" : words, "mask" : mask])
         } catch let error {
             print(error.localizedDescription)

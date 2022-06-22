@@ -1,9 +1,11 @@
+import 'package:Minutes/ffi.dart';
 import 'package:Minutes/redux_/leopard.dart';
 import 'package:Minutes/redux_/recorder.dart';
 import 'package:Minutes/redux_/transcriber.dart';
 import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/utils/global_variables.dart';
 import 'package:flutter/services.dart';
+import 'package:leopard_flutter/leopard.dart';
 
 import 'package:redux/redux.dart';
 import 'package:Minutes/redux_/rootStore.dart';
@@ -145,7 +147,18 @@ class PunctuateTranscript implements CallableThunkAction<AppState> {
   Future<void> _punctuate(Store<AppState> store, String text,
       List<TranscriptPair> transcriptTextList) async {
     try {
-      final arguments = {'text': text};
+      text = text.formatForPunctuation();
+
+      final String modelPath = await Leopard.tryExtractFlutterAsset(
+          'assets/tokenizer/albert-base-v2-spiece.model');
+
+      print('LOADED MODEL FROM ASSETS SUCCESS: $modelPath');
+
+      final tokens =
+          (await api.tokenize(text: text, modelPath: modelPath)).toList();
+      print('GOT TOKENS FROM RUST: \n$tokens');
+
+      final arguments = {'tokens': tokens};
       final Map? result =
           await platform.invokeMapMethod('punctuateText', arguments);
       if (result != null) {
@@ -178,10 +191,10 @@ class PunctuateTranscript implements CallableThunkAction<AppState> {
 
     List<TranscriptPair> punctuatedWords = [];
     int wordPos = 0;
-    print('${words.length}, ${allScores.length}, ${mask.length}');
-    print('words: $words');
-    int index = 0;
+
+    print('${words.length} words, ${allScores.length} scores, ${mask.length} mask');
     print(mask);
+    int index = 0;
     for (TranscriptPair pair in transcriptTextList) {
       while (index < allScores.length && !mask[index]) {
         index++;
@@ -190,13 +203,10 @@ class PunctuateTranscript implements CallableThunkAction<AppState> {
         String word = words[wordPos].toLowerCase().trim();
         // We want our words formatted in the same way as how it was returned by AlbertPunctuator so semantic equality can be checked
         // TODO: Need to take care of case where word is in single quotes e.g. 'hello'
-        String originalWord = pair.word
-            .toLowerCase()
-            .trim()
-            .replaceAll('’', "'")
-            .split(punctuationCharacters)
-            .join('');
+        String originalWord = pair.word.formatForPunctuation();
+
         print('${word} | origin: ${originalWord} | index: $index');
+
         if (originalWord != word) {
           print('DIFF');
           // Just copy over
@@ -205,15 +215,8 @@ class PunctuateTranscript implements CallableThunkAction<AppState> {
           final List<double> punctuationScores = allScores[index];
           final Pair<int, double> punctuationResult =
               Math.argmax(punctuationScores);
-          // If suggestion is no punctuation, we only add if the origianly word was capitalised
-          // i.e. The suggestion is to remove capitalisation
           punctuatedWords.add(pair.copyWith(
-              punctuationData: (punctuationResult.first > 0 ||
-                      (pair.word.isNotEmpty &&
-                          pair.word.trim().isCapitalised()))
-                  ? punctuationResult
-                  : null,
-              shouldOverrideData: true));
+              punctuationData: punctuationResult, shouldOverrideData: true));
           wordPos += 1;
           index++;
         }

@@ -5,6 +5,8 @@ import 'package:Minutes/utils/pair.dart';
 import 'package:Minutes/utils/transcript_pair.dart';
 import 'package:path/path.dart' as path;
 
+import 'global_variables.dart';
+
 extension StringCasingExtension on String {
   String toggleCapitalisation() {
     if (this.isCapitalised()) {
@@ -58,6 +60,16 @@ extension Filename on File {
 }
 
 extension TextFormatter on String {
+  String formatForPunctuation() {
+    return toLowerCase()
+        .trim()
+        .replaceAll('’', "'")
+        .split(punctuationCharacters) // Remove punctuation
+        .join('')
+        .replaceAll(RegExp(r'\s+'),
+            ' '); // Remove any additional whitespaces between words
+  }
+
   String formatText() {
     String formattedText = this.toUpperCase();
 

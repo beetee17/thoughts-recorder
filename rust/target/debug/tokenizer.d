@@ -1,0 +1,1 @@
+/Users/brandonthio/thoughts-recorder/rust/target/debug/tokenizer: /Users/brandonthio/thoughts-recorder/rust/src/api.rs /Users/brandonthio/thoughts-recorder/rust/src/bridge_generated.rs /Users/brandonthio/thoughts-recorder/rust/src/lib.rs

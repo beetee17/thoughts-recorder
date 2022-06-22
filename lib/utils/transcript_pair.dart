@@ -55,11 +55,14 @@ class TranscriptPair {
       } else {
         result += punctuation[0];
       }
+    } else if (punctuationCharacters.hasMatch(result[result.length - 1])) {
+      // If the suggestion is no punctuation but the user added puncutation, then the suggestion is to remove it
+      result = result.substring(0, result.length - 1);
     }
 
     if (punctuation[1] == 'U') {
       result = result.toCapitalized();
-    } else if (punctuation[1] == 'O' && result.isCapitalised()) {
+    } else if (result.isCapitalised()) {
       result = result.toLowerCase();
     }
 

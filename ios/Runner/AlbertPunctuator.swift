@@ -29,24 +29,18 @@ class AlbertPunctuator {
     /// This function takes in a String of text , tokenizes it, and sends the tokens to our PunctuatorModel for inference. The model returns 4 float values for each token, corresponding to the 4 punctuation options in `punctuationMapper`. The function outputs this multi-dimensional array, after applying the softmax function to each slice of 4 values to get the model's  confidence score.
     /// - Parameter text: The text to be punctuated
     /// - Returns: Confidence scores for the 4 punctuation options for each of the tokens in `text`
-    func punctuate(text: String) -> (scores: [[Float]], words:[String], mask: [Bool]) {
+    func punctuate(tokens: [Int]) -> (scores: [[Float]], words:[String], mask: [Bool]) {
         // Convert to lowercase and remove all punctuation
         // All whitepsaces and newlines are combined
         // Trim the ends
-        var charactersToRemove = CharacterSet.punctuationCharacters
-        charactersToRemove.remove(charactersIn: "'") // Only remove apostrophes, if single-quote
-        var formattedText = text.replacingOccurrences(of: "’", with: "'") .replacingOccurrences(of: " '", with: "").replacingOccurrences(of: "' ", with: "")
+
+        let decodedText = tokenizer.unTokenize(tokens: tokens).joined(separator: "")
+        print("Decoded this piece of text: \n\(decodedText)")
         
+        let inputs = getInputs(tokens: tokens)
         
-         formattedText = formattedText.lowercased().components(separatedBy: charactersToRemove).joined().split(usingRegex: "\\s+").joined(separator: " ").trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        print("Punctuating this piece of text: \n\(formattedText)")
-        let inputs = tokenize(text: formattedText)
-        
-        
-        let words: [String] = formattedText.components(separatedBy: .whitespacesAndNewlines)
-        
-        var wordPos = 0
+        let words: [String] = decodedText.replacingOccurrences(of: "▁", with: " ").trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: .whitespacesAndNewlines)
+    
       
         var allScores: [[Float]] = []
         
@@ -58,27 +52,25 @@ class AlbertPunctuator {
             let (output, time) = Utils.time {
                 return try! model.prediction(input: input).token_scoresShapedArray
             }
+            print("Took <\(time)s>")
             
             let tokens = input.tokens
             for i in 0..<tokens.count {
-                let token = tokens[i]
-                if ["[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]"].contains(tokenizer.unTokenize(token: token.intValue)) {
-                    // Skip this in terms of wordPos
+                let wordPiece = tokenizer.unTokenize(token:tokens[i].intValue)
+                if ["[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]"].contains(wordPiece)  {
                     mask.append(false)
-               
-                } else if wordPos < words.count{
-                    let wordTokens: [String] = tokenizer.tokenize(text: words[wordPos])
-                    for _ in 0..<max(0, wordTokens.count-1) {
-                        mask.append(false)
-                    }
-                    mask.append(true)
-                  
-                    wordPos += 1
+                } else if i < tokens.count - 1 {
+                    // There is a piece after this. If it starts with ▁ then this current piece must be the last of its word
+                    let nextWordPiece = tokenizer.unTokenize(token:tokens[i+1].intValue)
+                    
+                    // If it is the last piece then the next one is a stop token
+                    mask.append(nextWordPiece.starts(with: "▁") || nextWordPiece == "[SEP]")
+                
+                } else {
+                    // This is the last piece. The last token is always a [CLS]
+                    mask.append(false)
                 }
             }
-        
-          
-            print("Took <\(time)s>")
             
             var softMaxScores: [[Float]] = []
             
@@ -95,27 +87,10 @@ class AlbertPunctuator {
         return (allScores, words, mask)
     }
     
-  
+
     
-    func getPunctuatedText(from allScores: [[Float]], for words: [String], mask: [Bool]) -> String {
-        var punctuatedText: String = ""
-        var wordPos = 0
-        
-        for (index, punctuationScores) in allScores.enumerated() {
-            if mask[index] {
-                let word = words[wordPos]
-                let punctuationResult = argmax(punctuationScores)
-                punctuatedText += word + AlbertPunctuator.punctuationMapper[punctuationResult.0]! + " "
-                wordPos += 1
-            }
-        }
-        
-        return punctuatedText
-    }
-    
-    
-    private func tokenize(text: String) -> [PunctuatorModelInput] {
-        var remainingTokens = tokenizer.tokenizeToIds(text: text)
+    private func getInputs(tokens: [Int]) -> [PunctuatorModelInput] {
+        var remainingTokens = tokens
         var inputs: [PunctuatorModelInput] = []
         
         while !remainingTokens.isEmpty {

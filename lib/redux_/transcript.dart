@@ -192,10 +192,9 @@ class PunctuateTranscript implements CallableThunkAction<AppState> {
     List<TranscriptPair> punctuatedWords = [];
     int wordPos = 0;
 
-    print('${words.length}, ${allScores.length}, ${mask.length}');
-    print('words: $words');
-    int index = 0;
+    print('${words.length} words, ${allScores.length} scores, ${mask.length} mask');
     print(mask);
+    int index = 0;
     for (TranscriptPair pair in transcriptTextList) {
       while (index < allScores.length && !mask[index]) {
         index++;

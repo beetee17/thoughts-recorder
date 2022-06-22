@@ -116,7 +116,6 @@ class _DefaultSpanState extends State<DefaultSpan> {
             return res;
           }
 
-          print('$punctuated & $original');
           return AnimatedDefaultTextStyle(
             child: punctuated != original
                 ? GestureDetector(

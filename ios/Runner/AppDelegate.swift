@@ -41,4 +41,16 @@ import Flutter
             result(FlutterError(code: "An error occured", message: error.localizedDescription, details: nil))
         }
     }
+    
+    private func autoCorrectText(tokens: [Int], targets: [Int], result: FlutterResult) {
+        do {
+            let myModel = try AutoCorrectModel()
+            let autoCorrector = AlbertAutoCorrector(model: myModel)
+            let softMaxScores = autoCorrector.autoCorrect(tokens: tokens, targets: targets)
+            result(["scores" : softMaxScores])
+        } catch let error {
+            print(error.localizedDescription)
+            result(FlutterError(code: "An error occured", message: error.localizedDescription, details: nil))
+        }
+    }
 }

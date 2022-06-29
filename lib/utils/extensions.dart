@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
 
@@ -6,6 +7,42 @@ import 'package:Minutes/utils/transcript_pair.dart';
 import 'package:path/path.dart' as path;
 
 import 'global_variables.dart';
+
+extension Punctuation on Pair<int, double> {
+  static Pair<int, double> convertToUppercase(Pair<int, double> suggestion) {
+    if (suggestion.first < 4) {
+      return suggestion.map((p0) => p0 + 4, (p0) => p0);
+    } else {
+      return suggestion;
+    }
+  }
+
+  static Pair<int, double> convertToLowercase(Pair<int, double> suggestion) {
+    if (suggestion.first > 4) {
+      return suggestion.map((p0) => p0 - 4, (p0) => p0);
+    } else {
+      return suggestion;
+    }
+  }
+
+  static bool checkIfNextWordRequiresUpper(Pair<int, double>? prevSuggestion) {
+    if (prevSuggestion == null) {
+      return false;
+    }
+    return [2, 3, 6, 7].contains(prevSuggestion.first);
+  }
+
+  static Pair<int, double> forceSuggestPunctuation(
+      List<double> punctuationScores) {
+    final newScores = punctuationScores;
+    for (int i = 0; i < newScores.length; i++) {
+      if (![2, 3, 6, 7].contains(i)) {
+        newScores[i] = 0;
+      }
+    }
+    return Math.argmax(newScores);
+  }
+}
 
 extension StringCasingExtension on String {
   String toggleCapitalisation() {

@@ -20,6 +20,8 @@
 		6C42FE292859B95500F806CB /* AlbertPunctuator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C42FE282859B95500F806CB /* AlbertPunctuator.swift */; };
 		6C4DF4132861803C0077F6B6 /* librust_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C4DF40E286180060077F6B6 /* librust_static.a */; };
 		6C4DF4152861817A0077F6B6 /* bridge_generated.h in Resources */ = {isa = PBXBuildFile; fileRef = 6C4DF4142861815B0077F6B6 /* bridge_generated.h */; };
+		6C6B5A1C286C543C0042406F /* AlbertAutoCorrector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C6B5A1B286C543C0042406F /* AlbertAutoCorrector.swift */; };
+		6C6B5A2A286C73200042406F /* AutoCorrectModel.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = 6C6B5A28286C73200042406F /* AutoCorrectModel.mlpackage */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
@@ -79,6 +81,8 @@
 		6C42FE282859B95500F806CB /* AlbertPunctuator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbertPunctuator.swift; sourceTree = "<group>"; };
 		6C4DF408286180060077F6B6 /* rust.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = rust.xcodeproj; path = ../rust/rust.xcodeproj; sourceTree = "<group>"; };
 		6C4DF4142861815B0077F6B6 /* bridge_generated.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bridge_generated.h; sourceTree = "<group>"; };
+		6C6B5A1B286C543C0042406F /* AlbertAutoCorrector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbertAutoCorrector.swift; sourceTree = "<group>"; };
+		6C6B5A28286C73200042406F /* AutoCorrectModel.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; name = AutoCorrectModel.mlpackage; path = ../../auto_correct/AutoCorrectModel.mlpackage; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
@@ -153,6 +157,7 @@
 				6C42FE1C2859B7E700F806CB /* BertTokenizer.swift */,
 				6C42FE1D2859B7E700F806CB /* CoreMLHelpers.swift */,
 				6C42FE282859B95500F806CB /* AlbertPunctuator.swift */,
+				6C6B5A1B286C543C0042406F /* AlbertAutoCorrector.swift */,
 				6C42FE1A2859B7E700F806CB /* Math.swift */,
 				6C42FE1E2859B7E700F806CB /* MLMultiArray+Utils.swift */,
 				6C42FE262859B7F600F806CB /* Utils.swift */,
@@ -165,6 +170,7 @@
 				1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */,
 				74858FAE1ED2DC5600515810 /* AppDelegate.swift */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
+				6C6B5A28286C73200042406F /* AutoCorrectModel.mlpackage */,
 				6C0E1733285CE62B000EBA93 /* PunctuatorModel.mlpackage */,
 			);
 			path = Runner;
@@ -362,8 +368,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				6C0E1734285CE62B000EBA93 /* PunctuatorModel.mlpackage in Sources */,
+				6C6B5A1C286C543C0042406F /* AlbertAutoCorrector.swift in Sources */,
 				6C42FE292859B95500F806CB /* AlbertPunctuator.swift in Sources */,
 				6C42FE272859B7F600F806CB /* Utils.swift in Sources */,
+				6C6B5A2A286C73200042406F /* AutoCorrectModel.mlpackage in Sources */,
 				6C42FE232859B7E700F806CB /* MLMultiArray+Utils.swift in Sources */,
 				6C42FE222859B7E700F806CB /* CoreMLHelpers.swift in Sources */,
 				6C42FE212859B7E700F806CB /* BertTokenizer.swift in Sources */,
@@ -436,6 +444,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXCLUDED_ARCHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -446,11 +455,13 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 				STRIP_STYLE = "non-global";
 				SUPPORTED_PLATFORMS = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Profile;
 		};
@@ -485,6 +496,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
+				VALIDATE_WORKSPACE = NO;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Profile;
@@ -522,6 +534,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -538,10 +551,11 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 				STRIP_STYLE = "non-global";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Debug;
 		};
@@ -578,6 +592,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXCLUDED_ARCHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -588,6 +603,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 				STRIP_STYLE = "non-global";
 				SUPPORTED_PLATFORMS = iphoneos;
@@ -595,6 +611,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Release;
 		};
@@ -630,6 +647,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				VALIDATE_WORKSPACE = NO;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -665,6 +683,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
+				VALIDATE_WORKSPACE = NO;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

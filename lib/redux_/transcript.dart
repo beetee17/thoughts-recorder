@@ -192,9 +192,12 @@ class PunctuateTranscript implements CallableThunkAction<AppState> {
     List<TranscriptPair> punctuatedWords = [];
     int wordPos = 0;
 
-    print('${words.length} words, ${allScores.length} scores, ${mask.length} mask');
+    print(
+        '${words.length} words, ${allScores.length} scores, ${mask.length} mask');
     print(mask);
     int index = 0;
+    Pair<int, double>? lastPunctuationResult;
+
     for (TranscriptPair pair in transcriptTextList) {
       while (index < allScores.length && !mask[index]) {
         index++;
@@ -205,7 +208,8 @@ class PunctuateTranscript implements CallableThunkAction<AppState> {
         // TODO: Need to take care of case where word is in single quotes e.g. 'hello'
         String originalWord = pair.word.formatForPunctuation();
 
-        print('${word} | origin: ${originalWord} | index: $index');
+        print(
+            '${word} | origin: ${originalWord} | index: $index | wordPos: $wordPos');
 
         if (originalWord != word) {
           print('DIFF');
@@ -213,8 +217,28 @@ class PunctuateTranscript implements CallableThunkAction<AppState> {
           punctuatedWords.add(pair);
         } else {
           final List<double> punctuationScores = allScores[index];
-          final Pair<int, double> punctuationResult =
-              Math.argmax(punctuationScores);
+          Pair<int, double> punctuationResult = Math.argmax(punctuationScores);
+
+          if (wordPos == 0 && punctuationResult.first < 4) {
+            // Capitalise first word.
+            punctuationResult =
+                Punctuation.convertToUppercase(punctuationResult);
+          } else if (wordPos == words.length - 1) {
+            print('LAST WORD');
+            // Punctuate last word
+            punctuationResult =
+                Punctuation.forceSuggestPunctuation(punctuationScores);
+          } else if (Punctuation.checkIfNextWordRequiresUpper(
+              lastPunctuationResult)) {
+            punctuationResult =
+                Punctuation.convertToUppercase(punctuationResult);
+          } else {
+            punctuationResult =
+                Punctuation.convertToLowercase(punctuationResult);
+          }
+          print(punctuationResult);
+          lastPunctuationResult = punctuationResult;
+
           punctuatedWords.add(pair.copyWith(
               punctuationData: punctuationResult, shouldOverrideData: true));
           wordPos += 1;

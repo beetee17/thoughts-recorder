@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 
 Future<T?> showSpinnerUntil<T>(
     BuildContext context, Future<T?> Function() asyncFuction,
-    {Duration? delay}) async {
+    {Duration? delay, bool barrierDismissable = true}) async {
   showDialog(
     barrierLabel: 'Dismiss',
-    barrierDismissible: true,
+    barrierDismissible: barrierDismissable,
     builder: (ctx) => const Center(child: CircularProgressIndicator()),
     context: context,
   );

@@ -33,7 +33,8 @@ class _FilesScreenState extends State<FilesScreen> {
           context,
           () => InitLeopardAction()
               .call(store)
-              .then((_) => store.dispatch(refreshFiles)));
+              .then((_) => store.dispatch(refreshFiles)),
+          barrierDismissable: false);
     });
   }
 

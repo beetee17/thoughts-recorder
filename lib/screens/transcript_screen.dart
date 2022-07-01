@@ -32,6 +32,13 @@ class TranscriptScreen extends StatefulWidget {
 
 class _TranscriptScreenState extends State<TranscriptScreen> {
   @override
+  void dispose() {
+    // NEED TO STOP RECORDING IF USER DID NOT DO SO
+    super.dispose();
+    store.state.recorder.pauseRecording();
+  }
+
+  @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.white, // Only honored in Android M and above

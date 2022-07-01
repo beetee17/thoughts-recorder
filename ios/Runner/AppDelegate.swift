@@ -19,10 +19,21 @@ import Flutter
         // This method is invoked on the UI thread.
           switch call.method {
           case "punctuateText":
-              guard let args = call.arguments as? [String: [Int]] else { return }
-              let tokens = args["tokens"]!
+              guard let args = call.arguments as? [String: [Int]],
+                    let tokens = args["tokens"] else {
+                  print("INVALID INPUT: \(String(describing: call.arguments))")
+                  return
+              }
               
               self?.punctuateText(tokens: tokens, result: result)
+          case "autoCorrectText":
+              guard let args = call.arguments as? [String: [Int]],
+                    let tokens = args["tokens"],
+                    let targets = args["targets"] else {
+                  print("INVALID INPUT: \(String(describing: call.arguments))")
+                  return
+              }
+              self?.autoCorrectText(tokens: tokens, targets: targets, result: result)
           default:
               result(FlutterMethodNotImplemented)
           }

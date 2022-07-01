@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:Minutes/redux_/files.dart';
+import 'package:Minutes/redux_/transcriber.dart';
 import 'package:Minutes/screens/settings_screen.dart';
 import 'package:Minutes/screens/transcript_screen.dart';
 import 'package:Minutes/utils/colors.dart';
@@ -29,11 +30,12 @@ class _FilesScreenState extends State<FilesScreen> {
     super.initState();
 
     Settings.getAccessKey().then((_) {
-      showSpinnerUntil(
-          context,
-          () => InitLeopardAction()
-              .call(store)
-              .then((_) => store.dispatch(refreshFiles)));
+      showSpinnerUntil(context, () {
+        initialiseAutoCorrectSuggestions.call(store);
+        return InitLeopardAction()
+            .call(store)
+            .then((_) => store.dispatch(refreshFiles));
+      });
     });
   }
 

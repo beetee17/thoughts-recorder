@@ -48,3 +48,24 @@ pub fn tokenize(text: String, model_path: String) -> Vec<i64> {
     return tokens
 
 }
+
+pub fn tokenize_word(word: String, model_path: String) -> Vec<i64> {
+
+    let strip_accents = false;
+    let lower_case = false;
+    let model = SentencePieceModel::from_file(&model_path).unwrap();
+    println!("Got model!");
+
+    let vocab = AlbertVocab::from_file(&model_path).unwrap();
+    println!("Got vocab!");
+
+    let tokenizer =
+        AlbertTokenizer::from_existing_vocab_and_model(vocab, model, lower_case, strip_accents);
+   
+    let tokens: Vec<i64> =  tokenizer.convert_tokens_to_ids([word]);
+
+    println!("Rust returning tokens...");
+
+    return tokens
+
+}

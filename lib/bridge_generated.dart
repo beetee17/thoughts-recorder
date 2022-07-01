@@ -16,6 +16,11 @@ abstract class Rust {
       {required String text, required String modelPath, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kTokenizeConstMeta;
+
+  Future<Int64List> tokenizeWord(
+      {required String word, required String modelPath, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kTokenizeWordConstMeta;
 }
 
 class RustImpl extends FlutterRustBridgeBase<RustWire> implements Rust {
@@ -38,6 +43,23 @@ class RustImpl extends FlutterRustBridgeBase<RustWire> implements Rust {
       const FlutterRustBridgeTaskConstMeta(
         debugName: "tokenize",
         argNames: ["text", "modelPath"],
+      );
+
+  Future<Int64List> tokenizeWord(
+          {required String word, required String modelPath, dynamic hint}) =>
+      executeNormal(FlutterRustBridgeTask(
+        callFfi: (port_) => inner.wire_tokenize_word(
+            port_, _api2wire_String(word), _api2wire_String(modelPath)),
+        parseSuccessData: _wire2api_int_64_list,
+        constMeta: kTokenizeWordConstMeta,
+        argValues: [word, modelPath],
+        hint: hint,
+      ));
+
+  FlutterRustBridgeTaskConstMeta get kTokenizeWordConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "tokenize_word",
+        argNames: ["word", "modelPath"],
       );
 
   // Section: api2wire
@@ -106,6 +128,26 @@ class RustWire implements FlutterRustBridgeWireBase {
           ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
               ffi.Pointer<wire_uint_8_list>)>>('wire_tokenize');
   late final _wire_tokenize = _wire_tokenizePtr.asFunction<
+      void Function(
+          int, ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_tokenize_word(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> word,
+    ffi.Pointer<wire_uint_8_list> model_path,
+  ) {
+    return _wire_tokenize_word(
+      port_,
+      word,
+      model_path,
+    );
+  }
+
+  late final _wire_tokenize_wordPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>)>>('wire_tokenize_word');
+  late final _wire_tokenize_word = _wire_tokenize_wordPtr.asFunction<
       void Function(
           int, ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
 

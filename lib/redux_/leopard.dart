@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:Minutes/mic_recorder.dart';
+import 'package:Minutes/redux_/transcriber.dart';
 import 'package:Minutes/utils/extensions.dart';
 import 'package:Minutes/utils/persistence.dart';
 import 'package:cheetah_flutter/cheetah.dart';
@@ -55,6 +56,8 @@ class LeopardState {
       if (transcript.isEmpty) {
         return null;
       }
+      print("CALL AUTO CORRECT");
+      AutoCorrectTranscript(transcript).call(store);
       String parent = Uuid().v4();
       // We may want to split by combining all whitespaces to be safe.
       return transcript

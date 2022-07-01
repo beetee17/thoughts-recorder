@@ -31,32 +31,39 @@ class AlbertAutoCorrector {
         // All whitepsaces and newlines are combined
         // Trim the ends
         
-        let input = getInputs(tokens: tokens)
-        let maskIndex = findMaskIndex(tokens: tokens)
+        let (input, maskIndex) = getInputs(tokens: tokens)
         print("MASK AT INDEX \(maskIndex)")
         
         let (output, time) = Utils.time {
             return try! model.prediction(input: input).scoresShapedArray
         }
         
-        let outputAtMaskIndex = output[0, maskIndex+1]
+        let outputAtMaskIndex = output[0, maskIndex]
         print("Took <\(time)s>")
-        print("Mask Index Result: \(outputAtMaskIndex.shape) ")
-        for i in 0...20 {
-            print(outputAtMaskIndex[i].scalar!)
-        }
         
         var result: [Float] = []
+        
+        let sorted = outputAtMaskIndex.scalars.enumerated().sorted(by: {$0.element > $1.element})
+        
+        let indices = sorted.map{$0.offset}
+        
+        print("Mask Index Result by Ranking: \(outputAtMaskIndex.shape) ")
+        for i in 0...20 {
+            print("TOKEN: \(indices[i]), SCORE: \(sorted[i])")
+            print("RANK \(i+1): \(tokenizer.unTokenize(token: indices[i]))")
+        }
         
         for i in outputAtMaskIndex.indices {
             if targets.contains(i) {
                 let targetScore = outputAtMaskIndex[i].scalar ?? -1
                 result.append(targetScore)
                 print("\(i) GOT SCORE FOR TARGET \(tokenizer.unTokenize(token: i)): \(targetScore)")
+                print("RANK IS \((indices.firstIndex(of: indices[i]) ?? -1) + 1)")
             }
         }
-        result = softmax(result)
-        print("SOFTMAXING RESULT: \(result)")
+        let m = result.max()
+        result = result.map { $0 / (m ?? 1) }
+        print("NORMALIZED RESULT: \(result)")
         return result
     }
     
@@ -65,7 +72,7 @@ class AlbertAutoCorrector {
     }
 
     
-    private func getInputs(tokens: [Int]) -> AutoCorrectModelInput {
+    private func getInputs(tokens: [Int]) -> (AutoCorrectModelInput, Int) {
         
         let nPadding = seqLen - tokens.count - 2
         /// Sequence of input symbols. The sequence starts with a start token (101) followed by question tokens that are followed be a separator token (102) and the document tokens.The document tokens end with a separator token (102) and the sequenceis padded with 0 values to length 384.
@@ -87,8 +94,10 @@ class AlbertAutoCorrector {
             // 1 if not padding else 0
             attention_mask[i] = (i < seqLen - nPadding) ? 1 : 0
         }
-        
-        return AutoCorrectModelInput(tokens: MLMultiArray.from(currTokensWithPad, dims: 2), attention_mask: attention_mask)
+        print("currTokensWithPad \(currTokensWithPad)")
+        return (AutoCorrectModelInput(tokens: MLMultiArray.from(currTokensWithPad, dims: 2),
+                                      attention_mask: attention_mask),
+                findMaskIndex(tokens: currTokensWithPad))
         
     }
     

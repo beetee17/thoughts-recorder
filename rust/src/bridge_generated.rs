@@ -37,6 +37,26 @@ pub extern "C" fn wire_tokenize(
     )
 }
 
+#[no_mangle]
+pub extern "C" fn wire_tokenize_word(
+    port_: i64,
+    word: *mut wire_uint_8_list,
+    model_path: *mut wire_uint_8_list,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap(
+        WrapInfo {
+            debug_name: "tokenize_word",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_word = word.wire2api();
+            let api_model_path = model_path.wire2api();
+            move |task_callback| Ok(tokenize_word(api_word, api_model_path))
+        },
+    )
+}
+
 // Section: wire structs
 
 #[repr(C)]

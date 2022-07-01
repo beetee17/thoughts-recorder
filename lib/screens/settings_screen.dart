@@ -1,3 +1,4 @@
+import 'package:Minutes/screens/auto_correct_settings_screen.dart';
 import 'package:Minutes/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -126,6 +127,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               SettingsTile(
                                 title: Text('MAKE POINT'),
                                 value: UNEDITABLE_TEXT(r'\n\n- '),
+                              ),
+                            ],
+                          ),
+                          SettingsSection(
+                            title: Text(
+                              'Auto Correct',
+                            ),
+                            tiles: <SettingsTile>[
+                              SettingsTile(
+                                title: Text('Edit Suggestions'),
+                                trailing: Icon(Icons.arrow_forward_ios_rounded),
+                                onPressed: (ctx) {
+                                  Navigator.push(
+                                      ctx,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              AutoCorrectSettingsScreen(
+                                                suggestions: {
+                                                  "Test": {"Hello", "Another"},
+                                                  "Cool": {"Stuff"},
+                                                  "Empty": {},
+                                                },
+                                              )));
+                                },
                               ),
                             ],
                           )

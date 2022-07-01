@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:Minutes/redux_/cheetah.dart';
+import 'package:Minutes/utils/alert_dialog.dart';
 import 'package:cheetah_flutter/cheetah.dart';
 import 'package:cheetah_flutter/cheetah_error.dart';
 import 'package:file_picker/file_picker.dart';
@@ -12,6 +13,7 @@ import 'package:Minutes/redux_/status.dart';
 import 'package:Minutes/redux_/transcript.dart';
 import 'package:Minutes/redux_/transcriber.dart';
 import 'package:Minutes/utils/extensions.dart';
+import 'package:flutter/material.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 import 'package:redux/redux.dart';
 
@@ -53,33 +55,31 @@ class AudioState {
   }
 
   // File Picker Functions
-  void pickFile({bool fromGallery = false}) {
+  void pickFile(BuildContext context, {bool fromGallery = false}) {
     // From SDK Documentation:
     // The file needs to have a sample rate equal to or greater than Leopard.sampleRate.
     // The supported formats are: FLAC, MP3, Ogg, Opus, Vorbis, WAV, and WebM.
     // TODO: Now support any media file type through conversion of file via ffmpeg.
     FilePicker.platform
         .pickFiles(
-            type: fromGallery ? FileType.video : FileType.custom,
-            allowedExtensions: fromGallery
-                ? null
-                : [
-                    'flac',
-                    'mp3',
-                    'ogg',
-                    'opus',
-                    'vorbis',
-                    'wav',
-                    'webm',
-                    'mp4',
-                    'mov',
-                    'avi'
-                  ])
+            type: fromGallery ? FileType.video : FileType.any,
+            allowedExtensions: null)
         .then((res) {
       if (res != null) {
-        store.dispatch(AudioFileChangeAction(File(res.files.single.path!)));
-        print(res.files.single.path!);
-        store.dispatch(processCurrentAudioFile);
+        // Convert file to wav then get the file path
+        final pickedFile = File(res.files.single.path!);
+        print('Picked File at Path: ${pickedFile.path}');
+
+        MicRecorder.convertFileToWav(pickedFile).then((wavFile) {
+          print('converted picked file to .wav with result: ${wavFile?.path}');
+          if (wavFile != null) {
+            store.dispatch(AudioFileChangeAction(wavFile));
+            store.dispatch(processCurrentAudioFile);
+          } else {
+            showAlertDialog(context, "Error Converting File",
+                "Could not extract audio from the file: ${res.files.single.name}. Please try another file.");
+          }
+        });
       } else {
         // User canceled the picker
       }

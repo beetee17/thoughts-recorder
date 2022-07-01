@@ -13,6 +13,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:Minutes/utils/alert_dialog.dart';
+import 'package:Minutes/utils/extensions.dart';
 import 'package:cheetah_flutter/cheetah.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter/return_code.dart';
@@ -200,8 +202,28 @@ class MicRecorder {
     return wavFile.writeAsBytes(bytesBuilder.toBytes());
   }
 
+  static Future<File?> convertFileToWav(File file) async {
+    final directory = await getTemporaryDirectory();
+    final String originalFileName = file.nameWithoutExtension;
+    final String outputFilePath =
+        path.join(directory.path, '$originalFileName.wav');
+
+    // -y flag is for overwriting existing file
+    final session =
+        await FFmpegKit.execute('-y -i "${file.path}" "$outputFilePath"');
+
+    final returnCode = await session.getReturnCode();
+
+    // see https://stackoverflow.com/questions/59877602/how-to-get-byte-data-from-audio-file-must-be-as-signed-int-bytes-in-flutter
+    if (ReturnCode.isSuccess(returnCode)) {
+      File outputFile = File(outputFilePath);
+      return outputFile;
+    }
+    return null;
+  }
+
   static Future<List<int>?> getFramesFromFile(File file) async {
-    final directory = await getApplicationDocumentsDirectory();
+    final directory = await getTemporaryDirectory();
     final String outputFilePath = path.join(directory.path, 'output.pcm');
 
     // see https://stackoverflow.com/questions/4854513/can-ffmpeg-convert-audio-to-raw-pcm-if-so-how

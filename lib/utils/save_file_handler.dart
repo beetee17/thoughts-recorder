@@ -103,7 +103,8 @@ class SaveFileHandler {
       print('Loaded $path successfully');
 
       final Map<String, dynamic> decodedFile = jsonDecode(saveFile);
-      print('Decoded $path as: $decodedFile');
+      // print('Decoded $path as: $decodedFile');
+      print('Decoded $path successfully');
 
       return SaveFileContents.fromJson(decodedFile);
     } catch (err) {

@@ -15,7 +15,7 @@ class UploadFileButton extends StatelessWidget {
       distinct: true,
       converter: (store) => UploadFileButtonVM(store.state.audio.file,
           store.state.audio.pickFile, store.state.audio.removeSelectedFile),
-      builder: (_, viewModel) {
+      builder: (ctx, viewModel) {
         return PopupMenuButton(
             color: accentColor,
             icon: Icon(
@@ -34,7 +34,7 @@ class UploadFileButton extends StatelessWidget {
                         Text('Choose Files'),
                       ],
                     ),
-                    onTap: () => viewModel.pickFile(fromGallery: false)),
+                    onTap: () => viewModel.pickFile(ctx, fromGallery: false)),
                 PopupMenuItem(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -44,7 +44,7 @@ class UploadFileButton extends StatelessWidget {
                       Text('Photo Library'),
                     ],
                   ),
-                  onTap: () => viewModel.pickFile(fromGallery: true),
+                  onTap: () => viewModel.pickFile(ctx, fromGallery: true),
                 )
               ];
             });
@@ -55,7 +55,7 @@ class UploadFileButton extends StatelessWidget {
 
 class UploadFileButtonVM {
   File? file;
-  void Function({bool fromGallery}) pickFile;
+  void Function(BuildContext, {bool fromGallery}) pickFile;
   void Function() removeFile;
   UploadFileButtonVM(this.file, this.pickFile, this.removeFile);
   @override
